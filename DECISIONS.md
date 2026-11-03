@@ -47,3 +47,6 @@ Claude Code can produce the numbers; the recommendation and judgment are Eric's.
 
 ## 2026-11-02 D15. Secret scan is a dependency-free pre-commit hook, not gitleaks
 `.githooks/pre-commit` is plain Python (standard library only): it reads the staged diff and blocks key-shaped strings and any staged `.env` file. Chosen over gitleaks because it adds no dependency and every line can be read and explained. Accepted trade-off: far fewer patterns than gitleaks, and `git commit --no-verify` skips it. `make setup` turns it on (git does not copy hooks into a clone); `make test-secret-scan` proves it from a fresh clone.
+
+## 2026-11-02 D16. The no-real-names rule covers the beverage business, not the tool stack
+No real beverage brand, distributor, retailer, co-packer or employer appears in the repo. The two real names that D2 originally cited were removed from the repo copy; the decision itself is unchanged. Naming the tools and vendors the system is built on (Anthropic, Claude, Qwen, Ollama, DuckDB and the like) is fine: the spec cannot describe a three-way model comparison without them.

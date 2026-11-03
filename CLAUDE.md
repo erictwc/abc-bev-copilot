@@ -13,6 +13,7 @@ Project: ABC-BEV-CO Order-to-Shelf Copilot. Read `SPEC.md` for the design and `T
 
 - Use only the synthetic and public data described in the spec. Never read, copy or reference any employer, customer or vendor data.
 - Do not use any real company's name, brand or product in the repo, including in test data, comments or examples. The fictional company is ABC-BEV-CO.
+  This covers the beverage business world (brands, distributors, retailers, co-packers, employers). Naming the tools and vendors the spec builds on (Anthropic, Claude, Qwen, Ollama, DuckDB and the like) is fine (D16).
 - Never put API keys in files or version control. Use `.env` and keep `.env.example` current.
 
 ## Safety rules (ask before changing any of these)
