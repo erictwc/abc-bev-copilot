@@ -229,6 +229,8 @@ threshold. The threshold was set by measuring: the test questions and some
 off-topic ones were scored, and the line drawn between them, rather than picking
 a number in advance. The five test questions scored 0.61 or more on the right
 document, the off-topic ones 0.29 at most, and the line sits halfway, at 0.45.
+I kept it there rather than lowering it to 0.40, accepting that a few relevant
+second passages fall just under it.
 The model, chunk size, k and threshold sit in a small
 config file, and every tool call is logged with the settings it ran with.
 
