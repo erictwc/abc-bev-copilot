@@ -168,7 +168,25 @@ a tool call and a retry work, and a library would hide exactly the part I am
 supposed to understand. The 100-line limit keeps it small enough to read in one
 sitting. Changing that needs a written reason.
 
-*Draws on D4; SPEC §4.*
+For the same reason it uses no SDKs either, only Python's built-in HTTP and JSON
+modules: the headers, the retry loop and the token counts are all in the one
+file. Failed calls are retried up to three times with growing waits (2, 4, 8
+seconds, or whatever wait the server asks for), but only for errors that can
+clear by themselves: a dropped connection, a rate limit, an overloaded server.
+A malformed request fails at once.
+
+The cloud Qwen path goes through OpenRouter, pinned to a single host,
+DeepInfra, so every call is served by the same machines and latency means one
+thing. It hosts the same 9B and 14B sizes as the box, plus a 27B for the
+larger-model quality question. The 4B has no hosted version, and the hosted
+weights are less compressed than the box's 4-bit copies, so the memo reports a
+local-versus-cloud gap as hardware and quantization together. The Claude path
+defaults to Sonnet 5.5, which costs about $2 per full eval run, so several runs
+fit in the budget; Opus 5.5 stays available by name. The local path asks Ollama
+for a fixed context window on every call, because otherwise a long prompt would
+be cut short without any error.
+
+*Draws on D4, D39, D40, D42, D43; SPEC §4.*
 
 ---
 
@@ -183,7 +201,17 @@ quietly; raising a limit in code is a visible, reviewed commit. Cost per questio
 is reported for every model, because "what does this cost to run?" is the first
 question a business owner asks.
 
-*Draws on D5; SPEC §5.*
+The $5 demo reserve is enforced, not just intended: every call says which budget
+it belongs to, development calls stop at $15 for the month and only demo calls
+can spend the last $5. The check also counts the call about to be made, at the
+most it could possibly cost, so the cap can never be overshot by one last
+expensive call. A model with no price on file is refused outright.
+
+The spend log is a plain CSV file with one row per call, including free local
+calls, failures and refusals. It is kept out of git so that everyday runs do not
+create commits; the costs quoted in the README come from committed eval results.
+
+*Draws on D5, D41, D44, D45; SPEC §5.*
 
 ---
 
@@ -339,7 +367,6 @@ These are named in the spec but not decided yet. Each gets a dated entry when it
 is decided.
 
 - the local vector store (Chroma or sqlite-vec)
-- the cloud Qwen provider
 - every dependency beyond the Python standard library (the data generator needs
   none; DuckDB itself is decided when the SQL tool is built)
 
