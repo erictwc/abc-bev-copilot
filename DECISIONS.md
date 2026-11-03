@@ -44,3 +44,6 @@ Claude Code can produce the numbers; the recommendation and judgment are Eric's.
 
 ## 2026-11-02 D14. Describe the beta-testing experience generically
 "Beta user for third-party LLM testing: logging and categorizing failures." Check with his manager before it goes on a public page. Nothing from that tool appears in the repo.
+
+## 2026-11-02 D15. Secret scan is a dependency-free pre-commit hook, not gitleaks
+`.githooks/pre-commit` is plain Python (standard library only): it reads the staged diff and blocks key-shaped strings and any staged `.env` file. Chosen over gitleaks because it adds no dependency and every line can be read and explained. Accepted trade-off: far fewer patterns than gitleaks, and `git commit --no-verify` skips it. `make setup` turns it on (git does not copy hooks into a clone); `make test-secret-scan` proves it from a fresh clone.
