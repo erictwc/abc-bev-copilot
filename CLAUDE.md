@@ -7,6 +7,7 @@ Project: ABC-BEV-CO Order-to-Shelf Copilot. Read `SPEC.md` for the design and `T
 - Work on **one ticket per session**, the one Eric names. Stop at the ticket's "Done when" check, report the result, and wait.
 - Keep commits small. Say what changed and why.
 - Eric makes the decisions. When a choice is open, offer 2 or 3 options with a recommendation, and write the outcome in `DECISIONS.md` with the date once he decides.
+- When you add a decision to `DECISIONS.md`, update `docs/DECISION_NARRATIVE.md` in the same commit so the two never drift.
 - Finding facts (docs, versions, spec sheets) is your job. Decisions are his.
 
 ## Data and confidentiality
