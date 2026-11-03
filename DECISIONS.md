@@ -101,3 +101,18 @@ A PO is awaiting pickup when its status is `confirmed` and it has a pickup date.
 
 ## 2026-11-03 D33. Carriers are codes, `CARRIER-1` to `CARRIER-4`
 Like the warehouse codes, so no invented carrier name needs the D16 real-name check. Chosen over invented carrier names.
+
+## 2026-11-03 D34. The benchmark reads Ollama's own timing fields, not llama-bench
+`bench/run_bench.py` sends requests to the Ollama server on the box and records the prompt and decode token counts and durations that Ollama measures on the server. It is standard-library Python. Its one network call goes to `OLLAMA_HOST`, the home-network address the spec already names. The script refuses any address that is not private or loopback. Chosen over llama-bench because Ollama's model files often do not load in upstream llama.cpp. llama-bench would need llama.cpp built on the box and separate model downloads, and it would measure a different program from the one the local eval path (T10) runs. A both-tools cross-check was also considered and not chosen. Accepted trade-off: Ollama reuses cached prompt prefixes, so every request starts with a unique nonce, and a run whose prompt count comes back short is rejected rather than recorded. Ollama was not installed on the box yet, so installing it is part of T3.
+
+## 2026-11-03 D35. Three model sizes: qwen3.5:4b, qwen3.5:9b and qwen3:14b, all q4_K_M
+These are the Ollama tags `qwen3.5:4b-q4_K_M` (3.3 GB), `qwen3.5:9b-q4_K_M` (6.6 GB) and `qwen3:14b-q4_K_M` (9.3 GB), checked on ollama.com on 2026-11-03. Qwen3.5 has no size between 9B and 27B, and its 27B (17 GB) does not fit in 16 GB of RAM, so the spec's "14B, tight" case uses the older Qwen3 generation, labeled as such. Chosen over the two qwen3.5 sizes alone, and over qwen3:8b with qwen3:14b. SPEC §7 says sizes are chosen after the first run; this set can be revised once it has run.
+
+## 2026-11-03 D36. Prompt lengths of 512, 2,048 and 8,192 tokens, each followed by 128 generated tokens
+`num_ctx` is set to the prompt length plus 192, so the prompt is never cut and every row records the context it ran in. 8,192 covers an agent prompt with tool definitions and retrieved passages. Chosen over doublings up to 16,384, where one 14B prefill could take more than ten minutes on this CPU, and over 512 and 4,096 only.
+
+## 2026-11-03 D37. One discarded warm-up, then three measured runs per model and prompt length
+The warm-up also tunes the filler prompt to its target token count. Medians are taken later from the raw rows. Chosen over five measured runs and over a single run.
+
+## 2026-11-03 D38. `bench/results.csv` holds one row per measured run
+The columns are `timestamp, host, ollama_version, model, quant, size_gb, num_ctx, prompt_tokens, gen_tokens, repeat, prefill_tps, decode_tps, load_s`. `host` is a label (`GEEKOM-A5`), never an address. Runs are appended, so models can be run on different nights. Chosen over a summary file of medians, minimums and maximums, and over writing both. Raw rows hide nothing, and T11 takes its medians from them.

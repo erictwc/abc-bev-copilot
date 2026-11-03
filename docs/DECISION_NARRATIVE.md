@@ -237,8 +237,27 @@ few eval cases, not a rebuild, is part of the point.
 ## Why the GPU numbers are projected, not claimed
 
 I only have the CPU box, so I measure it properly and project what a GPU would
-do, rather than quote a number I never measured. The projection follows the
-physics:
+do, rather than quote a number I never measured.
+
+The measurement uses the same program the local model path runs: Ollama. It
+reports how long it spent reading the prompt and writing the answer, and a short
+script records those timings. The standard benchmark tool, llama-bench, was the
+other option. It is more controlled, but it would mean building a second program
+and downloading the models again, often in a different file format, and then the
+numbers would describe software that the evals never use. Ollama has one trap:
+it remembers prompts it has already seen and skips re-reading them, which would
+make prefill look instant. So every prompt starts with a unique random tag, and
+the script throws out any run where the prompt was not read in full.
+
+Three model sizes are tested: Qwen3.5 at 4B and 9B, and the older Qwen3 at 14B,
+all at 4-bit. Qwen3.5 jumps from 9B to 27B, and 27B does not fit in 16 GB, so the
+older 14B stands in for "the biggest that fits". Each model reads prompts of 512,
+2,048 and 8,192 tokens and writes 128 tokens after each. There is one warm-up run
+that is thrown away, then three that count. Every run is its own row in the
+results file, so nothing is averaged away before anyone can see it. The script
+only talks to an address on the home network and refuses anything else.
+
+The projection follows the physics:
 
 - **Decode** (writing the answer token by token) is limited by memory bandwidth,
   so it scales roughly with the ratio of GPU to box memory bandwidth.
@@ -252,7 +271,7 @@ projection against reality. Model quality does not change with hardware for the
 same model and quantization, so quality questions about larger models are
 answered by the cloud Qwen runs.
 
-*Draws on D10; SPEC §7.*
+*Draws on D10, D34, D35, D36, D37, D38; SPEC §7.*
 
 ---
 
@@ -321,7 +340,6 @@ is decided.
 
 - the local vector store (Chroma or sqlite-vec)
 - the cloud Qwen provider
-- which Qwen model sizes to test (chosen after the first benchmark run)
 - every dependency beyond the Python standard library (the data generator needs
   none; DuckDB itself is decided when the SQL tool is built)
 
