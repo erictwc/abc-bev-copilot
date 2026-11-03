@@ -2,7 +2,7 @@
 PYTHON ?= python3
 VENV := .venv
 
-.PHONY: setup test-secret-scan data data-check
+.PHONY: setup test-secret-scan data data-check corpus corpus-check
 
 ## setup: venv, dependencies, secret-scan hook, .env. Safe to run twice.
 setup:
@@ -29,3 +29,15 @@ data-check:
 	$(PYTHON) data/generate.py --out "$$tmp/b" >/dev/null && \
 	diff -r "$$tmp/a" "$$tmp/b" && diff -r "$$tmp/a" data/csv && \
 	echo "data-check: two runs and data/csv/ are byte-identical" && cat data/csv/SHA256SUMS
+
+## corpus: write the 20 product sheets to docs_corpus/ from sku_master. Standard library only (D23).
+corpus:
+	@$(PYTHON) docs_corpus/make_sheets.py
+
+## corpus-check: regenerate sheets into a temp folder, compare with docs_corpus/, then check every header (D22).
+corpus-check:
+	@tmp=$$(mktemp -d) && trap 'rm -rf "$$tmp"' EXIT && \
+	$(PYTHON) docs_corpus/make_sheets.py --out "$$tmp" >/dev/null && \
+	for f in "$$tmp"/*.md; do cmp -s "$$f" "docs_corpus/$$(basename "$$f")" || { echo "differs: $$(basename "$$f")"; exit 1; }; done && \
+	echo "corpus-check: generated sheets match docs_corpus/ byte for byte" && \
+	$(PYTHON) docs_corpus/make_sheets.py --check

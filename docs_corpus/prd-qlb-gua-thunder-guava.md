@@ -1,0 +1,30 @@
+DOC-ID: PRD-QLB-GUA-v1
+Title: Quillbolt Thunder Guava product sheet
+Owner: Brand Management
+Effective date: 2026-10-01
+
+# Quillbolt Thunder Guava
+
+Quillbolt Thunder Guava is an energy drink made for ABC-BEV-CO on co-packer line LINE-1. It comes in 2 packs.
+
+## Packs
+
+| sku_id | Pack | Cans per case | Status |
+|---|---|---:|---|
+| QLB-GUA-C12 | 12 oz can | 24 | active |
+| QLB-GUA-C16 | 16 oz can | 12 | active |
+
+## Caffeine and nutrition (per can)
+
+| sku_id | Caffeine (mg) | Calories | Sugar (g) |
+|---|---:|---:|---:|
+| QLB-GUA-C12 | 120 | 110 | 27 |
+| QLB-GUA-C16 | 160 | 147 | 36 |
+
+## Shelf life and storage
+
+Shelf life is 9 months from the production date printed on the can. Store cases dry, out of direct sun, between 35 and 85 °F. Do not freeze.
+
+## Status
+
+- active: in regular distribution (QLB-GUA-C12, QLB-GUA-C16).
