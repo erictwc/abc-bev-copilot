@@ -27,6 +27,8 @@ import os
 import secrets
 import socket
 import sys
+import time
+import urllib.error
 import urllib.parse
 import urllib.request
 from datetime import datetime, timezone
@@ -40,6 +42,7 @@ CTX_MARGIN = 64        # num_ctx = prompt + GEN_TOKENS + CTX_MARGIN, so the prom
 REPEATS = 3                                                               # D37
 TOLERANCE = 0.03       # a tuned prompt is within 3% of its target, and never over num_ctx
 MAX_TUNING = 4
+RETRIES = 2           # server errors (HTTP 5xx) retried per request, 10 s apart
 TIMEOUT_S = 3600       # an 8k prefill on the 14B can take many minutes on this CPU
 HOST_LABEL = "GEEKOM-A5"
 COLUMNS = ["timestamp", "host", "ollama_version", "model", "quant", "size_gb", "num_ctx",
@@ -82,10 +85,19 @@ def require_home_network(hostname):
 
 
 def call(base, path, body=None):
+    """One request. A server error (5xx) carries no timings, so it is retried, not recorded."""
     data = None if body is None else json.dumps(body).encode()
     req = urllib.request.Request(base + path, data=data, headers={"Content-Type": "application/json"})
-    with urllib.request.urlopen(req, timeout=TIMEOUT_S) as resp:
-        return json.loads(resp.read())
+    for attempt in range(1, RETRIES + 2):
+        try:
+            with urllib.request.urlopen(req, timeout=TIMEOUT_S) as resp:
+                return json.loads(resp.read())
+        except urllib.error.HTTPError as e:
+            msg = e.read().decode(errors="replace").strip()
+            if e.code < 500 or attempt > RETRIES:
+                sys.exit(f"{path}: HTTP {e.code}: {msg}")
+            print(f"{path}: HTTP {e.code}: {msg} (retry {attempt} of {RETRIES})", file=sys.stderr, flush=True)
+            time.sleep(10)
 
 
 def filler(n_words):
