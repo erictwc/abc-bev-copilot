@@ -19,7 +19,7 @@ other field are fixed, and there is no tolerance for small changes.
 
 - The first requested-date change is free. Each change after that costs $200.
 - Moving the requested date earlier or later needs Supply Planning's approval.
-- A confirmed PO can be cancelled only with a 25% restocking fee.
+- A confirmed PO can be cancelled only with a restocking fee of 25% of the invoice cost.
 
 ## Cut-off
 

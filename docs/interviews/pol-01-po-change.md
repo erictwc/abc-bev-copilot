@@ -56,3 +56,8 @@ or damaged during shipping, which contradicts POL-01's "ABC-BEV-CO does not take
 returns." Claude Code asked whether to change that line to "Returns are covered by the
 returns policy (POL-05)."
 > correct
+
+## Change after sign-off (2026-11-03, after T2 closed)
+
+Claude Code noted the 25% restocking fee does not say what it is 25% of.
+> 25% of the invoice cost
