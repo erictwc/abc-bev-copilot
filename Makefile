@@ -18,7 +18,7 @@ setup:
 test-secret-scan:
 	@$(PYTHON) .githooks/test_pre_commit.py
 
-## data: write the five v1 tables to data/csv/ with SHA256SUMS. Standard library only (D18).
+## data: write the six v1 tables to data/csv/ with SHA256SUMS. Standard library only (D18).
 data:
 	@$(PYTHON) data/generate.py --out data/csv
 

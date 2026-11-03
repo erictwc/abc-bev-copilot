@@ -1,10 +1,12 @@
-"""Seeded generator for the five v1 tables (ticket T1).
+"""Seeded generator for the six v1 tables (tickets T1 and T2b).
 
 Writes CSV files plus SHA256SUMS to --out (default data/csv). Standard library
 only (D18). Same seed, byte-identical files (D17):
 
 - every date is counted from ANCHOR, never from today's date (D19)
-- all randomness comes from one random.Random(seed), passed down explicitly
+- all randomness comes from two random.Random streams fixed by the seed, passed
+  down explicitly: the T1 stream, then a second one for the T2b columns and table,
+  used only after the T1 rows are final, so T2b leaves every T1 value unchanged (D29)
 - only rng.random(), randrange(), choice() and sample() are used, and no libm
   functions (exp, log, sin...), whose last bit can differ between platforms
 - no iteration over sets: string hashing is randomized per process
@@ -60,6 +62,8 @@ CHAINS = [  # retailer (parent company), chain (store banner)
     ("Stonefinch Inc", "Stonefinch Grocer"), ("Mirelle Co", "Mirelle Mart"),
 ]
 WAREHOUSES = [("WH-EAST", 4), ("WH-CENTRAL", 3), ("WH-WEST", 3)]   # name, demand weight
+CARRIERS = ["CARRIER-1", "CARRIER-2", "CARRIER-3", "CARRIER-4"]   # codes, not names (D33)
+CARRIER_LEAD = timedelta(days=7)   # a carrier is assigned this close to pickup (POL-01)
 RUN_NOTES = ["Can supplier short", "Line maintenance", "Flavor concentrate late",
              "Changeover overran", "Labor shortage on shift"]
 
@@ -255,6 +259,62 @@ def plant(rng, skus, orders, runs, inventory, promos):
     target["authorized"] = ""
 
 
+def add_shipments(rng, orders):
+    """T2b: pickup, carrier and shipment fields on every PO (D31). Awaiting pickup is
+    status confirmed with a pickup date (D32). requested_date is the delivery date."""
+    for o in orders:   # in po_id order
+        o.update(pickup_date="", carrier="", ship_date="", shipped_qty="", delivered_date="")
+        transit = timedelta(days=rng.randrange(1, 5))
+        pickup = o["requested_date"] - transit
+        if o["status"] == "shipped" and o["last_changed"] < o["requested_date"]:
+            pickup = o["last_changed"]   # the status changed when the truck left
+        if o["status"] == "confirmed" and pickup > ANCHOR + CARRIER_LEAD:
+            continue   # no carrier yet, so no pickup date
+        if o["status"] == "open":
+            continue
+        o["pickup_date"], o["carrier"] = pickup, rng.choice(CARRIERS)
+        if o["status"] == "confirmed":
+            continue
+        o["ship_date"], o["shipped_qty"] = pickup, o["qty"]
+        if o["status"] == "received":
+            if rng.random() < 0.05:   # short shipment
+                o["shipped_qty"] = min(o["qty"] - 10, max(10, round(o["qty"] * uniform(rng, 0.6, 0.95) / 10) * 10))
+            if rng.random() < 0.92:
+                delivered = o["requested_date"] - timedelta(days=rng.randrange(transit.days))
+            else:
+                delivered = o["requested_date"] + timedelta(days=rng.randrange(1, 4))
+            o["delivered_date"] = max(pickup + timedelta(days=1), min(delivered, o["last_changed"]))
+
+
+def make_depletions(rng, orders, runs):
+    """T2b: weekly distributor depletion reports, by reason (D30). Volumes follow each
+    distributor's own orders. A SKU never produced has nothing to deplete."""
+    made = {r["sku_id"] for r in runs if r["status"] == "completed"}
+    lines = {}
+    for o in orders:
+        if o["sku_id"] in made:
+            lines.setdefault((o["distributor"], o["sku_id"]), []).append(o)
+    fridays = [m + timedelta(days=4) for m in mondays(START, ANCHOR - timedelta(days=4))]
+    rows = []
+    for (dist, sku_id), pos in sorted(lines.items()):
+        first = min(o["requested_date"] for o in pos)   # depletions start once stock arrives
+        last = DISCONTINUED + timedelta(weeks=8) if sku_id in DISCONTINUED_SKUS else ANCHOR
+        weeks = (max(o["order_date"] for o in pos) - min(o["order_date"] for o in pos)).days / 7 + 4
+        weekly = sum(o["qty"] for o in pos) / weeks
+        for fri in fridays:
+            if fri < first or fri > last:
+                continue
+            total = max(0, round(weekly * uniform(rng, 0.75, 1.25)))
+            samples = round(total * uniform(rng, 0.005, 0.02))
+            spoiled = round(total * uniform(rng, 0, 0.01))
+            damaged = round(total * uniform(rng, 0, 0.01))
+            rows.append({"week_ending": fri, "distributor": dist, "sku_id": sku_id,
+                         "sold": total - samples - spoiled - damaged, "samples": samples,
+                         "spoiled": spoiled, "damaged": damaged})
+    rows.sort(key=lambda d: (d["week_ending"], d["distributor"], d["sku_id"]))
+    return rows
+
+
 def write(path, rows, cols):
     with open(path, "w", newline="", encoding="utf-8") as f:
         w = csv.writer(f, lineterminator="\n")
@@ -286,18 +346,25 @@ def main():
     inventory.sort(key=lambda v: (v["snapshot_date"], v["warehouse"], v["sku_id"]))
     promos.sort(key=lambda p: (p["start_date"], p["chain"], p["sku_id"]))
 
+    rng2 = Random(f"{args.seed}:T2b")   # second stream, after the T1 rows are final (D29)
+    add_shipments(rng2, orders)
+    depletions = make_depletions(rng2, orders, runs)
+
     out = Path(args.out)
     out.mkdir(parents=True, exist_ok=True)
     tables = {
         "sku_master": (skus, ["sku_id", "brand", "flavor", "pack", "case_size", "copacker_line", "status"]),
         "distributor_orders": (orders, ["po_id", "distributor", "sku_id", "qty", "order_date",
-                                        "requested_date", "status", "last_changed"]),
+                                        "requested_date", "status", "last_changed", "pickup_date",
+                                        "carrier", "ship_date", "shipped_qty", "delivered_date"]),
         "copacker_plan": (runs, ["run_id", "sku_id", "planned_qty", "scheduled_week", "status",
                                  "constraint_note"]),
         "warehouse_inventory": (inventory, ["snapshot_date", "warehouse", "sku_id", "on_hand",
                                             "allocated", "in_transit"]),
         "promo_calendar": (promos, ["retailer", "chain", "sku_id", "start_date", "end_date",
                                     "authorized", "planned_lift_pct", "ad_week"]),
+        "distributor_depletions": (depletions, ["week_ending", "distributor", "sku_id", "sold",
+                                                "samples", "spoiled", "damaged"]),
     }
     sums = []
     for name, (rows, cols) in tables.items():
