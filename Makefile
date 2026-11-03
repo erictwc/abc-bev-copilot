@@ -1,8 +1,9 @@
-# Every target here runs offline. A new outbound call needs a DECISIONS.md entry first.
+# Every target here runs offline except bench, which calls the box on the home network
+# (OLLAMA_HOST, D34). A new outbound call needs a DECISIONS.md entry first.
 PYTHON ?= python3
 VENV := .venv
 
-.PHONY: setup test-secret-scan data data-check corpus corpus-check
+.PHONY: setup test-secret-scan data data-check corpus corpus-check bench
 
 ## setup: venv, dependencies, secret-scan hook, .env. Safe to run twice.
 setup:
@@ -41,3 +42,7 @@ corpus-check:
 	for f in "$$tmp"/*.md; do cmp -s "$$f" "docs_corpus/$$(basename "$$f")" || { echo "differs: $$(basename "$$f")"; exit 1; }; done && \
 	echo "corpus-check: generated sheets match docs_corpus/ byte for byte" && \
 	$(PYTHON) docs_corpus/make_sheets.py --check
+
+## bench: prefill and decode tokens/s from Ollama on the box, appended to bench/results.csv (T3, D34-D38).
+bench:
+	@$(PYTHON) bench/run_bench.py
