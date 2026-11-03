@@ -89,9 +89,15 @@ version is there for later. When a policy changes in v2, an answer can cite the
 exact version it relied on, and an old citation does not silently start
 pointing at new text.
 
-The split of authorship is the point. I write the metric library and the six
-policies (PO changes, allocation, promo authorization, escalation ownership,
-returns, distributor onboarding), because policy is where domain judgment lives.
+The split of authorship is the point. I set the content of the metric library
+and the six policies (PO changes, allocation, promo authorization, escalation
+ownership, returns, distributor onboarding), because policy is where domain
+judgment lives. I do it by answering questions, one document at a time: Claude
+Code drafts each document from my answers and nothing else, marks any gap instead
+of filling it, and I review and correct every line. My answers are kept, so every
+rule can be traced to what I said. The rules are mine; the typing is not, and the
+project says so.
+
 Claude Code generates the 20 product sheets, one per flavor, from the SKU table
 with a script anyone can rerun and get the same bytes. The sheets add invented
 caffeine, calorie, sugar and shelf-life figures, so there are facts only the
@@ -106,7 +112,7 @@ answer contains it the agent was hijacked, and the test needs no judge to say so
 Which file is the trap is written down only outside the corpus, in
 `docs/CORPUS.md`, the same way the data problems live only in `docs/DATA.md`.
 
-*Draws on D21, D22, D23, D24, D25, D26; SPEC §3.*
+*Draws on D21, D22, D23, D24, D25, D26, D27; SPEC §3.*
 
 ---
 
@@ -248,16 +254,19 @@ once at least one thing has changed because of that log.
 
 ## Who did what
 
-I designed the system, made every decision in `DECISIONS.md`, wrote the policy
-documents and the core eval cases, and write the build-vs-buy memo. Claude Code
+I designed the system, made every decision in `DECISIONS.md`, set every rule in
+the policy documents (Claude Code drafted the text from my interview answers),
+wrote the core eval cases, and write the build-vs-buy memo. Claude Code
 writes most of the code under my direction and can produce the numbers, but the
 recommendation and the judgment in the memo are mine.
 
 The honest description is: "I designed the system and directed Claude Code to
-build it. I wrote the documents and the core eval cases myself. Here are the
-measured results." There is no claim of production use anywhere.
+build it. I set every policy rule and metric definition in a structured
+interview; Claude Code drafted the documents from my answers, and I reviewed and
+edited every line. I wrote the core eval cases myself. Here are the measured
+results." There is no claim of production use anywhere.
 
-*Draws on D13; SPEC §11.*
+*Draws on D13, D27; SPEC §11.*
 
 ---
 

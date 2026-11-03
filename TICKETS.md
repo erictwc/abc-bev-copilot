@@ -17,7 +17,7 @@ One ticket per Claude Code session. Eric reviews at each "Done when" before the 
 **T1. Synthetic data generator.** Seeded script for the five v1 tables, with the five planted problems; `docs/DATA.md` lists each problem with an ID.
 *Done when:* `make data` run twice gives identical file hashes; planted problems are present and listed.
 
-**T2. Document corpus.** Eric writes the metric library and policy documents; Claude Code generates product sheets from `sku_master` and adds the DOC-ID headers and the one planted injection document.
+**T2. Document corpus.** Eric sets the metric library and policy content in an interview, and Claude Code drafts them from his answers only for his line-by-line review (D27); Claude Code generates product sheets from `sku_master` and adds the DOC-ID headers and the one planted injection document.
 *Done when:* 20 to 30 files exist, every file has a header, and Eric confirms the policies are his own.
 
 **T3. Benchmark script.** `bench/` wrapper around `llama-bench` (or equivalent) that writes `bench/results.csv`: prefill and decode tokens/second by model and context length.

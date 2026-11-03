@@ -145,8 +145,8 @@ def check():
         if not re.fullmatch(r"[A-Z]{3}(-[A-Z0-9]+)+-v\d+", doc_id):
             problems.append(f"{p.name}: DOC-ID '{doc_id}' does not end in a version like -v1")
         ids.setdefault(doc_id, []).append(p.name)
-        if len(head) > 3 and ("TBD" in head[2] + head[3] or "Draft pending" in "\n".join(head[4:])):
-            print(f"pending: {p.name} is still a stub (TBD header or Draft pending body)")
+        if len(head) > 3 and ("TBD" in head[2] + head[3] or any(m in "\n".join(head[4:]) for m in ("Draft pending", "[GAP"))):
+            print(f"pending: {p.name} is not finished (TBD header, Draft pending body or [GAP] marker)")
         for tok in sorted(set(SKU_TOKEN.findall(p.read_text(encoding="utf-8"))) - known):
             problems.append(f"{p.name}: '{tok}' is not a sku_master sku_id")
     problems += [f"duplicate DOC-ID {k}: {v}" for k, v in ids.items() if len(v) > 1]

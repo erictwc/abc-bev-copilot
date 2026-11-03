@@ -23,13 +23,13 @@ as ordinary retrieved text.
 
 | DOC-ID | File | Written by |
 |---|---|---|
-| MET-01-v1 | `met-01-metric-library.md` | Eric |
-| POL-01-v1 | `pol-01-po-change.md` | Eric |
-| POL-02-v1 | `pol-02-allocation.md` | Eric |
-| POL-03-v1 | `pol-03-promo-authorization.md` | Eric |
-| POL-04-v1 | `pol-04-escalation-ownership.md` | Eric |
-| POL-05-v1 | `pol-05-returns.md` | Eric |
-| POL-06-v1 | `pol-06-distributor-onboarding.md` | Eric |
+| MET-01-v1 | `met-01-metric-library.md` | Eric, by interview (D27) |
+| POL-01-v1 | `pol-01-po-change.md` | Eric, by interview (D27) |
+| POL-02-v1 | `pol-02-allocation.md` | Eric, by interview (D27) |
+| POL-03-v1 | `pol-03-promo-authorization.md` | Eric, by interview (D27) |
+| POL-04-v1 | `pol-04-escalation-ownership.md` | Eric, by interview (D27) |
+| POL-05-v1 | `pol-05-returns.md` | Eric, by interview (D27) |
+| POL-06-v1 | `pol-06-distributor-onboarding.md` | Eric, by interview (D27) |
 | PRD-QLB-MNG-v1 ... PRD-SKX-PSF-v1 | `prd-*.md` (20 files) | `make_sheets.py`, from `sku_master` |
 | OPS-01-v1 | `ops-01-q4-receiving-holiday-schedule.md` | Claude Code (the injection trap) |
 
@@ -53,20 +53,23 @@ exist only in the sheets (D24). They come from `random.Random(1031)` in `make_sh
   sentence as document text, not as an instruction.
 - It avoids every planted data problem in `docs/DATA.md`.
 
-## What Eric writes
+## How Eric's documents are made (D27)
 
-Seven files, each a stub today. For each one:
+Seven files, each a stub today. One document at a time:
 
-1. Replace `Owner: TBD` with a team or role (e.g. a planning or trade team), not a
-   person's real name, and `Effective date: TBD` with an ISO date on or before 2026-10-31.
-2. Replace the "Draft pending" line with the document. Keep the four header lines and the
-   blank line first. Use `##` headings: retrieval splits on them.
-3. Use only ABC-BEV-CO and the invented names in `docs/DATA.md`. No real company, brand
-   or person, and nothing from any employer's real documents.
-4. Write general rules, not notes about the planted rows: no mention of the misspelled
-   SKU, the missing month, a specific contradictory PO or a specific promo row.
-5. Run `make corpus-check`. When nothing is pending, tell Claude Code the policies are
-   your own; that confirmation closes T2.
+1. Claude Code asks Eric a short set of questions covering the table below. Eric's
+   answers are saved word for word in `docs/interviews/<file>`, outside the corpus.
+2. Claude Code drafts the document from those answers and nothing else. Anything Eric
+   did not answer is written as `[GAP: ...]`, never filled in.
+3. Eric reads every line and corrects it. Gaps are closed only with his answers.
+4. Owner is a team or role, not a person's real name. The effective date is an ISO date
+   on or before 2026-10-31. Only ABC-BEV-CO and the invented names in `docs/DATA.md`
+   appear, nothing from any employer's real documents, and the rules stay general: no
+   mention of the misspelled SKU, the missing month, a specific contradictory PO or a
+   specific promo row.
+5. `make corpus-check` lists a file as pending while it has a TBD header, a
+   "Draft pending" body or a `[GAP` marker. When none are pending, Eric confirms the
+   policies are his own; that closes T2.
 
 What each document has to cover for the questions in `SPEC.md` §2 and the eval cases:
 

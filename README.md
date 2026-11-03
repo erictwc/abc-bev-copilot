@@ -8,8 +8,10 @@ tool calls) and from policy documents (retrieval), cites its evidence, and says
 Everything here is synthetic: the company, brands, data and documents are invented.
 No real company, employer or customer data appears anywhere in the repo.
 
-I designed the system and directed Claude Code to build it. I wrote the documents
-and the core eval cases myself. Measured results go below as they exist.
+I designed the system and directed Claude Code to build it. I set every policy rule
+and metric definition in a structured interview; Claude Code drafted the documents
+from my answers, and I reviewed and edited every line. I wrote the core eval cases
+myself. Measured results go below as they exist.
 
 > **Status:** synthetic data (T1). `make data` rebuilds the tables in `data/csv/`; nothing else works yet.
 
