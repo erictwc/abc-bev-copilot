@@ -55,7 +55,7 @@ exist only in the sheets (D24). They come from `random.Random(1031)` in `make_sh
 
 ## How Eric's documents are made (D27)
 
-Seven files, each a stub today. One document at a time:
+Seven files, written one at a time this way:
 
 1. Claude Code asks Eric a short set of questions covering the table below. Eric's
    answers are saved word for word in `docs/interviews/<file>`, outside the corpus.
@@ -70,6 +70,10 @@ Seven files, each a stub today. One document at a time:
 5. `make corpus-check` lists a file as pending while it has a TBD header, a
    "Draft pending" body or a `[GAP` marker. When none are pending, Eric confirms the
    policies are his own; that closes T2.
+
+**Status (2026-11-03):** all seven are written from Eric's answers and committed with
+their interview records. Asked to approve POL-06 and confirm that all seven documents are
+his own policies, Eric answered: "Commit and confirm". That closes T2's done-when.
 
 What each document has to cover for the questions in `SPEC.md` §2 and the eval cases:
 

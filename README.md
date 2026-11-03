@@ -13,7 +13,7 @@ and metric definition in a structured interview; Claude Code drafted the documen
 from my answers, and I reviewed and edited every line. I wrote the core eval cases
 myself. Measured results go below as they exist.
 
-> **Status:** synthetic data (T1). `make data` rebuilds the tables in `data/csv/`; nothing else works yet.
+> **Status:** synthetic data (T1) and document corpus (T2). `make data` rebuilds the tables in `data/csv/`; `make corpus-check` checks the 28 documents in `docs_corpus/`. Nothing else works yet.
 
 ## Setup
 
