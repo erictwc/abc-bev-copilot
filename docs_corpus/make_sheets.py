@@ -13,7 +13,7 @@ they cannot hint at the planted data problems in docs/DATA.md.
 
 --check validates the whole corpus instead: every docs_corpus/*.md except
 README.md has the four-line header (D22), the count is 20 to 30, and every
-SKU-shaped token in the corpus exists in sku_master.
+SKU-shaped token in the corpus exists in sku_master. Stubs are listed as pending.
 """
 
 import argparse
@@ -145,8 +145,8 @@ def check():
         if not re.fullmatch(r"[A-Z]{3}(-[A-Z0-9]+)+-v\d+", doc_id):
             problems.append(f"{p.name}: DOC-ID '{doc_id}' does not end in a version like -v1")
         ids.setdefault(doc_id, []).append(p.name)
-        if len(head) > 3 and "TBD" in head[2] + head[3]:
-            print(f"pending: {p.name} has TBD in its header")
+        if len(head) > 3 and ("TBD" in head[2] + head[3] or "Draft pending" in "\n".join(head[4:])):
+            print(f"pending: {p.name} is still a stub (TBD header or Draft pending body)")
         for tok in sorted(set(SKU_TOKEN.findall(p.read_text(encoding="utf-8"))) - known):
             problems.append(f"{p.name}: '{tok}' is not a sku_master sku_id")
     problems += [f"duplicate DOC-ID {k}: {v}" for k, v in ids.items() if len(v) > 1]
