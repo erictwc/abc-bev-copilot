@@ -12,10 +12,9 @@ __pycache__/
 # Spend log, one row per model call (D41); eval result files carry the committed costs
 logs/
 
-# Local stores, rebuilt from the generator and the corpus
+# Local stores, rebuilt by make db and make index (D48, D55)
 *.duckdb
 *.duckdb.wal
-chroma/
-*.sqlite-vec
+*.building
 
 .DS_Store

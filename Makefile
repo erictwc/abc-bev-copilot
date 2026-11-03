@@ -1,9 +1,10 @@
-# Every target here runs offline except bench and smoke. bench calls the box on the home network
-# (OLLAMA_HOST, D34); smoke calls the path it is given (D39, D40). A new outbound call needs a DECISIONS.md entry first.
+# Every target here runs offline except bench, smoke, index and test-retrieval. bench, index and test-retrieval
+# call the box on the home network (OLLAMA_HOST, D34, D49); smoke calls the path it is given (D39, D40). A new outbound call needs a DECISIONS.md entry first.
 PYTHON ?= python3
 VENV := .venv
+VPY := $(VENV)/bin/python   # targets that need duckdb (D47)
 
-.PHONY: setup test-secret-scan data data-check corpus corpus-check bench test-adapter smoke
+.PHONY: setup test-secret-scan data data-check corpus corpus-check bench test-adapter smoke db index test-tools test-retrieval
 
 ## setup: venv, dependencies, secret-scan hook, .env. Safe to run twice.
 setup:
@@ -55,3 +56,19 @@ test-adapter:
 PATHS ?= local cloud claude
 smoke:
 	@for p in $(PATHS); do $(PYTHON) agent/smoke.py $$p || exit 1; done
+
+## db: build data/abc.duckdb from data/csv/ with explicit column types; gitignored (T5, D55).
+db:
+	@$(VPY) -m agent.index db
+
+## index: chunk docs_corpus/, embed on the box, write data/docs.duckdb; gitignored (T5, D48-D50).
+index:
+	@$(VPY) -m agent.index docs
+
+## test-tools: offline tests of run_sql's guard rails, chunking and search_docs, with fake embeddings (T5).
+test-tools:
+	@$(VPY) -m unittest agent.test_tools
+
+## test-retrieval: five hand-picked questions must return the right DOC-ID first; needs the box and make index (T5).
+test-retrieval:
+	@$(VPY) -m unittest -v agent.test_retrieval

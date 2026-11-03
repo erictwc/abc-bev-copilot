@@ -1,0 +1,12 @@
+# Retrieval settings for search_docs (T5, D54). Every tool call logs the values it ran with
+# to logs/tools.csv. Changing embed_model or chunk_chars needs `make index` again; search_docs
+# refuses an index built with different values.
+# The SQL tool's safety limits are NOT here on purpose: they are constants in agent/tools.py (D54).
+
+[retrieval]
+embed_model = "qwen3-embedding:0.6b"   # Ollama on the GEEKOM box, via OLLAMA_HOST (D49)
+chunk_chars = 800                      # merge ## sections up to this size, no overlap (D50)
+k = 5                                  # passages returned by default (D51)
+threshold = 0.45                       # minimum cosine score, calibrated on 2026-11-03 (D56)
+# Qwen3-Embedding is trained with an instruction in front of queries only, not documents.
+query_prefix = "Instruct: Given a question from a trade development manager, retrieve the company document passages that answer it\nQuery: "
