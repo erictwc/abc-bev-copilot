@@ -1,0 +1,18 @@
+# Secrets: only .env.example is tracked
+.env
+.env.*
+!.env.example
+
+# Python
+.venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+
+# Local stores, rebuilt from the generator and the corpus
+*.duckdb
+*.duckdb.wal
+chroma/
+*.sqlite-vec
+
+.DS_Store
