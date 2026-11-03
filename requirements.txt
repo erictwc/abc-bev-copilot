@@ -1,2 +1,2 @@
-# Runtime dependencies. Empty at T0 on purpose.
-# Every line added here needs a dated reason in DECISIONS.md, agreed with Eric first.
+# Runtime dependencies. Every line added here needs a dated reason in DECISIONS.md, agreed with Eric first.
+duckdb==2.0.0  # D47: SQL tool (T5) and the document vector store (D48)

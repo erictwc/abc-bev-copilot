@@ -140,3 +140,30 @@ Before a paid call is sent, the adapter adds this month's logged spend to the mo
 
 ## 2026-11-03 D46. The spend log and the cap live in `agent/spend.py`; the 100-line limit covers `adapter.py`
 With retries, three request formats, the cap and the log in one file, the adapter came to 120 dense lines. The cap check, the price table, the monthly total and the log writer moved to `agent/spend.py` (71 lines); `adapter.py` (99 lines) keeps only the model calls, retries and tool-call parsing, which is what D4 wants readable in one sitting. The adapter calls `spend.check()` before every call and `spend.log()` after it, so nothing changes in what is enforced. To stay small, each path returns its own assistant message to append for the next turn, rather than converting every turn to one shared format. Chosen over dropping safeguards to fit one file and over raising the limit.
+
+## 2026-11-03 D47. DuckDB 2.0.0 is the first runtime dependency
+`requirements.txt` pins `duckdb==2.0.0` (released 2026-10-21, Python 3.11+, wheels for 3.14). It runs the SQL tool and, by D48, holds the document vectors. 2.0.0 is the version D17's hash test already ran. Chosen over the 1.5.6 line. Tested before choosing: a read-only connection with `enable_external_access = false` and `lock_configuration = true` refuses INSERT, reading or writing files (`read_csv`, `COPY ... TO`), turning the setting back on, and `ATTACH`.
+
+## 2026-11-03 D48. The vector store is DuckDB itself, in its own file
+Chunks and their embeddings go in a `chunks` table with a fixed-size `FLOAT[n]` column in `data/docs.duckdb`, searched with `array_cosine_similarity` over every row. The corpus is 28 files, about 30 KB, so brute force over ~100 rows is instant and no index is needed. The vectors live in a different file from the tables, so the SQL tool's connection cannot see them at all. Chosen over sqlite-vec 0.1.9 (one more package, not yet 1.0) and Chroma 1.5.9 (about 30 more packages, among them onnxruntime, grpcio and kubernetes). This replaces SPEC §4's "Chroma or sqlite-vec".
+
+## 2026-11-03 D49. Embeddings come from `qwen3-embedding:0.6b` on the GEEKOM box
+Ollama on the box (639 MB, q8_0) serves `/api/embed`, reached through `OLLAMA_HOST` with the same home-network-only check as the adapter. No new dependency and no new outbound host; embedding costs nothing. Chosen over the same model on a local Ollama on the Mac and over an in-process library such as fastembed, which would add onnxruntime and a download from Hugging Face. Accepted trade-off: every retrieval, so every eval run on any path, needs the box switched on. Eric approved the one `ollama pull` on the box with this choice.
+
+## 2026-11-03 D50. Chunks follow the `##` headings, merged up to about 800 characters
+Each document's body is split at its `##` headings; neighbouring small sections are merged until the next would pass 800 characters; there is no overlap. The text embedded for a chunk starts with the document title and the section heading, so a short section still says what it is about. A product sheet (under 900 bytes) comes out as one or two chunks. Chunks are numbered from 1 inside each document, so a citation reads `POL-01-v1#3`. Chosen over fixed 500-character windows with 100 overlap and over one chunk per document.
+
+## 2026-11-03 D51. `search_docs` returns k = 5 by default; the score threshold is calibrated, not guessed
+A passage below the threshold is never returned, even if fewer than k pass. The threshold is set by scoring the five T5 test queries and a few off-topic ones and placing it between the two groups; the value and the scores that justify it are recorded in a later entry. Chosen over k = 3 with a fixed 0.5 picked in advance.
+
+## 2026-11-03 D52. `run_sql` refuses a result over 200 rows
+The query is fetched up to 201 rows; if the 201st exists the tool returns an error asking for a filter or an aggregate, and no rows. Chosen over truncating with a flag, which invites the model to add up a partial table, and over a 50-row limit.
+
+## 2026-11-03 D53. A query is interrupted after 10 seconds
+DuckDB has no statement timeout setting, so a timer calls `connection.interrupt()` after 10 s and the tool returns a timeout error. Tested before choosing: a heavy cross join stopped at 1.0 s with a 1 s timer. Chosen over running each query in a subprocess and killing it.
+
+## 2026-11-03 D54. The tools are `agent/tools.py`; settings in `config.toml`, safety limits in code, every call logged
+`agent/tools.py` holds `run_sql` and `search_docs`; `agent/index.py` builds both DuckDB files (`make db`, `make index`). Retrieval settings (embedding model, chunk size, k, threshold) are in `config.toml` at the repo root, read with the standard library's `tomllib`. The SQL safety limits (allow-list, row limit, timeout) are constants in `tools.py`, so changing one is a reviewed commit, like the spend cap (D44). Every tool call appends one row to `logs/tools.csv` (gitignored, like the spend log): the tool, its input, the settings it ran with, what it returned and how long it took. Chosen over keeping everything as constants in `tools.py`.
+
+## 2026-11-03 D55. `make db` builds `data/abc.duckdb` from the CSVs with explicit column types
+Only the six v1 tables go in, each created with written-out types (dates as `DATE`, quantities as `INTEGER`, `authorized` and other flags as `VARCHAR` so an empty field stays NULL) and filled from `data/csv/`. The file is a gitignored build product (D17). `run_sql` opens it read-only and rejects any query that names a table outside those six or uses a table function, checked on DuckDB's own parse of the query; DuckDB's table-name helper alone misses `information_schema` and `duckdb_tables()`. Chosen over loading the CSVs into memory on every start.

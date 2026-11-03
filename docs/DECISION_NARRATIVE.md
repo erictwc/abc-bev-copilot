@@ -194,6 +194,46 @@ be cut short without any error.
 
 ---
 
+## How the agent reaches the data and the documents
+
+The agent has two tools. `run_sql` asks the tables a question in SQL;
+`search_docs` finds the passages of the documents that best match a question.
+
+DuckDB is the one library the project depends on. It reads the committed CSVs
+into a database file with every column type written out, and the SQL tool opens
+that file read-only. The guard rails are layered, so no single check has to be
+perfect: the connection itself cannot write, read other files or change its own
+settings; a query must be exactly one SELECT; every table it touches must be one
+of the six tables, checked on DuckDB's own parse of the query, because DuckDB's
+quick table-name helper misses its system tables; a result over 200 rows is
+refused rather than cut short, so the model is never tempted to add up half a
+table; and a query still running after 10 seconds is stopped. These limits are
+in code, not in a settings file, so loosening one is a visible, reviewed commit.
+
+The documents are cut into chunks along their own section headings, because my
+policies are already written one rule to a section. Small sections are merged up
+to about 800 characters, and each chunk carries its document title and heading,
+so a short section still says what it is about. A chunk is cited as its DOC-ID
+plus a number, for example `POL-01-v1#3`.
+
+Each chunk is turned into a vector by a small Qwen embedding model running on
+the home box, so embedding costs nothing and nothing new leaves the house. The
+cost is that the box has to be on for every eval run, on every path. The vectors
+are stored in DuckDB too, in a separate file the SQL tool cannot see. Chroma and
+sqlite-vec were the options in the spec; with about a hundred chunks, comparing
+the question with every chunk is instant, and a dedicated vector database would
+only add packages.
+
+The search returns up to five passages, and never one that scores below a
+threshold. The threshold was set by measuring: the test questions and some
+off-topic ones were scored, and the line drawn between them, rather than picking
+a number in advance. The model, chunk size, k and threshold sit in a small
+config file, and every tool call is logged with the settings it ran with.
+
+*Draws on D47, D48, D49, D50, D51, D52, D53, D54, D55; SPEC §4.*
+
+---
+
 ## Why there is a hard $20 a month spend cap, in code
 
 Total spend on paid models is capped at $20 a month, and $5 of that is reserved
@@ -370,9 +410,8 @@ test-secret-scan` proves it works from a fresh clone.
 These are named in the spec but not decided yet. Each gets a dated entry when it
 is decided.
 
-- the local vector store (Chroma or sqlite-vec)
-- every dependency beyond the Python standard library (the data generator needs
-  none; DuckDB itself is decided when the SQL tool is built)
+- nothing from the spec's list at the moment; new open choices are added here
+  as tickets raise them
 
 The spec also asks for at least three entries recording things that were tried
 and did not work. None exist yet; they will come from the build.
