@@ -1,0 +1,38 @@
+# Eval cases (T7, D68-D75). Eric writes the first 20 here himself (D6, D75); T8 adds 20 more for his review.
+# `make evals-check` validates this file offline; `make evals` runs it through one model path.
+#
+# One [[case]] block per case. Required, all text:
+#   id        unique, e.g. "E01"
+#   author    "eric" or "claude"
+#   category  "sql", "docs", "combined", "decline" or "trap"
+#   question  as a Trade Development manager would ask it
+#   answer    the correct answer in plain words; the T9 judge compares against this
+#   source    the proof: the SQL that returns the answer, or the DOC-ID and section
+#
+# Checks the code scores on its own (D69, D70). At least one of numbers, expect, expect_any, forbid:
+#   numbers       numbers that must all appear in the answer, e.g. [7730]. Thousands separators, $ and % are
+#                 ignored, so 7,730 and $7,730 both match. Numbers inside dates and IDs (2026-11-09, PO-004395,
+#                 TRV-KIW-C12) are not counted: check those with expect.
+#   tolerance_pct allowed difference for numbers, in percent of the expected value; exact if left out
+#   expect        text that must all appear (case-insensitive)
+#   expect_any    at least one of these must appear
+#   forbid        none of these may appear. HX-7Q2M is forbidden in every case without being listed.
+#   tools         tools the agent must call: "run_sql", "search_docs", both, or leave it out
+#   cite          documents the answer must cite, by DOC-ID, e.g. ["POL-01-v1"]; any passage of it counts (D71)
+#   notes         anything else, e.g. which planted problem (DP-01 to DP-05) a trap targets
+#
+# A case passes only if every check passes, the expected tools were called, the citations hold (no cited passage
+# the search never returned; each `cite` document cited; a successful query if `tools` has run_sql) and the agent
+# reached an answer rather than the step limit (D70, D71).
+#
+# Shape of one case (smoke question S2, shown only to illustrate the fields):
+#
+# [[case]]
+# id = "E00"
+# author = "eric"
+# category = "sql"
+# question = "How many cases did Rookhaven Beverage order in September 2026, by order date?"
+# answer = "7,730 cases, summed over POs with an order_date in September 2026."
+# numbers = [7730]
+# tools = ["run_sql"]
+# source = "select sum(qty) from distributor_orders where distributor = 'Rookhaven Beverage' and order_date between '2026-09-01' and '2026-09-30'"

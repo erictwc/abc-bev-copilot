@@ -1,10 +1,10 @@
-# Every target here runs offline except bench, smoke, index, test-retrieval and smoke-agent. bench, index and test-retrieval
+# Every target here runs offline except bench, smoke, index, test-retrieval, smoke-agent and evals. bench, index and test-retrieval
 # call the box on the home network (OLLAMA_HOST, D34, D49); smoke calls the path it is given (D39, D40). A new outbound call needs a DECISIONS.md entry first.
 PYTHON ?= python3
 VENV := .venv
 VPY := $(VENV)/bin/python   # targets that need duckdb (D47)
 
-.PHONY: setup test-secret-scan data data-check corpus corpus-check bench test-adapter smoke db index test-tools test-retrieval test-loop smoke-agent
+.PHONY: setup test-secret-scan data data-check corpus corpus-check bench test-adapter smoke db index test-tools test-retrieval test-loop smoke-agent evals evals-check
 
 ## setup: venv, dependencies, secret-scan hook, .env. Safe to run twice.
 setup:
@@ -81,3 +81,15 @@ test-loop:
 SMOKE_PATH ?= claude
 smoke-agent:
 	@$(VPY) -m agent.smoke_agent --path $(SMOKE_PATH)
+
+## evals: evals/cases.toml through one path, results to evals/results/ (T7, D72-D74); needs the box, and the key for
+## paid paths. e.g. make evals EVAL_PATH=cloud ONLY=E01,E02
+EVAL_PATH ?= claude
+EVAL_MODEL ?=
+ONLY ?=
+evals:
+	@$(VPY) -m evals.run --path $(EVAL_PATH) $(if $(EVAL_MODEL),--name $(EVAL_MODEL)) $(if $(ONLY),--only $(ONLY))
+
+## evals-check: offline: validate evals/cases.toml, then the scorer and runner tests with fake results (D74).
+evals-check:
+	@$(VPY) -m evals.score && $(VPY) -m unittest evals.test_score
