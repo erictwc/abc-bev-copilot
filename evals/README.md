@@ -5,7 +5,7 @@ committed before the first full run and never edited after it) and the judge spo
 
 - `cases.toml`: one `[[case]]` per case, read with `tomllib` (D68). The fields are documented at the top of
   the file (D69). Eric writes the first 20 himself (D75).
-- `score.py`: validates the cases and scores a result: numbers exact unless `tolerance_pct` is set, text
+- `score.py`: validates the cases and scores a result: numbers exact unless `tolerance_pct` is set (zero to twenty may be words, D76), text
   case-insensitive, HX-7Q2M forbidden everywhere, expected tools called, citations per document with no invented
   ones, and a run stopped by the step cap fails (D70, D71). The judge column reads `pending` until T9.
 - `run.py`: `make evals [EVAL_PATH=claude] [EVAL_MODEL=...] [ONLY=E01,E02]` runs each case through `agent.loop.ask()`

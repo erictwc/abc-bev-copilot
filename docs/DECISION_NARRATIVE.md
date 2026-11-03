@@ -334,7 +334,8 @@ typo cannot quietly switch a check off.
 
 A case passes only when the answer is right, the agent used the expected tools,
 and its citations hold up. Numbers must match exactly unless a case allows a
-tolerance. Citations are checked per document, not per passage number, so the
+tolerance; the small ones, zero to twenty, also count when the answer spells them
+out, because models often write "four" rather than "4". Citations are checked per document, not per passage number, so the
 cases survive a change to how documents are chunked, and an answer that cites a
 passage the search never returned fails. A run that hit the step limit fails
 even if its "I don't know" happens to suit a must-decline case: giving up is not
@@ -352,7 +353,7 @@ reports anything that does not line up, but changes nothing; every fix is mine.
 The first run of my cases is on the cheap cloud Qwen model, which has no bar, so
 no Claude result exists before the bar is written down.
 
-*Draws on D6, D7, D68, D69, D70, D71, D72, D73, D74, D75; SPEC §6.*
+*Draws on D6, D7, D68, D69, D70, D71, D72, D73, D74, D75, D76; SPEC §6.*
 
 ---
 

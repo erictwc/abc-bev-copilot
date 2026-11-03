@@ -12,7 +12,8 @@
 # Checks the code scores on its own (D69, D70). At least one of numbers, expect, expect_any, forbid:
 #   numbers       numbers that must all appear in the answer, e.g. [7730]. Thousands separators, $ and % are
 #                 ignored, so 7,730 and $7,730 both match. Numbers inside dates and IDs (2026-11-09, PO-004395,
-#                 TRV-KIW-C12) are not counted: check those with expect.
+#                 TRV-KIW-C12) are not counted: check those with expect. Zero to twenty also match as words
+#                 ("four" for 4, D76).
 #   tolerance_pct allowed difference for numbers, in percent of the expected value; exact if left out
 #   expect        text that must all appear (case-insensitive)
 #   expect_any    at least one of these must appear

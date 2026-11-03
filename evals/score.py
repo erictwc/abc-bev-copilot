@@ -23,6 +23,9 @@ FIELDS = set(REQUIRED) | set(LISTS) | {"tolerance_pct", "notes"}
 # A number not glued to a word, a dot or a hyphen on its left, nor to "-x" on its right, so 2026-11-09,
 # PO-004395, 2026-W46 and C12 give no numbers, while 144mg still gives 144.
 NUMBER = re.compile(r"(?<![\w.\-])(?>-?\d+(?:\.\d+)?)(?!-\w)")   # atomic: 2026-11 must not give 202
+WORDS = ("zero one two three four five six seven eight nine ten eleven twelve thirteen fourteen fifteen sixteen "
+         "seventeen eighteen nineteen twenty").split()      # D76: zero to twenty may be spelled out
+NUMBER_WORD = re.compile(r"(?<!-)\b(" + "|".join(WORDS) + r")\b(?!-)", re.I)     # not twenty-one
 QUOTES = str.maketrans({"‘": "'", "’": "'", "“": '"', "”": '"'})
 
 
@@ -81,9 +84,9 @@ def load(path=CASES):
 
 
 def numbers_in(text):
-    """Every number in the text, ignoring thousands separators, $ and %."""
+    """Every number in the text, ignoring thousands separators, $ and %, plus the words zero to twenty (D76)."""
     text = re.sub(r"(?<=\d),(?=\d{3}(?!\d))", "", text).replace("$", "")
-    return [float(n) for n in NUMBER.findall(text)]
+    return [float(n) for n in NUMBER.findall(text)] + [float(WORDS.index(w.lower())) for w in NUMBER_WORD.findall(text)]
 
 
 def has_number(want, found, tolerance_pct=0):

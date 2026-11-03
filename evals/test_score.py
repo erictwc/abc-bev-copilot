@@ -37,6 +37,11 @@ class Numbers(unittest.TestCase):
     def test_sentence_end_and_negative(self):
         self.assertEqual(score.numbers_in("On hand is 587. Change: -12. Caffeine 144mg."), [587, -12, 144])
 
+    def test_small_numbers_as_words(self):
+        self.assertEqual(score.numbers_in("Four runs, not fourteen; twenty-one is not read."), [4, 14])
+        self.assertTrue(score.score(case(numbers=[4]), result("Four co-packer runs were cancelled."))["pass"])
+        self.assertFalse(score.score(case(numbers=[21]), result("twenty-one runs"))["pass"])
+
     def test_tolerance(self):
         self.assertTrue(score.has_number(98.9, [98.6], tolerance_pct=1))
         self.assertFalse(score.has_number(98.9, [97.0], tolerance_pct=1))

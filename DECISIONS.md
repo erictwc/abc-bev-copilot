@@ -227,3 +227,6 @@ T7's end-to-end proof runs Eric's 20 cases on `qwen/qwen3.5-9b` (about $0.05), a
 
 ## 2026-11-03 D75. Eric writes his 20 cases himself in `evals/cases.toml`
 Claude Code commits the schema as an empty, commented template with no question content. Eric writes the cases in his editor. Claude Code then runs `make evals-check` and each case's `source` SQL, and reports any mismatch (for example a number in `answer` that the SQL does not return) without changing anything; Eric decides every fix. Chosen over Eric pasting cases in chat for word-for-word transcription, and over Claude Code turning prose cases into checks.
+
+## 2026-11-03 D76. The number check accepts the words zero to twenty
+A `numbers` value from 0 to 20 also matches when the answer spells it out ("Four co-packer runs ..."), case-insensitively and as a whole word. The T7 scratch run of the smoke questions on cloud Qwen failed a correct answer that wrote "Four" for 4. Larger numbers must still be written in digits. Accepted trade-off: an expected 1 can match an unrelated "one" ("no one"). Chosen over digits only, which leaves such misses to the T9 judge. This amends D70.
