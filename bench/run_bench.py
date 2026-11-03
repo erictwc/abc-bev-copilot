@@ -106,11 +106,15 @@ def filler(n_words):
 
 
 def generate(base, model, n_words, num_ctx):
-    """One raw request (no chat template) with a fresh nonce at the very start."""
+    """One raw request (no chat template) with a fresh nonce at the very start.
+
+    Sampled at Ollama's default temperature: at 0 the model loops on the filler and Ollama
+    aborts with "token repeat limit reached". Speed depends on token counts, not content.
+    """
     prompt = f"Run {secrets.token_hex(8)}. " + filler(n_words)
     return call(base, "/api/generate", {
         "model": model, "prompt": prompt, "raw": True, "stream": False, "keep_alive": "15m",
-        "options": {"num_ctx": num_ctx, "num_predict": GEN_TOKENS, "temperature": 0, "seed": 42},
+        "options": {"num_ctx": num_ctx, "num_predict": GEN_TOKENS, "temperature": 0.8},
     })
 
 
