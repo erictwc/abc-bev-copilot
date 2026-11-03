@@ -86,3 +86,18 @@ Eric sets every rule, threshold, owner and definition in the metric library and 
 
 ## 2026-11-03 D28. Depletion and shipment data is its own ticket, after T2
 The MET-01 interview showed the T1 data cannot support Eric's definitions: there is no distributor depletion report, and POs carry no shipped quantity, ship date or delivery date, so fill rate, strict OTIF and supply available can only be approximated. Eric chose to finish T2 first and make the data change a separate ticket, T2b, rather than pause T2 and reopen T1 in the same session. The column details are decided when T2b starts. The MET-01 definitions are written as Eric gave them, whatever the data holds.
+
+## 2026-11-03 D29. T2b draws its new values from a second seeded stream
+Every new column and table comes from a second `random.Random`, seeded from the same seed and used only after the T1 generation is finished. So every existing row and column stays byte-for-byte the same, and the planted-problem rows and counts in `docs/DATA.md` (PO-004395, RUN-01349 and the rest) stay valid. Chosen over one stream for everything, which would regenerate all rows and force the five planted problems to be found and documented again. This amends D19's "all randomness comes from one seeded `random.Random`": there are now two, both fixed by the seed.
+
+## 2026-11-03 D30. Distributor depletion reports are a weekly table with the four reasons as columns
+`distributor_depletions` has one row per distributor, SKU and week: `week_ending` (a Friday, matching POL-06's Friday report), `distributor`, `sku_id`, and `sold`, `samples`, `spoiled`, `damaged` in cases, following the MET-01 definition. Volumes track each distributor's orders, with `sold` most of the total. Chosen over one row per reason and over a single total column, which loses the breakdown the definition names. The SPEC's v1 table list grows from five to six.
+
+## 2026-11-03 D31. `distributor_orders` gains pickup, carrier and shipment columns
+Added at the end of the row: `pickup_date`, `carrier`, `ship_date`, `shipped_qty`, `delivered_date`. Pickup date and carrier are filled in once a carrier is assigned (POL-01), so upcoming confirmed POs get them only when pickup is near. `ship_date` is the pickup date. A few POs ship short, so fill rate is not always 100%. `delivered_date` is set only on received POs, and a few arrive after the requested date, so strict OTIF has misses. `requested_date` is the requested delivery date, which OTIF is measured against. Chosen over the same without `carrier`.
+
+## 2026-11-03 D32. "Issued, awaiting pickup" is derived, not a new status
+A PO is awaiting pickup when its status is `confirmed` and it has a pickup date. The `status` column and its four values are unchanged. Chosen over a new `awaiting_pickup` status, which would change existing rows (against D29).
+
+## 2026-11-03 D33. Carriers are codes, `CARRIER-1` to `CARRIER-4`
+Like the warehouse codes, so no invented carrier name needs the D16 real-name check. Chosen over invented carrier names.

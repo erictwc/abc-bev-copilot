@@ -70,6 +70,15 @@ stay as I gave them, and the data is extended to match in its own ticket, after
 the documents are done, rather than reopening the data in the middle of writing
 them.
 
+That extension adds a weekly depletion report from each distributor, split into
+sold, samples, spoiled and damaged as my definition says, and gives every PO its
+pickup date, carrier, ship date, shipped quantity and delivery date. Carriers are
+codes, like the warehouses, so no new name needs checking. A PO "awaiting pickup"
+is simply a confirmed PO that has a pickup date, so no existing value changes. The
+new values come from a second seeded random stream that runs after the original
+one, so every row that already existed, including the five planted problems,
+stays exactly as it was.
+
 The first name considered was "Imagine Bev". It was dropped after a name check
 turned up a nearby real beverage brand. ABC-BEV-CO is deliberately generic.
 
@@ -78,7 +87,7 @@ retailers, co-packers, employers. It does not cover the tools the system is buil
 on. Naming the model vendors and libraries is fine, because a model comparison
 cannot be described without them.
 
-*Draws on D2, D16, D17, D18, D19, D20, D28; SPEC §3.*
+*Draws on D2, D16, D17, D18, D19, D20, D28, D29, D30, D31, D32, D33; SPEC §3.*
 
 ---
 
