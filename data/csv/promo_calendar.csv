@@ -1,0 +1,238 @@
+retailer,chain,sku_id,start_date,end_date,authorized,planned_lift_pct,ad_week
+Corvane Retail Group,Corvane Express,TRV-CHR-C12,2024-11-04,2024-11-17,n,23,2024-W45
+Corvane Retail Group,Corvane Market,SKX-APL-C16,2024-11-04,2024-11-17,n,29,2024-W45
+Corvane Retail Group,Corvane Market,TRV-GRP-C12,2024-11-11,2024-11-24,y,17,2024-W46
+Mirelle Co,Mirelle Mart,SKX-PIN-C16,2024-11-11,2024-11-24,y,24,2024-W46
+Stonefinch Inc,Stonefinch Fuel Stop,LMR-PUN-C12,2024-11-11,2024-11-24,y,11,2024-W46
+Stonefinch Inc,Stonefinch Grocer,SKX-APL-C16,2024-11-11,2024-11-24,y,30,2024-W46
+Pellweather Holdings,Pellweather Foods,LMR-MEL-C12,2024-11-18,2024-12-01,y,16,2024-W47
+Corvane Retail Group,Corvane Express,TRV-KIW-C16,2024-11-25,2024-12-08,y,12,2024-W48
+Mirelle Co,Mirelle Mart,TRV-CHR-C16,2024-11-25,2024-12-08,n,35,2024-W48
+Pellweather Holdings,Pellweather Foods,TRV-KIWI-C12,2024-11-25,2024-12-08,y,10,2024-W48
+Stonefinch Inc,Stonefinch Grocer,SKX-PIN-C12,2024-11-25,2024-12-08,y,37,2024-W48
+Mirelle Co,Mirelle Mart,TRV-YUZ-C12,2024-12-02,2024-12-15,y,19,2024-W49
+Pellweather Holdings,Pellweather Foods,TRV-CHR-C16,2024-12-02,2024-12-15,y,40,2024-W49
+Stonefinch Inc,Stonefinch Fuel Stop,SKX-PAP-C16,2024-12-02,2024-12-15,y,29,2024-W49
+Corvane Retail Group,Corvane Market,LMR-PUN-C16,2024-12-16,2024-12-29,y,13,2024-W51
+Stonefinch Inc,Stonefinch Grocer,LMR-MEL-C12,2024-12-16,2024-12-29,y,15,2024-W51
+Corvane Retail Group,Corvane Express,QLB-GUA-C16,2024-12-23,2025-01-05,y,15,2024-W52
+Pellweather Holdings,Pellweather Foods,QLB-MNG-C16,2024-12-23,2025-01-05,y,12,2024-W52
+Stonefinch Inc,Stonefinch Fuel Stop,LMR-LEM-C16,2024-12-23,2025-01-05,y,43,2024-W52
+Mirelle Co,Mirelle Mart,QLB-MNG-C16,2024-12-30,2025-01-12,y,31,2025-W01
+Pellweather Holdings,Pellweather Foods,TRV-PCH-C16,2024-12-30,2025-01-12,y,24,2025-W01
+Corvane Retail Group,Corvane Market,QLB-PLM-C16,2025-01-06,2025-01-19,y,18,2025-W02
+Mirelle Co,Mirelle Mart,TRV-PCH-C12,2025-01-13,2025-01-26,y,19,2025-W03
+Stonefinch Inc,Stonefinch Fuel Stop,SKX-PAP-C16,2025-01-13,2025-01-26,y,44,2025-W03
+Corvane Retail Group,Corvane Express,SKX-APL-C16,2025-01-20,2025-02-02,n,26,2025-W04
+Pellweather Holdings,Pellweather Foods,QLB-CRN-C12,2025-01-20,2025-02-02,y,11,2025-W04
+Corvane Retail Group,Corvane Express,TRV-KIWI-C12,2025-01-27,2025-02-09,y,37,2025-W05
+Stonefinch Inc,Stonefinch Fuel Stop,LMR-BRY-C12,2025-01-27,2025-02-09,n,19,2025-W05
+Stonefinch Inc,Stonefinch Grocer,QLB-MNG-C16,2025-01-27,2025-02-09,y,34,2025-W05
+Corvane Retail Group,Corvane Express,SKX-PIN-C16,2025-02-03,2025-02-16,y,20,2025-W06
+Mirelle Co,Mirelle Mart,QLB-GUA-C12,2025-02-03,2025-02-16,y,36,2025-W06
+Stonefinch Inc,Stonefinch Fuel Stop,QLB-MNG-C12,2025-02-03,2025-02-16,y,30,2025-W06
+Stonefinch Inc,Stonefinch Grocer,SKX-APL-C12,2025-02-03,2025-02-16,y,45,2025-W06
+Stonefinch Inc,Stonefinch Grocer,SKX-PIN-C16,2025-02-03,2025-02-16,y,30,2025-W06
+Corvane Retail Group,Corvane Market,TRV-CHR-C16,2025-02-10,2025-02-23,n,26,2025-W07
+Pellweather Holdings,Pellweather Foods,SKX-APL-C16,2025-02-10,2025-02-23,y,45,2025-W07
+Mirelle Co,Mirelle Mart,TRV-GRP-C16,2025-02-17,2025-03-02,y,23,2025-W08
+Mirelle Co,Mirelle Mart,LMR-LEM-C12,2025-02-24,2025-03-09,y,12,2025-W09
+Corvane Retail Group,Corvane Market,SKX-APL-C12,2025-03-03,2025-03-16,y,14,2025-W10
+Stonefinch Inc,Stonefinch Grocer,SKX-PIN-C12,2025-03-03,2025-03-16,y,13,2025-W10
+Stonefinch Inc,Stonefinch Fuel Stop,LMR-LEM-C16,2025-03-10,2025-03-23,y,39,2025-W11
+Corvane Retail Group,Corvane Express,QLB-PLM-C12,2025-03-17,2025-03-30,y,14,2025-W12
+Mirelle Co,Mirelle Mart,TRV-PCH-C12,2025-03-24,2025-04-06,y,13,2025-W13
+Pellweather Holdings,Pellweather Foods,QLB-TNG-C16,2025-03-24,2025-04-06,y,43,2025-W13
+Stonefinch Inc,Stonefinch Fuel Stop,LMR-PEA-C12,2025-03-24,2025-04-06,y,34,2025-W13
+Corvane Retail Group,Corvane Express,QLB-CRN-C16,2025-03-31,2025-04-13,y,15,2025-W14
+Corvane Retail Group,Corvane Market,LMR-PEA-C12,2025-03-31,2025-04-13,y,32,2025-W14
+Mirelle Co,Mirelle Mart,LMR-BRY-C12,2025-03-31,2025-04-13,y,31,2025-W14
+Corvane Retail Group,Corvane Express,SKX-PAP-C12,2025-04-14,2025-04-27,y,31,2025-W16
+Corvane Retail Group,Corvane Market,SKX-PAP-C12,2025-04-14,2025-04-27,y,20,2025-W16
+Mirelle Co,Mirelle Mart,SKX-PIN-C12,2025-04-14,2025-04-27,y,20,2025-W16
+Pellweather Holdings,Pellweather Foods,LMR-BRY-C12,2025-04-14,2025-04-27,y,14,2025-W16
+Stonefinch Inc,Stonefinch Fuel Stop,QLB-PLM-C12,2025-04-14,2025-04-27,y,29,2025-W16
+Stonefinch Inc,Stonefinch Fuel Stop,SKX-PIN-C16,2025-04-14,2025-04-27,y,19,2025-W16
+Stonefinch Inc,Stonefinch Grocer,SKX-PAP-C16,2025-04-21,2025-05-04,y,26,2025-W17
+Corvane Retail Group,Corvane Express,LMR-PUN-C12,2025-04-28,2025-05-11,y,30,2025-W18
+Stonefinch Inc,Stonefinch Fuel Stop,QLB-GUA-C12,2025-04-28,2025-05-11,y,38,2025-W18
+Stonefinch Inc,Stonefinch Grocer,LMR-PEA-C12,2025-04-28,2025-05-11,y,18,2025-W18
+Corvane Retail Group,Corvane Market,QLB-CRN-C12,2025-05-12,2025-05-25,y,13,2025-W20
+Stonefinch Inc,Stonefinch Grocer,TRV-GRP-C12,2025-05-19,2025-06-01,y,44,2025-W21
+Mirelle Co,Mirelle Mart,QLB-TNG-C12,2025-05-26,2025-06-08,y,44,2025-W22
+Pellweather Holdings,Pellweather Foods,SKX-LYC-C12,2025-05-26,2025-06-08,y,16,2025-W22
+Stonefinch Inc,Stonefinch Fuel Stop,QLB-PLM-C12,2025-05-26,2025-06-08,y,21,2025-W22
+Corvane Retail Group,Corvane Express,LMR-PEA-C16,2025-06-02,2025-06-15,y,17,2025-W23
+Pellweather Holdings,Pellweather Foods,SKX-PIN-C12,2025-06-02,2025-06-15,y,15,2025-W23
+Pellweather Holdings,Pellweather Foods,LMR-BRY-C16,2025-06-09,2025-06-22,y,16,2025-W24
+Stonefinch Inc,Stonefinch Grocer,LMR-PUN-C16,2025-06-09,2025-06-22,y,25,2025-W24
+Corvane Retail Group,Corvane Express,TRV-YUZ-C12,2025-06-23,2025-07-06,y,11,2025-W26
+Corvane Retail Group,Corvane Market,QLB-CRN-C16,2025-06-23,2025-07-06,y,40,2025-W26
+Mirelle Co,Mirelle Mart,SKX-PIN-C16,2025-06-23,2025-07-06,y,22,2025-W26
+Stonefinch Inc,Stonefinch Fuel Stop,QLB-PLM-C16,2025-06-23,2025-07-06,y,24,2025-W26
+Stonefinch Inc,Stonefinch Fuel Stop,TRV-PCH-C16,2025-07-07,2025-07-20,y,27,2025-W28
+Pellweather Holdings,Pellweather Foods,QLB-MNG-C16,2025-07-14,2025-07-27,y,12,2025-W29
+Stonefinch Inc,Stonefinch Fuel Stop,SKX-PAP-C16,2025-07-14,2025-07-27,y,25,2025-W29
+Stonefinch Inc,Stonefinch Grocer,TRV-KIWI-C12,2025-07-14,2025-07-27,y,24,2025-W29
+Corvane Retail Group,Corvane Express,TRV-KIW-C16,2025-07-21,2025-08-03,y,28,2025-W30
+Corvane Retail Group,Corvane Market,TRV-GRP-C12,2025-07-21,2025-08-03,y,41,2025-W30
+Pellweather Holdings,Pellweather Foods,QLB-GUA-C12,2025-07-21,2025-08-03,y,29,2025-W30
+Corvane Retail Group,Corvane Express,SKX-PAP-C12,2025-07-28,2025-08-10,n,17,2025-W31
+Mirelle Co,Mirelle Mart,QLB-CRN-C12,2025-07-28,2025-08-10,y,45,2025-W31
+Mirelle Co,Mirelle Mart,TRV-KIWI-C12,2025-07-28,2025-08-10,y,17,2025-W31
+Corvane Retail Group,Corvane Express,SKX-PIN-C12,2025-08-04,2025-08-17,y,36,2025-W32
+Corvane Retail Group,Corvane Market,TRV-PCH-C12,2025-08-04,2025-08-17,y,44,2025-W32
+Stonefinch Inc,Stonefinch Grocer,QLB-PLM-C16,2025-08-04,2025-08-17,y,13,2025-W32
+Pellweather Holdings,Pellweather Foods,SKX-PAP-C12,2025-08-11,2025-08-24,y,15,2025-W33
+Stonefinch Inc,Stonefinch Fuel Stop,TRV-KIW-C16,2025-08-18,2025-08-31,y,27,2025-W34
+Corvane Retail Group,Corvane Express,QLB-TNG-C16,2025-08-25,2025-09-07,y,27,2025-W35
+Stonefinch Inc,Stonefinch Fuel Stop,TRV-CHR-C12,2025-08-25,2025-09-07,n,25,2025-W35
+Stonefinch Inc,Stonefinch Grocer,QLB-PLM-C16,2025-08-25,2025-09-07,y,37,2025-W35
+Mirelle Co,Mirelle Mart,SKX-PIN-C16,2025-09-01,2025-09-14,y,27,2025-W36
+Corvane Retail Group,Corvane Market,SKX-PAP-C16,2025-09-08,2025-09-21,y,19,2025-W37
+Mirelle Co,Mirelle Mart,LMR-BRY-C16,2025-09-08,2025-09-21,y,35,2025-W37
+Stonefinch Inc,Stonefinch Fuel Stop,SKX-LYC-C12,2025-09-08,2025-09-21,y,37,2025-W37
+Stonefinch Inc,Stonefinch Fuel Stop,LMR-BRY-C12,2025-09-15,2025-09-28,y,15,2025-W38
+Stonefinch Inc,Stonefinch Grocer,SKX-PIN-C16,2025-09-15,2025-09-28,y,37,2025-W38
+Corvane Retail Group,Corvane Express,TRV-CHR-C12,2025-09-22,2025-10-05,y,41,2025-W39
+Pellweather Holdings,Pellweather Foods,LMR-BRY-C12,2025-09-22,2025-10-05,y,14,2025-W39
+Pellweather Holdings,Pellweather Foods,SKX-PSF-C12,2025-09-22,2025-10-05,n,22,2025-W39
+Stonefinch Inc,Stonefinch Grocer,TRV-PCH-C12,2025-09-22,2025-10-05,y,36,2025-W39
+Mirelle Co,Mirelle Mart,LMR-PEA-C12,2025-09-29,2025-10-12,y,34,2025-W40
+Pellweather Holdings,Pellweather Foods,LMR-MEL-C16,2025-09-29,2025-10-12,y,14,2025-W40
+Corvane Retail Group,Corvane Express,LMR-PUN-C12,2025-10-06,2025-10-19,y,27,2025-W41
+Corvane Retail Group,Corvane Express,QLB-CRN-C16,2025-10-06,2025-10-19,y,18,2025-W41
+Mirelle Co,Mirelle Mart,SKX-PIN-C12,2025-10-06,2025-10-19,n,27,2025-W41
+Corvane Retail Group,Corvane Market,LMR-BRY-C12,2025-10-13,2025-10-26,y,43,2025-W42
+Corvane Retail Group,Corvane Market,QLB-PLM-C16,2025-10-13,2025-10-26,y,19,2025-W42
+Pellweather Holdings,Pellweather Foods,QLB-GUA-C16,2025-10-13,2025-10-26,y,40,2025-W42
+Stonefinch Inc,Stonefinch Grocer,LMR-BRY-C12,2025-10-13,2025-10-26,y,28,2025-W42
+Stonefinch Inc,Stonefinch Fuel Stop,TRV-CHR-C12,2025-10-20,2025-11-02,y,17,2025-W43
+Corvane Retail Group,Corvane Market,SKX-PAP-C12,2025-10-27,2025-11-09,y,19,2025-W44
+Stonefinch Inc,Stonefinch Fuel Stop,LMR-LEM-C16,2025-10-27,2025-11-09,y,40,2025-W44
+Pellweather Holdings,Pellweather Foods,LMR-MEL-C12,2025-11-03,2025-11-16,y,29,2025-W45
+Corvane Retail Group,Corvane Market,QLB-PLM-C16,2025-11-10,2025-11-23,y,33,2025-W46
+Mirelle Co,Mirelle Mart,QLB-CRN-C16,2025-11-10,2025-11-23,y,43,2025-W46
+Stonefinch Inc,Stonefinch Grocer,TRV-KIWI-C12,2025-11-17,2025-11-30,y,16,2025-W47
+Corvane Retail Group,Corvane Express,QLB-GUA-C16,2025-11-24,2025-12-07,y,29,2025-W48
+Stonefinch Inc,Stonefinch Fuel Stop,LMR-LEM-C12,2025-11-24,2025-12-07,y,15,2025-W48
+Mirelle Co,Mirelle Mart,SKX-PSF-C12,2025-12-01,2025-12-14,y,18,2025-W49
+Stonefinch Inc,Stonefinch Fuel Stop,LMR-PEA-C12,2025-12-01,2025-12-14,y,38,2025-W49
+Corvane Retail Group,Corvane Express,QLB-MNG-C16,2025-12-08,2025-12-21,y,10,2025-W50
+Corvane Retail Group,Corvane Market,LMR-PEA-C16,2025-12-15,2025-12-28,y,32,2025-W51
+Stonefinch Inc,Stonefinch Fuel Stop,LMR-MEL-C12,2025-12-15,2025-12-28,n,41,2025-W51
+Corvane Retail Group,Corvane Express,LMR-BRY-C16,2025-12-22,2026-01-04,y,19,2025-W52
+Corvane Retail Group,Corvane Market,SKX-APL-C16,2025-12-22,2026-01-04,y,13,2025-W52
+Mirelle Co,Mirelle Mart,TRV-PCH-C12,2025-12-22,2026-01-04,y,20,2025-W52
+Stonefinch Inc,Stonefinch Grocer,LMR-MEL-C16,2025-12-22,2026-01-04,y,37,2025-W52
+Stonefinch Inc,Stonefinch Grocer,TRV-GRP-C16,2025-12-22,2026-01-04,y,13,2025-W52
+Corvane Retail Group,Corvane Express,TRV-YUZ-C12,2025-12-29,2026-01-11,y,26,2026-W01
+Mirelle Co,Mirelle Mart,TRV-GRP-C16,2025-12-29,2026-01-11,y,20,2026-W01
+Pellweather Holdings,Pellweather Foods,QLB-TNG-C16,2025-12-29,2026-01-11,y,23,2026-W01
+Pellweather Holdings,Pellweather Foods,LMR-LEM-C16,2026-01-05,2026-01-18,y,18,2026-W02
+Stonefinch Inc,Stonefinch Grocer,TRV-CHR-C12,2026-01-05,2026-01-18,y,34,2026-W02
+Corvane Retail Group,Corvane Market,SKX-PIN-C12,2026-01-12,2026-01-25,y,38,2026-W03
+Pellweather Holdings,Pellweather Foods,TRV-KIWI-C12,2026-01-19,2026-02-01,y,28,2026-W04
+Stonefinch Inc,Stonefinch Fuel Stop,SKX-LYC-C16,2026-01-19,2026-02-01,n,19,2026-W04
+Stonefinch Inc,Stonefinch Grocer,QLB-PLM-C12,2026-01-19,2026-02-01,n,11,2026-W04
+Pellweather Holdings,Pellweather Foods,QLB-GUA-C16,2026-01-26,2026-02-08,n,28,2026-W05
+Corvane Retail Group,Corvane Express,SKX-LYC-C16,2026-02-02,2026-02-15,y,27,2026-W06
+Pellweather Holdings,Pellweather Foods,SKX-PIN-C12,2026-02-02,2026-02-15,y,28,2026-W06
+Stonefinch Inc,Stonefinch Fuel Stop,TRV-YUZ-C12,2026-02-02,2026-02-15,y,30,2026-W06
+Stonefinch Inc,Stonefinch Grocer,TRV-PCH-C12,2026-02-02,2026-02-15,y,33,2026-W06
+Stonefinch Inc,Stonefinch Grocer,TRV-KIWI-C12,2026-02-09,2026-02-22,y,26,2026-W07
+Corvane Retail Group,Corvane Market,SKX-LYC-C16,2026-02-16,2026-03-01,y,23,2026-W08
+Corvane Retail Group,Corvane Express,LMR-BRY-C16,2026-02-23,2026-03-08,y,32,2026-W09
+Corvane Retail Group,Corvane Express,TRV-PCH-C12,2026-02-23,2026-03-08,y,15,2026-W09
+Mirelle Co,Mirelle Mart,SKX-PIN-C16,2026-02-23,2026-03-08,y,21,2026-W09
+Stonefinch Inc,Stonefinch Fuel Stop,SKX-APL-C12,2026-02-23,2026-03-08,y,25,2026-W09
+Stonefinch Inc,Stonefinch Grocer,TRV-GRP-C12,2026-02-23,2026-03-08,y,30,2026-W09
+Mirelle Co,Mirelle Mart,LMR-MEL-C16,2026-03-09,2026-03-22,y,35,2026-W11
+Mirelle Co,Mirelle Mart,QLB-MNG-C12,2026-03-16,2026-03-29,y,39,2026-W12
+Pellweather Holdings,Pellweather Foods,QLB-TNG-C16,2026-03-16,2026-03-29,y,32,2026-W12
+Stonefinch Inc,Stonefinch Fuel Stop,QLB-TNG-C16,2026-03-23,2026-04-05,y,45,2026-W13
+Corvane Retail Group,Corvane Market,TRV-YUZ-C12,2026-03-30,2026-04-12,y,26,2026-W14
+Pellweather Holdings,Pellweather Foods,QLB-CRN-C16,2026-03-30,2026-04-12,y,23,2026-W14
+Stonefinch Inc,Stonefinch Fuel Stop,LMR-BRY-C16,2026-03-30,2026-04-12,y,20,2026-W14
+Stonefinch Inc,Stonefinch Fuel Stop,TRV-CHR-C16,2026-04-06,2026-04-19,y,34,2026-W15
+Stonefinch Inc,Stonefinch Grocer,SKX-PAP-C12,2026-04-06,2026-04-19,y,42,2026-W15
+Corvane Retail Group,Corvane Market,SKX-LYC-C16,2026-04-13,2026-04-26,y,15,2026-W16
+Corvane Retail Group,Corvane Express,SKX-PAP-C12,2026-04-20,2026-05-03,y,30,2026-W17
+Corvane Retail Group,Corvane Express,SKX-PIN-C12,2026-04-20,2026-05-03,y,19,2026-W17
+Corvane Retail Group,Corvane Market,SKX-PAP-C16,2026-04-20,2026-05-03,y,11,2026-W17
+Mirelle Co,Mirelle Mart,QLB-MNG-C12,2026-04-20,2026-05-03,y,14,2026-W17
+Stonefinch Inc,Stonefinch Grocer,SKX-LYC-C16,2026-04-20,2026-05-03,y,19,2026-W17
+Corvane Retail Group,Corvane Market,TRV-KIWI-C12,2026-04-27,2026-05-10,y,22,2026-W18
+Mirelle Co,Mirelle Mart,SKX-LYC-C16,2026-04-27,2026-05-10,y,25,2026-W18
+Pellweather Holdings,Pellweather Foods,QLB-TNG-C16,2026-04-27,2026-05-10,y,19,2026-W18
+Corvane Retail Group,Corvane Market,LMR-BRY-C12,2026-05-04,2026-05-17,y,30,2026-W19
+Mirelle Co,Mirelle Mart,QLB-MNG-C16,2026-05-04,2026-05-17,y,20,2026-W19
+Stonefinch Inc,Stonefinch Fuel Stop,LMR-BRY-C16,2026-05-04,2026-05-17,y,27,2026-W19
+Corvane Retail Group,Corvane Express,QLB-GUA-C16,2026-05-11,2026-05-24,y,44,2026-W20
+Pellweather Holdings,Pellweather Foods,LMR-LEM-C16,2026-05-11,2026-05-24,y,23,2026-W20
+Pellweather Holdings,Pellweather Foods,LMR-PEA-C16,2026-05-11,2026-05-24,y,13,2026-W20
+Stonefinch Inc,Stonefinch Grocer,SKX-PIN-C12,2026-05-11,2026-05-24,y,16,2026-W20
+Stonefinch Inc,Stonefinch Grocer,SKX-APL-C12,2026-05-18,2026-05-31,y,36,2026-W21
+Stonefinch Inc,Stonefinch Fuel Stop,TRV-CHR-C12,2026-05-25,2026-06-07,y,30,2026-W22
+Corvane Retail Group,Corvane Express,LMR-BRY-C12,2026-06-08,2026-06-21,y,44,2026-W24
+Mirelle Co,Mirelle Mart,LMR-LEM-C12,2026-06-15,2026-06-28,y,25,2026-W25
+Stonefinch Inc,Stonefinch Grocer,QLB-CRN-C12,2026-06-15,2026-06-28,y,19,2026-W25
+Corvane Retail Group,Corvane Market,SKX-LYC-C16,2026-06-22,2026-07-05,y,27,2026-W26
+Pellweather Holdings,Pellweather Foods,SKX-LYC-C16,2026-06-22,2026-07-05,y,25,2026-W26
+Stonefinch Inc,Stonefinch Fuel Stop,LMR-PEA-C12,2026-06-22,2026-07-05,y,24,2026-W26
+Mirelle Co,Mirelle Mart,QLB-MNG-C12,2026-06-29,2026-07-12,y,34,2026-W27
+Stonefinch Inc,Stonefinch Fuel Stop,TRV-KIW-C16,2026-06-29,2026-07-12,y,44,2026-W27
+Pellweather Holdings,Pellweather Foods,SKX-PIN-C16,2026-07-06,2026-07-19,y,37,2026-W28
+Stonefinch Inc,Stonefinch Grocer,SKX-PIN-C12,2026-07-06,2026-07-19,y,20,2026-W28
+Corvane Retail Group,Corvane Express,TRV-YUZ-C12,2026-07-13,2026-07-26,y,11,2026-W29
+Corvane Retail Group,Corvane Market,QLB-PLM-C16,2026-07-13,2026-07-26,y,37,2026-W29
+Corvane Retail Group,Corvane Express,TRV-KIW-C16,2026-07-20,2026-08-02,y,26,2026-W30
+Mirelle Co,Mirelle Mart,LMR-PEA-C16,2026-07-20,2026-08-02,y,14,2026-W30
+Pellweather Holdings,Pellweather Foods,QLB-CRN-C12,2026-07-20,2026-08-02,y,30,2026-W30
+Stonefinch Inc,Stonefinch Fuel Stop,SKX-PAP-C12,2026-07-20,2026-08-02,y,17,2026-W30
+Stonefinch Inc,Stonefinch Grocer,QLB-TNG-C12,2026-07-20,2026-08-02,y,13,2026-W30
+Pellweather Holdings,Pellweather Foods,LMR-MEL-C16,2026-07-27,2026-08-09,y,13,2026-W31
+Stonefinch Inc,Stonefinch Fuel Stop,SKX-PSF-C12,2026-07-27,2026-08-09,y,31,2026-W31
+Corvane Retail Group,Corvane Express,TRV-GRP-C12,2026-08-03,2026-08-16,y,23,2026-W32
+Corvane Retail Group,Corvane Market,SKX-LYC-C12,2026-08-03,2026-08-16,y,36,2026-W32
+Mirelle Co,Mirelle Mart,QLB-CRN-C12,2026-08-03,2026-08-16,y,39,2026-W32
+Mirelle Co,Mirelle Mart,LMR-BRY-C12,2026-08-10,2026-08-23,y,42,2026-W33
+Stonefinch Inc,Stonefinch Grocer,SKX-APL-C12,2026-08-10,2026-08-23,y,23,2026-W33
+Stonefinch Inc,Stonefinch Fuel Stop,SKX-LYC-C12,2026-08-24,2026-09-06,y,37,2026-W35
+Stonefinch Inc,Stonefinch Fuel Stop,TRV-KIWI-C12,2026-08-24,2026-09-06,n,16,2026-W35
+Corvane Retail Group,Corvane Express,LMR-PEA-C12,2026-08-31,2026-09-13,y,43,2026-W36
+Corvane Retail Group,Corvane Market,QLB-TNG-C16,2026-08-31,2026-09-13,y,24,2026-W36
+Stonefinch Inc,Stonefinch Fuel Stop,QLB-TNG-C16,2026-09-07,2026-09-20,y,34,2026-W37
+Corvane Retail Group,Corvane Express,LMR-BRY-C12,2026-09-14,2026-09-27,y,31,2026-W38
+Mirelle Co,Mirelle Mart,SKX-LYC-C12,2026-09-14,2026-09-27,y,43,2026-W38
+Pellweather Holdings,Pellweather Foods,QLB-CRN-C16,2026-09-14,2026-09-27,y,37,2026-W38
+Pellweather Holdings,Pellweather Foods,QLB-PLM-C12,2026-09-14,2026-09-27,y,21,2026-W38
+Corvane Retail Group,Corvane Market,QLB-MNG-C12,2026-09-28,2026-10-11,y,10,2026-W40
+Stonefinch Inc,Stonefinch Grocer,QLB-MNG-C16,2026-09-28,2026-10-11,y,16,2026-W40
+Stonefinch Inc,Stonefinch Grocer,SKX-PIN-C16,2026-09-28,2026-10-11,n,28,2026-W40
+Corvane Retail Group,Corvane Express,SKX-APL-C16,2026-10-05,2026-10-18,y,45,2026-W41
+Corvane Retail Group,Corvane Market,QLB-MNG-C16,2026-10-05,2026-10-18,y,20,2026-W41
+Mirelle Co,Mirelle Mart,SKX-PAP-C16,2026-10-12,2026-10-25,y,28,2026-W42
+Stonefinch Inc,Stonefinch Fuel Stop,SKX-PIN-C16,2026-10-12,2026-10-25,y,28,2026-W42
+Corvane Retail Group,Corvane Express,SKX-PSF-C12,2026-10-19,2026-11-01,y,39,2026-W43
+Corvane Retail Group,Corvane Market,TRV-YUZ-C12,2026-10-19,2026-11-01,y,13,2026-W43
+Pellweather Holdings,Pellweather Foods,LMR-PEA-C16,2026-10-26,2026-11-08,y,42,2026-W44
+Pellweather Holdings,Pellweather Foods,TRV-YUZ-C16,2026-10-26,2026-11-08,y,27,2026-W44
+Stonefinch Inc,Stonefinch Fuel Stop,TRV-PCH-C12,2026-10-26,2026-11-08,y,40,2026-W44
+Corvane Retail Group,Corvane Express,QLB-GUA-C12,2026-11-02,2026-11-15,y,39,2026-W45
+Corvane Retail Group,Corvane Express,SKX-PIN-C16,2026-11-02,2026-11-15,y,36,2026-W45
+Stonefinch Inc,Stonefinch Grocer,TRV-YUZ-C16,2026-11-02,2026-11-15,y,45,2026-W45
+Corvane Retail Group,Corvane Market,QLB-MNG-C16,2026-11-09,2026-11-22,,14,2026-W46
+Stonefinch Inc,Stonefinch Fuel Stop,TRV-GRP-C16,2026-11-09,2026-11-22,y,20,2026-W46
+Mirelle Co,Mirelle Mart,LMR-MEL-C12,2026-11-23,2026-12-06,y,35,2026-W48
+Pellweather Holdings,Pellweather Foods,SKX-APL-C16,2026-11-23,2026-12-06,n,19,2026-W48
+Corvane Retail Group,Corvane Express,TRV-PCH-C12,2026-11-30,2026-12-13,y,34,2026-W49
+Corvane Retail Group,Corvane Market,LMR-PEA-C16,2026-11-30,2026-12-13,y,13,2026-W49
+Corvane Retail Group,Corvane Market,SKX-PIN-C12,2026-11-30,2026-12-13,y,35,2026-W49
+Stonefinch Inc,Stonefinch Fuel Stop,LMR-MEL-C12,2026-11-30,2026-12-13,y,33,2026-W49
+Stonefinch Inc,Stonefinch Fuel Stop,TRV-KIWI-C12,2026-11-30,2026-12-13,y,41,2026-W49
+Stonefinch Inc,Stonefinch Grocer,TRV-PCH-C16,2026-12-07,2026-12-20,y,44,2026-W50
+Pellweather Holdings,Pellweather Foods,LMR-LEM-C16,2026-12-14,2026-12-27,n,42,2026-W51
+Pellweather Holdings,Pellweather Foods,SKX-PSF-C12,2026-12-21,2027-01-03,n,10,2026-W52
+Mirelle Co,Mirelle Mart,QLB-PLM-C16,2026-12-28,2027-01-10,y,23,2026-W53
+Mirelle Co,Mirelle Mart,TRV-YUZ-C16,2026-12-28,2027-01-10,y,29,2026-W53

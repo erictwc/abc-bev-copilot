@@ -11,7 +11,7 @@ No real company, employer or customer data appears anywhere in the repo.
 I designed the system and directed Claude Code to build it. I wrote the documents
 and the core eval cases myself. Measured results go below as they exist.
 
-> **Status:** scaffold only (T0). Nothing below the setup section works yet.
+> **Status:** synthetic data (T1). `make data` rebuilds the tables in `data/csv/`; nothing else works yet.
 
 ## Setup
 
