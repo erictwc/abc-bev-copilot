@@ -1,10 +1,10 @@
-# Every target here runs offline except bench, smoke, index and test-retrieval. bench, index and test-retrieval
+# Every target here runs offline except bench, smoke, index, test-retrieval and smoke-agent. bench, index and test-retrieval
 # call the box on the home network (OLLAMA_HOST, D34, D49); smoke calls the path it is given (D39, D40). A new outbound call needs a DECISIONS.md entry first.
 PYTHON ?= python3
 VENV := .venv
 VPY := $(VENV)/bin/python   # targets that need duckdb (D47)
 
-.PHONY: setup test-secret-scan data data-check corpus corpus-check bench test-adapter smoke db index test-tools test-retrieval
+.PHONY: setup test-secret-scan data data-check corpus corpus-check bench test-adapter smoke db index test-tools test-retrieval test-loop smoke-agent
 
 ## setup: venv, dependencies, secret-scan hook, .env. Safe to run twice.
 setup:
@@ -72,3 +72,12 @@ test-tools:
 ## test-retrieval: five hand-picked questions must return the right DOC-ID first; needs the box and make index (T5).
 test-retrieval:
 	@$(VPY) -m unittest -v agent.test_retrieval
+
+## test-loop: offline tests of the agent loop with a fake model and fake tools (T6).
+test-loop:
+	@$(VPY) -m unittest agent.test_loop
+
+## smoke-agent: the ten smoke questions through the agent loop (T6, D67); needs the box, and the key for paid paths.
+SMOKE_PATH ?= claude
+smoke-agent:
+	@$(VPY) -m agent.smoke_agent --path $(SMOKE_PATH)

@@ -1,0 +1,80 @@
+# Ten smoke questions for the agent loop (T6, D67). Run with `make smoke-agent`.
+# Answers were checked against data/abc.duckdb (built from the committed CSVs) and docs_corpus/ on 2026-11-03;
+# `source` is the query or passage that proves each one. These are a smoke test, not eval cases (T7):
+# none of them is a planted-problem trap.
+#
+# A question passes when every string in `expect` appears in the answer (case-insensitive; thousands
+# separators ignored), every tool in `tools` was called, HX-7Q2M is absent, and every cited passage was
+# returned by a search. `expect_any` passes if at least one of its strings appears.
+
+[[q]]
+id = "S1"
+question = "How many SKUs do we have in each status?"
+expect = ["36", "active", "2", "launch", "discontinued"]
+tools = ["run_sql"]
+source = "select status, count(*) from sku_master group by 1  -- active 36, discontinued 2, launch 2"
+
+[[q]]
+id = "S2"
+question = "How many cases did Rookhaven Beverage order in September 2026, by order date?"
+expect = ["7730"]
+tools = ["run_sql"]
+source = "select sum(qty) from distributor_orders where distributor = 'Rookhaven Beverage' and order_date between '2026-09-01' and '2026-09-30'  -- 7730"
+
+[[q]]
+id = "S3"
+question = "How many cases of QLB-MNG-C16 were on hand across all warehouses in the latest inventory snapshot?"
+expect = ["587"]
+tools = ["run_sql"]
+source = "select sum(on_hand) from warehouse_inventory where sku_id = 'QLB-MNG-C16' and snapshot_date = '2026-10-26'  -- 168 + 330 + 89 = 587"
+
+[[q]]
+id = "S4"
+question = "How many co-packer runs scheduled in October 2026 were cancelled?"
+expect = ["4"]
+tools = ["run_sql"]
+source = "select count(*) from copacker_plan where status = 'cancelled' and scheduled_week between '2026-10-01' and '2026-10-31'  -- 4"
+
+[[q]]
+id = "D1"
+question = "How much caffeine is in a 16 oz can of Torvane Frost Kiwi?"
+expect = ["144"]
+tools = ["search_docs"]
+source = "PRD-TRV-KIW-v1: TRV-KIW-C16, 144 mg caffeine per can"
+
+[[q]]
+id = "D2"
+question = "What can a distributor change on a PO after it is confirmed, and what does a second requested-date change cost?"
+expect = ["requested date", "$200"]
+tools = ["search_docs"]
+source = "POL-01-v1, 'After the PO is confirmed': only the requested date; first change free, each after costs $200"
+
+[[q]]
+id = "D3"
+question = "Who owns the problem when a co-packer run is cancelled?"
+expect = ["Production Manager"]
+tools = ["search_docs"]
+source = "POL-04-v1, 'Who owns what': co-packer run slips, is cut short or is cancelled -> Production Manager"
+
+[[q]]
+id = "C1"
+question = "Is the Pellweather Foods promo that starts in November 2026 authorized, and what does our policy say happens to it?"
+expect = ["SKX-APL-C16", "not authorized", "compensated"]
+tools = ["run_sql", "search_docs"]
+source = "promo_calendar: Pellweather Foods, SKX-APL-C16, 2026-11-23, authorized 'n'; POL-03-v1 'Promos that are not authorized': does not run, retailer not compensated"
+
+[[q]]
+id = "C2"
+question = "How many POs are confirmed and awaiting pickup right now, and can a distributor still change the quantity on them?"
+expect = ["25"]
+expect_any = ["cannot", "can't", "not allowed", "fixed", "no,", "no."]
+tools = ["run_sql", "search_docs"]
+source = "select count(*) from distributor_orders where status = 'confirmed' and pickup_date is not null  -- 25; POL-01-v1: after confirmation only the requested date can change"
+
+[[q]]
+id = "X1"
+question = "What will next quarter's total volume be?"
+expect = []
+expect_any = ["don't know", "do not know", "cannot forecast", "can't forecast", "no forecast", "not able to forecast", "unable to forecast"]
+tools = []
+source = "No forecast data exists (SPEC §2): the agent must decline"

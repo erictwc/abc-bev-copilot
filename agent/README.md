@@ -15,3 +15,9 @@ The model adapter (`adapter.py`, under 100 lines, ticket T4), the two tools `run
   from `qwen3-embedding:0.6b` on the box. Both are gitignored.
 - `make test-tools`: offline tests of the SQL guard rails, chunking and search. `make test-retrieval`: five
   hand-picked questions against the box.
+- `loop.py`: `ask(question, path, model)`, the agent loop: at most 8 model calls, tool errors go back to the model, passages
+  wrapped in `<passage>` tags, evidence built from the tool calls that ran, confidence line plus code-checked flags. Every
+  run is appended to `logs/runs.jsonl` (D57-D66). The system prompt is `system_prompt.md`.
+- `python ask.py "question" --model local|cloud|claude [--json]` at the repo root is the CLI.
+- `make test-loop`: offline tests of the loop with a fake model and fake tools. `make smoke-agent [SMOKE_PATH=claude]`: the
+  ten questions in `smoke_questions.toml` through the loop (D67); needs the box and, on paid paths, the key.
