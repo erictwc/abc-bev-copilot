@@ -50,3 +50,15 @@ Claude Code can produce the numbers; the recommendation and judgment are Eric's.
 
 ## 2026-11-02 D16. The no-real-names rule covers the beverage business, not the tool stack
 No real beverage brand, distributor, retailer, co-packer or employer appears in the repo. The two real names that D2 originally cited were removed from the repo copy; the decision itself is unchanged. Naming the tools and vendors the system is built on (Anthropic, Claude, Qwen, Ollama, DuckDB and the like) is fine: the spec cannot describe a three-way model comparison without them.
+
+## 2026-11-02 D17. Generated tables are CSV files, committed to the repo
+`make data` writes plain CSV with the standard library to `data/csv/`. A test before T1 built the same 50,000-row table twice: the `.duckdb` file hashed differently each run (DuckDB 1.5.6 and 2.0.0), CSV hashed the same on both runs and both versions, and Parquet was stable per run but changed bytes between versions. So a `.duckdb` file cannot meet "same seed, byte-identical output", and Parquet would tie the hashes to one library version. The CSVs are committed so eval cases can point at exact rows and any generator change shows as a data diff. DuckDB loads them in T5 with explicit column types; the `.duckdb` file stays a gitignored build product.
+
+## 2026-11-02 D18. T1 uses the Python standard library only
+No dependency is added for the generator. Adding DuckDB is its own decision in T5, when `run_sql` needs it. The planted-problem proofs in `docs/DATA.md` are written as DuckDB SQL so they can be reused by evals; for T1 they were run with a throwaway DuckDB outside the repo.
+
+## 2026-11-02 D19. Data is anchored to 2026-10-31 with one fixed seed
+Every date is computed from the constant `ANCHOR = 2026-10-31`, never from today's date: 24 full months of orders (Nov 2024 to Oct 2026), "next month" is November 2026, and an October promo has finished, which suits the v2 promo-ROI question. All randomness comes from one seeded `random.Random`; the committed data uses the default seed (`make data SEED=n` can override it for experiments). Shape defaults accepted with it: about 40 SKUs across 4 brands, 12 distributors, 3 warehouses with a snapshot every Monday, and `retailer` is the parent company while `chain` is the store banner. `make data-check` generates twice into temporary folders and compares hashes.
+
+## 2026-11-02 D20. Where the five planted problems go
+Each gets an ID (DP-01 to DP-05) in `docs/DATA.md` with its table, the exact rows and a proving query; nothing in the data itself marks them. DP-01: one SKU's ID is spelled differently in `promo_calendar` than in `sku_master`. DP-02: `distributor_orders` has no rows for one month. DP-03: a PO marked shipped for a launch SKU whose only co-packer run was cancelled, linked by SKU and week, with no schema change. DP-04: two distributors share a name prefix, kept as plain names as the spec lists them. DP-05: a November 2026 promo has an empty (NULL) `authorized` field rather than `n`.
