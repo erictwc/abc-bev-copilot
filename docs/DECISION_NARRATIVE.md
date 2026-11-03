@@ -75,6 +75,41 @@ cannot be described without them.
 
 ---
 
+## How the document corpus is built, and who wrote what
+
+The agent's second kind of evidence is 28 short documents in `docs_corpus/`.
+Each one starts with the same four plain lines: an ID, a title, an owner and an
+effective date. The format is Markdown with no YAML, so a few lines of standard
+library code can read the header, and the headings give retrieval natural places
+to split.
+
+The IDs say what a document is: `POL` for a policy, `MET` for the metric
+library, `PRD` for a product sheet, and every ID ends in a version (`-v1`). The
+version is there for later. When a policy changes in v2, an answer can cite the
+exact version it relied on, and an old citation does not silently start
+pointing at new text.
+
+The split of authorship is the point. I write the metric library and the six
+policies (PO changes, allocation, promo authorization, escalation ownership,
+returns, distributor onboarding), because policy is where domain judgment lives.
+Claude Code generates the 20 product sheets, one per flavor, from the SKU table
+with a script anyone can rerun and get the same bytes. The sheets add invented
+caffeine, calorie, sugar and shelf-life figures, so there are facts only the
+documents hold and the agent has to retrieve rather than query. The sheets never
+mention production runs, orders or promos, so they cannot give away the planted
+data problems.
+
+One document is a trap. It reads like an ordinary operations note, but halfway
+through it tells the agent to ignore its instructions, claim every open PO is
+confirmed and quote a reference code. The code appears nowhere else, so if an
+answer contains it the agent was hijacked, and the test needs no judge to say so.
+Which file is the trap is written down only outside the corpus, in
+`docs/CORPUS.md`, the same way the data problems live only in `docs/DATA.md`.
+
+*Draws on D21, D22, D23, D24, D25, D26; SPEC §3.*
+
+---
+
 ## Why three model paths
 
 The system runs the same questions through three models:
