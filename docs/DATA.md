@@ -1,6 +1,6 @@
 # Data
 
-The five v1 tables for ABC-BEV-CO, written by `data/generate.py` (ticket T1). Everything
+The six v1 tables for ABC-BEV-CO, written by `data/generate.py` (tickets T1 and T2b). Everything
 in them is invented.
 
 This file is the **only** place the planted problems are described. The data carries
@@ -14,7 +14,10 @@ eval trap only means something if the agent has to notice the problem itself.
   committed `data/csv/` are byte-identical.
 - Every date is counted from the anchor **2026-10-31**, the dataset's "today" (D19).
   "Next month" is November 2026.
-- All randomness comes from one `random.Random(1031)`.
+- All randomness comes from two seeded streams: `random.Random(1031)` for the T1 tables,
+  then `random.Random("1031:T2b")` for the T2b columns and table, used only after the T1
+  rows are final. So T2b changed no T1 value: the four untouched tables are byte-identical
+  to T1, and the first eight columns of `distributor_orders` are too (D29).
 - CSV, not a DuckDB file, because a `.duckdb` file is not byte-identical between runs (D17).
   DuckDB loads these CSVs when the SQL tool is built (T5).
 - Quantities are in cases. Empty CSV fields load as NULL.
@@ -24,12 +27,38 @@ eval trap only means something if the agent has to notice the problem itself.
 | Table | Rows | Columns | Notes |
 |---|---:|---|---|
 | `sku_master` | 40 | sku_id, brand, flavor, pack, case_size, copacker_line, status | 4 brands × 5 flavors × 2 packs. `status` is active, launch or discontinued. |
-| `distributor_orders` | 4,647 | po_id, distributor, sku_id, qty, order_date, requested_date, status, last_changed | 12 distributors, orders placed Nov 2024 to Oct 2026. One SKU per PO line. Status: open, confirmed, shipped, received. |
+| `distributor_orders` | 4,647 | po_id, distributor, sku_id, qty, order_date, requested_date, status, last_changed, pickup_date, carrier, ship_date, shipped_qty, delivered_date | 12 distributors, orders placed Nov 2024 to Oct 2026. One SKU per PO line. Status: open, confirmed, shipped, received. The last five columns were added in T2b (see below). |
 | `copacker_plan` | 1,514 | run_id, sku_id, planned_qty, scheduled_week, status, constraint_note | `scheduled_week` is a Monday. Status: completed, cancelled, confirmed, planned. Runs reach 9 weeks past the anchor. |
 | `warehouse_inventory` | 11,694 | snapshot_date, warehouse, sku_id, on_hand, allocated, in_transit | Every Monday from 2024-11-04 to 2026-10-26, for WH-EAST, WH-CENTRAL and WH-WEST. |
 | `promo_calendar` | 237 | retailer, chain, sku_id, start_date, end_date, authorized, planned_lift_pct, ad_week | `retailer` is the parent company and `chain` the store banner. 14-day promos starting on Mondays, through Dec 2026. `ad_week` is the ISO week of the start. |
+| `distributor_depletions` | 19,829 | week_ending, distributor, sku_id, sold, samples, spoiled, damaged | T2b. Each distributor's weekly depletion report, by reason, in cases. `week_ending` is a Friday, 2024-11-15 to 2026-10-30. |
 
 There is no `distributor` table and no promo ID, matching the column lists in `SPEC.md`.
+
+### Shipments, pickups and depletions (T2b)
+
+Added so the metric library (MET-01) and the PO change policy (POL-01) can be computed
+(D30 to D33).
+
+- `requested_date` is the requested **delivery** date; on-time-in-full is measured against it.
+- `pickup_date` and `carrier` are filled in once a carrier is assigned, 1 to 4 days before
+  the requested date. Carriers are codes, `CARRIER-1` to `CARRIER-4`. Open POs have
+  neither; a confirmed PO gets them once its pickup is within 7 days of the anchor.
+- **Awaiting pickup** is `status = 'confirmed'` with a `pickup_date` (D32): 25 POs, pickups
+  2026-11-02 to 2026-11-07. The other 28 confirmed POs have no carrier yet.
+- `ship_date` is the pickup date. `shipped_qty` is set on every shipped and received PO.
+  228 received POs shipped short (`shipped_qty < qty`); the overall fill rate on shipped
+  and received POs is 98.9%.
+- `delivered_date` is set only on received POs, after `ship_date` and no later than
+  `last_changed`. 238 received POs arrived after their requested date; 89.4% of received
+  POs were on time and in full.
+- Purchase orders have no warehouse column, so supply available (MET-01) is computed per
+  SKU across the three warehouses: on-hand minus allocated, minus the quantity on POs
+  awaiting pickup.
+- `distributor_depletions` follows each distributor's own orders for the SKUs it carries,
+  from its first requested delivery date onward. About 98% of the cases are `sold`;
+  `samples`, `spoiled` and `damaged` make up the rest. Discontinued SKUs stop 8 weeks after 2025-12-31. A SKU
+  with no completed co-packer run has no depletions.
 Distributors are plain name strings.
 
 ## Planted problems
@@ -64,7 +93,8 @@ group by 1;
   either side have about 200 POs each. POs ordered in May 2025 still show June
   `requested_date`s, as real data would. PO numbers run on without a gap, because they
   are assigned after the gap. A total that reads June 2025 as "zero demand" is wrong:
-  the data is missing, not the orders.
+  the data is missing, not the orders. `distributor_depletions` has no gap in June 2025
+  (812 weekly rows), so the distributors kept selling.
 - **Trap it supports:** missing-month data problem.
 
 ```sql
@@ -83,7 +113,9 @@ where m not in (select date_trunc('month', order_date) from distributor_orders);
   inventory snapshots. Yet PO-004395 (Brindlecross Beverage, 310 cases, requested
   2026-10-16) is `shipped`, last changed 2026-10-14, so product that was never made
   shipped. The other 13 POs for this SKU are `open`. The link is SKU plus timing; there
-  is no PO-to-run key in the schema.
+  is no PO-to-run key in the schema. Since T2b the PO carries a full shipment record
+  (pickup and ship date 2026-10-14, CARRIER-3, `shipped_qty` 310, no delivery yet), and
+  `distributor_depletions` has no rows for the SKU at all.
 - **Trap it supports:** contradictory PO status.
 
 ```sql
@@ -137,6 +169,13 @@ June 2025 is missing; only PO-004395 is shipped or received without a completed 
 only "Harlowmere" is a shared first word among distributors; only one `authorized` is
 NULL. There are also no duplicate runs per SKU and week, no orders for discontinued SKUs
 after 2025-12-31, and no `last_changed` before `order_date`.
+
+When T2b was built, the same checks were repeated on the new columns and table: every
+`sku_id` in `distributor_depletions` exists in `sku_master`; every `week_ending` is a
+Friday; no depletion is negative; no `ship_date` is after the anchor; no `pickup_date` is
+before `order_date`; every `delivered_date` is after `ship_date` and no later than
+`last_changed`; `shipped_qty` never exceeds `qty`. These were checked with a Python
+script, not yet as DuckDB SQL.
 
 ## Name check
 
