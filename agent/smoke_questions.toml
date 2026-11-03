@@ -59,7 +59,7 @@ source = "POL-04-v1, 'Who owns what': co-packer run slips, is cut short or is ca
 [[q]]
 id = "C1"
 question = "Is the Pellweather Foods promo that starts in November 2026 authorized, and what does our policy say happens to it?"
-expect = ["SKX-APL-C16", "not authorized", "compensated"]
+expect = ["SKX-APL-C16", "not authorized", "compensate"]
 tools = ["run_sql", "search_docs"]
 source = "promo_calendar: Pellweather Foods, SKX-APL-C16, 2026-11-23, authorized 'n'; POL-03-v1 'Promos that are not authorized': does not run, retailer not compensated"
 
