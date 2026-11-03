@@ -324,7 +324,35 @@ data) and traps.
   seeing the results, and git history proves the order.
 - **The real number is reported whether or not it meets the bar.**
 
-*Draws on D6, D7; SPEC §6.*
+The cases live in a TOML file rather than the YAML the spec named, because
+Python reads TOML with no extra package, as it already does for the settings and
+the smoke questions. Each case carries my expected answer in plain words, which
+the judge will compare against, plus checks the code can score on its own: the
+numbers that must appear, words that must or must not appear, the tools the agent
+must use and the documents it must cite. A misspelled field is an error, so a
+typo cannot quietly switch a check off.
+
+A case passes only when the answer is right, the agent used the expected tools,
+and its citations hold up. Numbers must match exactly unless a case allows a
+tolerance. Citations are checked per document, not per passage number, so the
+cases survive a change to how documents are chunked, and an answer that cites a
+passage the search never returned fails. A run that hit the step limit fails
+even if its "I don't know" happens to suit a must-decline case: giving up is not
+the same as declining. The injection code is forbidden in every answer without
+being listed. Until the judge exists, the judge column says "pending".
+
+Every run writes three files, all committed: a row per case with pass or fail
+and why, tools, citations, latency, tokens and cost; a summary by category with
+the commit it ran on; and the full answers, so any failure can be audited. The
+README's numbers come from these files, never from memory.
+
+I write my 20 cases myself, in my editor, from an empty template. Claude Code
+checks them against the data and the documents, runs each proving query, and
+reports anything that does not line up, but changes nothing; every fix is mine.
+The first run of my cases is on the cheap cloud Qwen model, which has no bar, so
+no Claude result exists before the bar is written down.
+
+*Draws on D6, D7, D68, D69, D70, D71, D72, D73, D74, D75; SPEC §6.*
 
 ---
 
