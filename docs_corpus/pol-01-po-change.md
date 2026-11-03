@@ -31,4 +31,4 @@ changes are allowed within 48 hours of the pickup date.
 A shipped or received PO is corrected only if there was a packing or shipping mistake,
 or damage.
 
-ABC-BEV-CO does not take returns.
+Returns are covered by the returns policy (POL-05).

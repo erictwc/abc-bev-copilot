@@ -48,3 +48,11 @@ change).
 Claude Code showed the full text, asked whether the 25% restocking fee should say "of the
 PO value", and asked whether to commit POL-01 as it reads.
 > Commit it
+
+## Change after sign-off (2026-11-03, during the POL-05 interview)
+
+In the POL-05 interview Eric said returns are accepted for product spoiled from the start
+or damaged during shipping, which contradicts POL-01's "ABC-BEV-CO does not take
+returns." Claude Code asked whether to change that line to "Returns are covered by the
+returns policy (POL-05)."
+> correct
