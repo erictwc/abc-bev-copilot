@@ -9,6 +9,9 @@ __pycache__/
 *.pyc
 .pytest_cache/
 
+# Spend log, one row per model call (D41); eval result files carry the committed costs
+logs/
+
 # Local stores, rebuilt from the generator and the corpus
 *.duckdb
 *.duckdb.wal

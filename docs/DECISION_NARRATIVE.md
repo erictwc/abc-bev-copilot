@@ -168,6 +168,10 @@ a tool call and a retry work, and a library would hide exactly the part I am
 supposed to understand. The 100-line limit keeps it small enough to read in one
 sitting. Changing that needs a written reason.
 
+The money side, the spend log and the cap, sits in its own small file next to
+it, so the adapter is only about calling models and the cost rules can be read
+in one place.
+
 For the same reason it uses no SDKs either, only Python's built-in HTTP and JSON
 modules: the headers, the retry loop and the token counts are all in the one
 file. Failed calls are retried up to three times with growing waits (2, 4, 8
@@ -186,7 +190,7 @@ fit in the budget; Opus 5.5 stays available by name. The local path asks Ollama
 for a fixed context window on every call, because otherwise a long prompt would
 be cut short without any error.
 
-*Draws on D4, D39, D40, D42, D43; SPEC §4.*
+*Draws on D4, D39, D40, D42, D43, D46; SPEC §4.*
 
 ---
 

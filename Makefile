@@ -1,9 +1,9 @@
-# Every target here runs offline except bench, which calls the box on the home network
-# (OLLAMA_HOST, D34). A new outbound call needs a DECISIONS.md entry first.
+# Every target here runs offline except bench and smoke. bench calls the box on the home network
+# (OLLAMA_HOST, D34); smoke calls the path it is given (D39, D40). A new outbound call needs a DECISIONS.md entry first.
 PYTHON ?= python3
 VENV := .venv
 
-.PHONY: setup test-secret-scan data data-check corpus corpus-check bench
+.PHONY: setup test-secret-scan data data-check corpus corpus-check bench test-adapter smoke
 
 ## setup: venv, dependencies, secret-scan hook, .env. Safe to run twice.
 setup:
@@ -46,3 +46,12 @@ corpus-check:
 ## bench: prefill and decode tokens/s from Ollama on the box, appended to bench/results.csv (T3, D34-D38).
 bench:
 	@$(PYTHON) bench/run_bench.py
+
+## test-adapter: offline tests of the model adapter: cap, spend log, retries, message conversion (T4).
+test-adapter:
+	@$(PYTHON) -m unittest agent.test_adapter
+
+## smoke: one tool-call round trip per path, e.g. make smoke PATHS="cloud claude". Paid paths cost under a cent.
+PATHS ?= local cloud claude
+smoke:
+	@for p in $(PATHS); do $(PYTHON) agent/smoke.py $$p || exit 1; done
