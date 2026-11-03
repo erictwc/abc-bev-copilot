@@ -20,6 +20,9 @@ One ticket per Claude Code session. Eric reviews at each "Done when" before the 
 **T2. Document corpus.** Eric sets the metric library and policy content in an interview, and Claude Code drafts them from his answers only for his line-by-line review (D27); Claude Code generates product sheets from `sku_master` and adds the DOC-ID headers and the one planted injection document.
 *Done when:* 20 to 30 files exist, every file has a header, and Eric confirms the policies are his own.
 
+**T2b. Depletion and shipment data (D28).** Extend the T1 generator so the data supports the MET-01 definitions: a distributor depletion report table, and shipped quantity, ship date and delivery date on `distributor_orders` (plus whatever marks an issued PO awaiting pickup). Eric picks the columns at the start. Keep it seeded and standard-library only; re-prove DP-01 to DP-05 and update `docs/DATA.md`.
+*Done when:* `make data-check` passes on the new data, all five planted problems are still present and listed, and fill rate, strict OTIF, depletions and supply available can each be computed from the tables.
+
 **T3. Benchmark script.** `bench/` wrapper around `llama-bench` (or equivalent) that writes `bench/results.csv`: prefill and decode tokens/second by model and context length.
 *Done when:* it runs on the GEEKOM box for at least two model sizes and the CSV is committed.
 

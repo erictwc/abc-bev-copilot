@@ -63,6 +63,13 @@ Each one is listed with an ID in `docs/DATA.md`, along with the rows and a query
 that proves it, and only there: the data itself carries no hint, just as real
 data would not.
 
+Writing the metric library showed a gap in the first version of the data. My
+definitions need distributor depletion reports and real shipments (quantity, ship
+date, delivery date), and the orders table had only a status. The definitions
+stay as I gave them, and the data is extended to match in its own ticket, after
+the documents are done, rather than reopening the data in the middle of writing
+them.
+
 The first name considered was "Imagine Bev". It was dropped after a name check
 turned up a nearby real beverage brand. ABC-BEV-CO is deliberately generic.
 
@@ -71,7 +78,7 @@ retailers, co-packers, employers. It does not cover the tools the system is buil
 on. Naming the model vendors and libraries is fine, because a model comparison
 cannot be described without them.
 
-*Draws on D2, D16, D17, D18, D19, D20; SPEC §3.*
+*Draws on D2, D16, D17, D18, D19, D20, D28; SPEC §3.*
 
 ---
 
