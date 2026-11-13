@@ -68,6 +68,12 @@ class Judge(unittest.TestCase):
         with mock.patch.object(judge.adapter, "call", side_effect=RuntimeError("HTTP 500")):
             self.assertEqual(judge.judge(CASE, result())["verdict"], "error")
 
+    def test_cut_off_reply_says_so(self):
+        with mock.patch.object(judge.adapter, "call", return_value={**reply(""), "stop": "max_tokens"}):
+            j = judge.judge(CASE, result())
+        self.assertEqual(j["verdict"], "error")
+        self.assertIn("cut off", j["reason"])
+
     def test_cap_refusal_propagates(self):
         with mock.patch.object(judge.adapter, "call", side_effect=spend.CapReached("cap")):
             with self.assertRaises(spend.CapReached):

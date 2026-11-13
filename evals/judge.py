@@ -1,4 +1,4 @@
-"""The judge (T9, D82-D85): python -m evals.judge evals/results/<run>.jsonl
+"""The judge (T9, D82-D86): python -m evals.judge evals/results/<run>.jsonl
 
 judge() asks claude-opus-5-5, a model that differs from every model under test (D6, D82), whether the agent's
 answer agrees with the case's reference `answer`. It reads the question, the reference answer, the case notes
@@ -16,7 +16,7 @@ from evals import score
 
 PATH, MODEL = "claude", "claude-opus-5-5"
 PROMPT = (Path(__file__).resolve().parent / "judge_prompt.md").read_text()
-MAX_TOKENS = 300
+MAX_TOKENS = 2000      # Opus thinks first and the thinking counts here; 300 cut replies off (D86)
 TAGS = ("question", "reference_answer", "notes", "agent_answer")
 TAG = re.compile(r"<(/?)(" + "|".join(TAGS) + r")>", re.I)
 
@@ -62,6 +62,8 @@ def judge(case, r):
     except Exception as e:
         return {**out, "reason": f"judge call failed: {str(e)[:200]}"}
     verdict, reason = parse(reply["text"])
+    if verdict == "error" and reply.get("stop") == "max_tokens":
+        reason = f"judge reply cut off at max_tokens={MAX_TOKENS}"
     return {**out, "verdict": verdict, "reason": reason, "input_tokens": reply["input_tokens"],
             "output_tokens": reply["output_tokens"], "cost_usd": reply["cost_usd"]}
 

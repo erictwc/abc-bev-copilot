@@ -383,7 +383,10 @@ passages, because the code already checks those. The judge runs on every case,
 including ones the code checks already failed, so every disagreement between
 the two is on record, and a case passes only when both agree it should. The
 risk I accept is that Opus and Sonnet come from the same family and the judge
-may like Sonnet's style.
+may like Sonnet's style. Opus thinks before it answers, and that thinking counts
+against its reply limit: at the first limit I set, a fifth of its replies came
+back cut off. I kept the thinking and raised the limit, which costs about $0.60
+to judge a 40-case run, rather than change the adapter to switch thinking off.
 
 To check the judge itself, I hand-grade 10 of its calls, two per category,
 taken first from the cases where it and the code checks disagree. They come
@@ -392,7 +395,7 @@ judge is tested on answers to all 40 questions without touching the one
 measured Claude run. `evals/JUDGE_CHECK.md` lists the 10 calls and every place
 I disagree with the judge.
 
-*Draws on D6, D7, D68, D69, D70, D71, D72, D73, D74, D75, D76, D77, D78, D79, D80, D81, D82, D83, D84, D85; SPEC §6.*
+*Draws on D6, D7, D68, D69, D70, D71, D72, D73, D74, D75, D76, D77, D78, D79, D80, D81, D82, D83, D84, D85, D86; SPEC §6.*
 
 ---
 
