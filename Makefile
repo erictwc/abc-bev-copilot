@@ -1,10 +1,10 @@
-# Every target here runs offline except bench, smoke, index, test-retrieval, smoke-agent and evals. bench, index and test-retrieval
+# Every target here runs offline except bench, smoke, index, test-retrieval, smoke-agent, evals and judge. bench, index and test-retrieval
 # call the box on the home network (OLLAMA_HOST, D34, D49); smoke calls the path it is given (D39, D40). A new outbound call needs a DECISIONS.md entry first.
 PYTHON ?= python3
 VENV := .venv
 VPY := $(VENV)/bin/python   # targets that need duckdb (D47)
 
-.PHONY: setup test-secret-scan data data-check corpus corpus-check bench test-adapter smoke db index test-tools test-retrieval test-loop smoke-agent evals evals-check
+.PHONY: setup test-secret-scan data data-check corpus corpus-check bench test-adapter smoke db index test-tools test-retrieval test-loop smoke-agent evals evals-check judge
 
 ## setup: venv, dependencies, secret-scan hook, .env. Safe to run twice.
 setup:
@@ -90,6 +90,12 @@ ONLY ?=
 evals:
 	@$(VPY) -m evals.run --path $(EVAL_PATH) $(if $(EVAL_MODEL),--name $(EVAL_MODEL)) $(if $(ONLY),--only $(ONLY))
 
-## evals-check: offline: validate evals/cases.toml, then the scorer and runner tests with fake results (D74).
+## judge: judge an earlier run with claude-opus-5-5 into <run>_judged.{csv,md,jsonl} (T9, D84); needs the key.
+## e.g. make judge RUN=evals/results/2026-11-13T2207Z_cloud_qwen-qwen3.5-9b.jsonl
+RUN ?=
+judge:
+	@$(VPY) -m evals.judge $(RUN)
+
+## evals-check: offline: validate evals/cases.toml, then the scorer, runner and judge tests with fake results (D74).
 evals-check:
-	@$(VPY) -m evals.score && $(VPY) -m unittest evals.test_score
+	@$(VPY) -m evals.score && $(VPY) -m unittest evals.test_score evals.test_judge

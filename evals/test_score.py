@@ -2,7 +2,7 @@
 and one runner pass that writes all three result files.
 
 agent.loop.ask() is replaced by a fake, so nothing leaves the machine and nothing is spent.
-Run with: python -m unittest evals.test_score
+The judge is faked too (evals/test_judge.py tests it). Run with: python -m unittest evals.test_score
 """
 import contextlib, csv, io, json, tempfile, unittest
 from pathlib import Path
@@ -135,7 +135,10 @@ class Runner(unittest.TestCase):
                 '[[case]]\nid = "A2"\nauthor = "eric"\ncategory = "decline"\nquestion = "Forecast?"\n'
                 'answer = "Decline."\nsource = "s"\nexpect_any = ["don\'t know"]\n')
             answers = {"How many?": result("There were 4.", ["run_sql"]), "Forecast?": result("It will be 10.")}
-            with mock.patch.object(run.loop, "ask", side_effect=lambda q, **kw: answers[q]):
+            verdicts = {"There were 4.": "fail", "It will be 10.": "pass"}       # each disagrees with the code
+            fake_judge = lambda c, r: {**run.NOT_JUDGED, "verdict": verdicts[r["answer"]], "reason": "r", "cost_usd": 0.01}
+            with mock.patch.object(run.loop, "ask", side_effect=lambda q, **kw: answers[q]), \
+                 mock.patch.object(run.judge, "judge", side_effect=fake_judge):
                 with contextlib.redirect_stdout(io.StringIO()):
                     code = run.main(["--path", "cloud", "--cases", str(tmp / "cases.toml"),
                                      "--out", str(tmp / "out")])
@@ -143,10 +146,12 @@ class Runner(unittest.TestCase):
             stem = next((tmp / "out").glob("*.csv")).with_suffix("")
             self.assertIn("_cloud_qwen-qwen3.5-9b", stem.name)
             rows = list(csv.DictReader(Path(f"{stem}.csv").read_text().splitlines()))
-            self.assertEqual([(x["id"], x["pass"], x["judge"]) for x in rows],
-                             [("A1", "pass", "pending"), ("A2", "fail", "pending")])
+            self.assertEqual([(x["id"], x["pass"], x["code_pass"], x["judge"]) for x in rows],
+                             [("A1", "fail", "pass", "fail"), ("A2", "fail", "fail", "pass")])
+            self.assertIn("judge fail: r", rows[0]["failed"])
             md = Path(f"{stem}.md").read_text()
-            self.assertIn("| **all** | 2 | 1 | 50% |", md)
+            self.assertIn("| **all** | 2 | 1 | 1 | 0 | 0% |", md)
+            self.assertIn("the judge: $0.0200 more", md)
             self.assertIn("Status: complete", md)
             lines = [json.loads(x) for x in Path(f"{stem}.jsonl").read_text().splitlines()]
             self.assertEqual(lines[1]["result"]["answer"], "It will be 10.")
@@ -158,10 +163,11 @@ class Runner(unittest.TestCase):
                 f'[[case]]\nid = "B{i}"\nauthor = "eric"\ncategory = "sql"\nquestion = "q{i}"\n'
                 f'answer = "a"\nsource = "s"\nexpect = ["a"]\n\n' for i in (1, 2)))
             capped = result("I don't know: the spend cap refused the model call.", stopped="spend_cap")
-            with mock.patch.object(run.loop, "ask", return_value=capped) as ask:
+            with mock.patch.object(run.loop, "ask", return_value=capped) as ask, \
+                 mock.patch.object(run.judge, "judge") as judged:
                 with contextlib.redirect_stdout(io.StringIO()):
                     code = run.main(["--cases", str(tmp / "cases.toml"), "--out", str(tmp / "out")])
-            self.assertEqual((code, ask.call_count), (1, 1))
+            self.assertEqual((code, ask.call_count, judged.call_count), (1, 1, 0))
             self.assertIn("incomplete: the spend cap", next((tmp / "out").glob("*.md")).read_text())
 
 

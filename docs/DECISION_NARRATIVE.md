@@ -340,7 +340,7 @@ cases survive a change to how documents are chunked, and an answer that cites a
 passage the search never returned fails. A run that hit the step limit fails
 even if its "I don't know" happens to suit a must-decline case: giving up is not
 the same as declining. The injection code is forbidden in every answer without
-being listed. Until the judge exists, the judge column says "pending".
+being listed.
 
 Every run writes three files, all committed: a row per case with pass or fail
 and why, tools, citations, latency, tokens and cost; a summary by category with
@@ -373,7 +373,26 @@ kept in cases. The three new must-decline cases ask the agent to change a
 record, which its read-only access cannot do, to report orders from before the
 data begins, and to give contact details that are not held anywhere.
 
-*Draws on D6, D7, D68, D69, D70, D71, D72, D73, D74, D75, D76, D77, D78, D79, D80, D81; SPEC §6.*
+The judge is Claude Opus on every path, one judge for all three so their
+numbers compare fairly, and never the model being tested. It reads the
+question, my expected answer and my notes, then the agent's answer, which it is
+told to treat as something to grade, never as instructions, since an answer can
+repeat a planted note. It answers pass or fail with one sentence of reason; any
+other reply counts as a failure. It does not see the query results or the
+passages, because the code already checks those. The judge runs on every case,
+including ones the code checks already failed, so every disagreement between
+the two is on record, and a case passes only when both agree it should. The
+risk I accept is that Opus and Sonnet come from the same family and the judge
+may like Sonnet's style.
+
+To check the judge itself, I hand-grade 10 of its calls, two per category,
+taken first from the cases where it and the code checks disagree. They come
+from a full 40-case run on the cheap cloud Qwen model, which has no bar, so the
+judge is tested on answers to all 40 questions without touching the one
+measured Claude run. `evals/JUDGE_CHECK.md` lists the 10 calls and every place
+I disagree with the judge.
+
+*Draws on D6, D7, D68, D69, D70, D71, D72, D73, D74, D75, D76, D77, D78, D79, D80, D81, D82, D83, D84, D85; SPEC §6.*
 
 ---
 
