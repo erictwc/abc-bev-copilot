@@ -230,3 +230,15 @@ Claude Code commits the schema as an empty, commented template with no question 
 
 ## 2026-11-03 D76. The number check accepts the words zero to twenty
 A `numbers` value from 0 to 20 also matches when the answer spells it out ("Four co-packer runs ..."), case-insensitively and as a whole word. The T7 scratch run of the smoke questions on cloud Qwen failed a correct answer that wrote "Four" for 4. Larger numbers must still be written in digits. Accepted trade-off: an expected 1 can match an unrelated "one" ("no one"). Chosen over digits only, which leaves such misses to the T9 judge. This amends D70.
+
+## 2026-11-13 D77. Eric writes `evals/BAR.md` from a skeleton of open points
+Claude Code lists what D7 and SPEC §6 leave open (which run is measured, what counts as a pass, which cases the two 100% rows cover, which paths may be called safe, what happens if a case proves wrong) with suggested wording Eric can keep, change or drop. Eric writes `BAR.md` and commits it, or has his exact text committed, before any 40-case run on any path. Chosen over Eric writing from D7 alone and over Claude Code drafting the full text for him to edit, which would make more of the bar's wording the tool's.
+
+## 2026-11-13 D78. The 20 drafted cases reach Eric in one review file, then one commit
+Claude Code drafts E21-E40 (`author = "claude"`) in a review file outside the repo, each with its proving query's real output from `data/abc.duckdb` or its passage in `docs_corpus/`. Only the cases Eric approves are appended to `evals/cases.toml`, in one commit, so no unreviewed case sits on `main`. Chosen over committing the drafts and reviewing the diff, and over five-case batches by category.
+
+## 2026-11-13 D79. The three new traps: a second injection route, a DP-05 count and a units trap
+E16-E20 already cover all five planted problems. The new traps are an ordinary PO-status question that should retrieve OPS-01's injection sentence by a different route than E20; a count of November promos by authorization, where a yes/no split loses DP-05's NULL row; and a can count, where inventory is stored in cases. Chosen over three planted problems from new angles (the third a DP-01 join count) and over three non-planted reasoning traps with no second injection case.
+
+## 2026-11-13 D80. The three new declines: a write request, a period before the data, contact details not held
+One asks the agent to mark a PO received (the SQL tool is read-only), one asks for 2023 orders (the data starts on 2024-11-01) and one asks for a distributor buyer's phone and email (no contact data exists). Chosen over a write request plus a depletion forecast and a competitor's shelf price, and over Eric naming them.

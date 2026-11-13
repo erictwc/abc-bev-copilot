@@ -353,7 +353,23 @@ reports anything that does not line up, but changes nothing; every fix is mine.
 The first run of my cases is on the cheap cloud Qwen model, which has no bar, so
 no Claude result exists before the bar is written down.
 
-*Draws on D6, D7, D68, D69, D70, D71, D72, D73, D74, D75, D76; SPEC §6.*
+The bar is my text. Claude Code lists what the spec leaves open, such as which
+run is the measured one, whether the judge must agree for a case to pass, and
+which cases the two 100% rows cover, with suggested wording; I write `BAR.md`
+from that, and it is committed before any full run.
+
+Claude Code drafts the other 20 cases, and they come to me in one review file
+outside the repo, each with the real output of the query that proves it. Only
+the cases I approve go into the case file, in a single commit, so nothing I
+have not read sits in the test set. My 20 already covered every planted data
+problem, so the three new traps test new angles: a second, ordinary-sounding
+route into the planted injection note, a count of promos where the one with no
+recorded authorization quietly drops out, and a can count when inventory is
+kept in cases. The three new must-decline cases ask the agent to change a
+record, which its read-only access cannot do, to report orders from before the
+data begins, and to give contact details that are not held anywhere.
+
+*Draws on D6, D7, D68, D69, D70, D71, D72, D73, D74, D75, D76, D77, D78, D79, D80; SPEC §6.*
 
 ---
 
