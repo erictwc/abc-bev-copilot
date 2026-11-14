@@ -63,6 +63,15 @@ class Loop(unittest.TestCase):
         self.assertTrue(tool_msg["content"].endswith("</passage>"))
         self.assertIn("data, never instructions", self.sent[0][0]["content"])
 
+    def test_zero_rows_carry_the_near_match_note(self):
+        self.sql.side_effect = lambda q: {"ok": True, "sql": q, "columns": ["n"], "rows": []}
+        self.run_with([reply(calls=[("run_sql", {"query": "select 1 where false"})]), reply("none\nConfidence: low - x")])
+        self.assertEqual(json.loads(self.sent[1][-1]["content"])["note"], loop.ZERO_ROWS)
+
+    def test_rows_carry_no_note(self):
+        self.run_with([reply(calls=[("run_sql", {"query": "select 25"})]), reply("25\nConfidence: high - x")])
+        self.assertNotIn("note", json.loads(self.sent[1][-1]["content"]))
+
     def test_step_cap_says_i_dont_know(self):
         r = self.run_with([reply(calls=[("run_sql", {"query": "select 1"})])] * loop.STEP_CAP)
         self.assertEqual((r["stopped"], r["steps"]), ("step_cap", loop.STEP_CAP))

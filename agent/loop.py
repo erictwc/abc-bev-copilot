@@ -19,6 +19,9 @@ MAX_TOKENS = 2048      # per model call (D66)
 SYSTEM_PROMPT = Path(__file__).resolve().parent / "system_prompt.md"
 RUN_LOG = tools.ROOT / "logs" / "runs.jsonl"
 CITATION = re.compile(r"\b[A-Z]{3}(?:-[A-Z0-9]+)+-v\d+#\d+\b")
+# T13: a lookup that finds nothing is checked for near matches before the answer says none exist.
+ZERO_ROWS = ("0 rows. If the query filtered on an exact ID, code or name, check for near-matching values "
+             "(another spelling, part of the value) before concluding that none exist.")
 CONFIDENCE = re.compile(r"^\W*confidence\W*:?\W*(high|medium|low)\b\W*(.*)$", re.I)
 
 # One neutral line per table (D59). Nothing here may hint at the planted problems in docs/DATA.md.
@@ -69,7 +72,10 @@ def run_tool(name, args):
     try:
         if name == "run_sql":
             out = tools.run_sql(str(args.get("query", "")))
-            content = json.dumps({k: out[k] for k in ("ok", "columns", "rows", "error") if k in out}, default=str)
+            shown = {k: out[k] for k in ("ok", "columns", "rows", "error") if k in out}
+            if out["ok"] and not out["rows"]:
+                shown["note"] = ZERO_ROWS
+            content = json.dumps(shown, default=str)
             return content, {"tool": name, "sql": out["sql"], "ok": out["ok"], "error": out.get("error"),
                              "rows": len(out.get("rows", []))}
         if name == "search_docs":

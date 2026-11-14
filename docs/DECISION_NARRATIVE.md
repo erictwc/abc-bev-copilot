@@ -635,7 +635,16 @@ case's fault, not the model's: E34's note gave the wrong date for the SKU's last
 promo, taken from the 12 oz can instead of the 16 oz one in the question. Claude
 had the right date. I corrected the note; the measured numbers stay as they were.
 
-*Draws on D104, D105, D106, D107, D108, D109, D110; SPEC §9, §10.*
+The fixes are five short rules in the system prompt and one note the loop adds
+when a query returns no rows. They name no case and no record. On the 40 cases
+Claude went from 31 (34 on the corrected cases) to 38. The two new misses are a
+citation of a passage the search never returned and a wording the check did not
+expect. One thing went wrong in the process: my held-out file reached the fixing
+session before the fixes were committed. They had already been written and the
+run had started, so I froze them exactly as they were, with no tuning on what
+that run showed, and the log says so.
+
+*Draws on D104, D105, D106, D107, D108, D109, D110, D111; SPEC §9, §10.*
 
 ---
 
