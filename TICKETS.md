@@ -65,6 +65,9 @@ Eric's target is 39/40 on the Claude path. It is a goal, not the bar: `BAR.md` a
 
 **Walkthrough video, moved from V8 into v1 (D109).** Eric records the 3-minute walkthrough from `docs/WALKTHROUGH.md` once T13's numbers are in it, and the README links it. V8 keeps the portfolio card.
 
+**T15. Judge-weighed wording and letter grades (D118).** After T13. `expect_any` becomes guidance for the judge instead of a code gate; numbers, `forbid`, HX-7Q2M, tools and citations stay code checks. The judge also gives each answer a letter grade, A+ to F, from a short rubric written into `evals/judge_prompt.md`; result files get a grade column and a per-path grade-point average beside pass/fail. `BAR.md` and the measured pass/fail results do not change. Regrade the stored T13 runs offline (judge cost only, told to Eric first).
+*Done when:* the T13 result files have graded companions committed, the README shows grades beside the measured pass/fail, and `make evals-check` covers the new judge fields.
+
 **v1 gate:** v1 is done when T12, T13 and T14 pass and the walkthrough video is linked from the README. Only then start v2.
 
 ## v2

@@ -14,16 +14,18 @@ from evals import judge, run, score
 def main(argv=None):
     p = argparse.ArgumentParser(description=__doc__.split("\n")[0])
     p.add_argument("jsonl", type=Path, help="a run's .jsonl in evals/results/")
+    p.add_argument("--cases", type=Path, nargs="+", default=[score.CASES],
+                   help="case files the run used (T13: evals/cases.toml evals/holdout.toml)")
     a = p.parse_args(argv)
-    cases = {c["id"]: c for c in score.load()}
+    cases = {c["id"]: c for f in a.cases for c in score.load(f)}
     lines = [json.loads(x) for x in a.jsonl.read_text().splitlines() if x.strip()]
     if missing := [x["id"] for x in lines if x["id"] not in cases]:
-        sys.exit(f"no case with id {', '.join(missing)} in {score.CASES.name}")
+        sys.exit(f"no case with id {', '.join(missing)} in {' + '.join(f.name for f in a.cases)}")
     stem = a.jsonl.with_suffix("")
     out = stem.with_name(stem.name + "_rescored")
     meta = judge.meta_from(Path(f"{stem}.md"), a.jsonl, lines)
     old_sha = meta["cases_sha"]
-    meta.update(judged_from=None, cases_sha=hashlib.sha256(score.CASES.read_bytes()).hexdigest()[:12])
+    meta.update(judged_from=None, cases_sha=" + ".join(hashlib.sha256(f.read_bytes()).hexdigest()[:12] for f in a.cases))
     rows, changed = [], []
     with open(f"{out}.jsonl", "w") as fj:
         for x in lines:

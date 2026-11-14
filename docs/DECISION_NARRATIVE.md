@@ -644,7 +644,15 @@ session before the fixes were committed. They had already been written and the
 run had started, so I froze them exactly as they were, with no tuning on what
 that run showed, and the log says so.
 
-*Draws on D104, D105, D106, D107, D108, D109, D110, D111; SPEC §9, §10.*
+The final runs on all 50 cases, one each: Claude 44, the 9B cloud Qwen 31 and
+the 27B cloud Qwen 35. On my 10 held-out cases Claude got 8 and both Qwen
+models got 6. Two of Claude's misses were only wording the check did not
+expect; one, on the ambiguous distributor, I accepted, which makes it 45 on the
+corrected cases. That pattern is why the next ticket moves wording checks to
+the judge and adds a letter grade beside pass/fail, without touching the bar or
+the measured numbers.
+
+*Draws on D104, D105, D106, D107, D108, D109, D110, D111, D117, D118; SPEC §9, §10.*
 
 ---
 
