@@ -598,7 +598,8 @@ model server, five commands build the data and run every offline test; from a
 fresh clone that took seconds. Second, asking a question needs an Ollama server,
 because every question is embedded for document search, even on the Claude
 path. I said that plainly rather than imply the whole thing runs from a clone
-alone. The diagram is Mermaid inside the README, so it stays text and changes
+alone. From a fresh clone, with the models already on the box, the first cited
+answer came back 41 seconds after the clone started. The diagram is Mermaid inside the README, so it stays text and changes
 with the code.
 
 The results table shows the measured runs. The Claude score on the corrected

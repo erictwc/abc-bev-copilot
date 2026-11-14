@@ -35,8 +35,9 @@ make test-adapter test-tools test-loop evals-check
 
 **2. Ask a question: needs Ollama for document search, and one model path.** Every question can call
 `search_docs`, which embeds the question with `qwen3-embedding:0.6b` on an Ollama server. Any Ollama on your own
-machine or home network works; `OLLAMA_HOST` must be a private or loopback address (D11, D49). This tier was not
-timed from a fresh clone (D104).
+machine or home network works; `OLLAMA_HOST` must be a private or loopback address (D11, D49). From a fresh clone of
+this repo, with both models already pulled on the box, tier 1, `make index` and one Claude question took 41 s in all
+(9 s, 27 s and 5 s; the question cost $0.0147). The time for `ollama pull` is not included (D104).
 
 ```sh
 ollama pull qwen3-embedding:0.6b              # on the machine OLLAMA_HOST points to
