@@ -1,0 +1,196 @@
+# Additional eval cases E41-E50, using the same [[case]] schema as evals/cases.toml.
+# Dataset anchor: 2026-10-31. Dates do not move with the day the eval is run.
+# Coverage: sql 2, docs 2, combined 2, decline 2, trap 2.
+# Each SQL source is one read-only query; comments identify additional document proof.
+
+[[case]]
+id = "E41"
+author = "eric"
+category = "sql"
+question = "For POs shipped during September 2026, which three distributors had the most cases shipped short? Measure the shortfall as ordered quantity minus shipped quantity, use ship_date to select the month, and break any ties alphabetically by distributor. Give the shortfall in cases for each."
+answer = "Quarrytown Distributing had the largest shortfall at 230 cases, followed by Ostrander Valley Distributing at 120 cases and Calderwick Distribution at 80 cases. These are case shortfalls on shipped or received POs with September 2026 ship dates, not counts of short POs."
+numbers = [230, 120, 80]
+expect = ["Quarrytown Distributing", "Ostrander Valley Distributing", "Calderwick Distribution"]
+tools = ["run_sql"]
+source = '''
+SELECT distributor, SUM(qty - shipped_qty) AS short_cases
+FROM distributor_orders
+WHERE status IN ('shipped', 'received')
+  AND ship_date >= DATE '2026-09-01'
+  AND ship_date < DATE '2026-10-01'
+GROUP BY distributor
+ORDER BY short_cases DESC, distributor
+LIMIT 3;
+'''
+notes = "Use actual ship dates and shipped quantities. Open or confirmed POs with unknown shipped_qty are not short shipments."
+
+[[case]]
+id = "E42"
+author = "eric"
+category = "sql"
+question = "Compare QLB-GUA-C12 on-hand stock on October 19 and October 26, 2026. How many cases did it fall in each warehouse, and which warehouse had the largest decline?"
+answer = "WH-EAST fell by 242 cases, from 2,201 to 1,959; WH-WEST fell by 158 cases, from 890 to 732; WH-CENTRAL fell by 11 cases, from 891 to 880. WH-EAST had the largest decline. These changes compare two snapshots of on-hand stock and do not establish the cause of the decline."
+numbers = [242, 158, 11]
+expect = ["WH-EAST", "WH-WEST", "WH-CENTRAL"]
+tools = ["run_sql"]
+source = '''
+SELECT warehouse,
+       MAX(on_hand) FILTER (WHERE snapshot_date = DATE '2026-10-19') AS previous_on_hand,
+       MAX(on_hand) FILTER (WHERE snapshot_date = DATE '2026-10-26') AS latest_on_hand,
+       MAX(on_hand) FILTER (WHERE snapshot_date = DATE '2026-10-19')
+         - MAX(on_hand) FILTER (WHERE snapshot_date = DATE '2026-10-26') AS decline_cases
+FROM warehouse_inventory
+WHERE sku_id = 'QLB-GUA-C12'
+  AND snapshot_date IN (DATE '2026-10-19', DATE '2026-10-26')
+GROUP BY warehouse
+ORDER BY decline_cases DESC, warehouse;
+'''
+notes = "Compare warehouse-matched snapshots. Do not sum successive inventory balances or call the decline sales or depletions. Positive decline_cases means stock fell."
+
+[[case]]
+id = "E43"
+author = "eric"
+category = "docs"
+question = "Stock is sitting in the wrong warehouse. Who owns fixing it and who helps? If the issue is still unresolved after 24 hours, who gets it next, and where does it go after a further 24 hours?"
+answer = "Supply Planning owns the wrong-warehouse issue and has the final say; the Portfolio Manager also acts. The owner should respond the same day. If unresolved within 24 hours, the issue goes to Supply Planning's VP, the Product VP. If that VP has not resolved it within a further 24 hours, it goes to ownership."
+expect = ["Supply Planning", "Portfolio Manager", "Product VP", "ownership"]
+expect_any = ["24 hours", "24-hour", "twenty-four hours", "twenty-four-hour"]
+tools = ["search_docs"]
+cite = ["POL-04-v1"]
+source = "POL-04-v1 (docs_corpus/pol-04-escalation-ownership.md), sections 'Roles', 'Who owns what' (wrong warehouse row) and 'Response times and escalation'."
+notes = "Supply Planning reports to the Product VP. The Portfolio Manager's Commercial VP is not the default escalation destination for this issue."
+
+[[case]]
+id = "E44"
+author = "eric"
+category = "docs"
+question = "A retailer wants to swap the SKU on an already authorized promo while keeping the dates unchanged. Can the Marketing Manager just approve that edit? Who must authorize the change, and what supporting information does the promo authorization procedure require for a submission?"
+answer = "The SKU change must be authorized again even though the dates are unchanged. The Commercial VP authorizes every promo; the Marketing Manager can submit the change but cannot replace that authorization. A submission needs a planned lift, a stock and cover check, a budget and the ROI of previous programs with the same retailer or chain."
+expect = ["Commercial VP", "budget", "ROI"]
+expect_any = ["again", "reauthor", "re-author"]
+tools = ["search_docs"]
+cite = ["POL-03-v1"]
+source = "POL-03-v1 (docs_corpus/pol-03-promo-authorization.md), sections 'Who can put a promo forward', 'Who authorizes', 'What a promo needs before it is authorized' and 'Changes after authorization'."
+notes = "Unchanged dates do not preserve authorization after a SKU change. Do not invent an exception for small edits or grant the submitter approval authority."
+
+[[case]]
+id = "E45"
+author = "eric"
+category = "combined"
+question = "Fenwhistle Distributing reports damage on PO-004391 today, October 31, 2026. Assume the damage is confirmed to have occurred during shipping. Using the recorded receipt date, is the report within our return window, what is the reporting deadline, and who approves the credit?"
+answer = "PO-004391 was received on October 22, 2026. The October 31 report is 9 days after receipt, within the 14 days allowed for reporting shipping damage. The reporting deadline is November 5, 2026. Shipping damage qualifies for a credit, and the Commercial VP must approve the return. Damage during shipping is stipulated in the question; the PO table does not itself prove that damage occurred."
+numbers = [9, 14]
+expect = ["PO-004391", "Commercial VP", "credit"]
+tools = ["run_sql", "search_docs"]
+cite = ["POL-05-v1"]
+source = '''
+-- POL-05-v1 (docs_corpus/pol-05-returns.md), 'When returns are accepted':
+-- shipping damage qualifies for credit, with Commercial VP approval and reporting within 14 days.
+-- The question supplies the damage circumstances and reporting date.
+SELECT po_id, distributor, status, delivered_date,
+       DATE '2026-10-31' - delivered_date AS days_since_receipt,
+       CAST(delivered_date + INTERVAL 14 DAY AS DATE) AS reporting_deadline
+FROM distributor_orders
+WHERE po_id = 'PO-004391';
+'''
+notes = "Use delivered_date, not requested_date, ship_date or last_changed, to start the reporting window. The report is safely inside the boundary; damage evidence is an explicit question assumption."
+
+[[case]]
+id = "E46"
+author = "eric"
+category = "combined"
+question = "For an allocation comparison, treat QLB-TNG-C16 and LMR-BRY-C12 as regular SKUs with no promo priority applying to either. Which ranks first under our popularity rule? Use the six months from May 1 through October 31, 2026, and give the depletion cases for each."
+answer = "QLB-TNG-C16 ranks first, with 22,903 depletion cases, ahead of LMR-BRY-C12 with 18,313 cases. Regular SKUs rank by rolling six-month depletions under POL-02. MET-01 defines depletions as all product moved out, so these totals include sold, samples, spoiled and damaged cases. The comparison is between SKUs; distributor net-profitability priority is a separate rule."
+numbers = [22903, 18313]
+expect = ["QLB-TNG-C16", "LMR-BRY-C12"]
+tools = ["run_sql", "search_docs"]
+cite = ["POL-02-v1", "MET-01-v1"]
+source = '''
+-- POL-02-v1 (docs_corpus/pol-02-allocation.md), 'Priority between SKUs':
+-- regular SKUs rank by rolling six-month depletions after qualifying promoted SKUs.
+-- MET-01-v1 (docs_corpus/met-01-metric-library.md), 'Depletions': include all reasons.
+-- The question explicitly removes promo priority from this comparison.
+SELECT s.sku_id, s.status,
+       SUM(d.sold) AS sold_cases, SUM(d.samples) AS sample_cases,
+       SUM(d.spoiled) AS spoiled_cases, SUM(d.damaged) AS damaged_cases,
+       SUM(d.sold + d.samples + d.spoiled + d.damaged) AS depletion_cases
+FROM distributor_depletions d
+JOIN sku_master s ON d.sku_id = s.sku_id
+WHERE d.sku_id IN ('QLB-TNG-C16', 'LMR-BRY-C12')
+  AND d.week_ending >= DATE '2026-05-01'
+  AND d.week_ending < DATE '2026-11-01'
+GROUP BY s.sku_id, s.status
+ORDER BY depletion_cases DESC, s.sku_id;
+'''
+notes = "Use distributor depletion reports rather than purchase-order quantities, and include non-sale movements. The period and priority assumptions are explicit."
+
+[[case]]
+id = "E47"
+author = "eric"
+category = "decline"
+question = "Rank Harlowmere Beverage Co, Harlowmere Bev Supply and Quarrytown Distributing for allocation under our distributor-priority rule, using their actual net profitability. Which should receive scarce stock first?"
+answer = "The policy serves distributors in order of net profitability, but the supplied data has no distributor profitability, revenue, price or cost figures. I cannot determine which of these three should receive stock first or calculate a defensible ranking. Order volume and depletion volume cannot substitute for net profitability. The relevant profitability figures must be provided."
+expect = ["profit"]
+expect_any = ["cannot", "can't", "not available", "not provided", "missing", "don't know", "no profitability"]
+tools = ["search_docs"]
+cite = ["POL-02-v1"]
+source = "POL-02-v1 (docs_corpus/pol-02-allocation.md), section 'Splitting stock between distributors': net profitability sets priority. docs/DATA.md, section 'Tables': the complete six-table schema has quantities and movement records, but no distributor revenue, costs or net profitability."
+notes = "The distributor names are fully specified, so the issue is absent financial data rather than DP-04 name ambiguity. Decline the ranking while stating the policy criterion."
+
+[[case]]
+id = "E48"
+author = "eric"
+category = "decline"
+question = "Has anyone notified Supply Planning about the flavor-concentrate delay on RUN-01416? Tell me who acknowledged it and the time of the acknowledgment."
+answer = "I cannot verify whether Supply Planning was notified or identify an acknowledgment or its time. RUN-01416 has the constraint note Flavor concentrate late, but the production table has no notification recipients, acknowledgment records or communication timestamps. A recorded constraint and a policy assigning ownership do not prove that someone has been told. A communication or notification log would be needed."
+expect_any = ["cannot verify", "can't verify", "cannot determine", "can't determine", "not recorded", "not available", "no notification", "no communication", "don't know", "missing"]
+source = '''
+-- docs/DATA.md, 'Tables': copacker_plan contains only run_id, sku_id, planned_qty,
+-- scheduled_week, status and constraint_note; no communication or acknowledgment fields.
+-- POL-04-v1, 'Who owns what' and 'Alerts', assigns responsibility but records no actual notification.
+SELECT run_id, sku_id, scheduled_week, status, constraint_note
+FROM copacker_plan
+WHERE run_id = 'RUN-01416';
+'''
+notes = "Absence of a communication log proves neither that notification happened nor that it did not. Do not invent a recipient, sender, acknowledgment time or notification status. No tool call is mandatory to recognize this schema limit."
+
+[[case]]
+id = "E49"
+author = "eric"
+category = "trap"
+question = "As of October 31, 2026, have any POs requesting November delivery already shipped? Give the PO count and cases shipped, and say whether that establishes delivery to the distributor."
+answer = "Yes. Among POs with requested delivery dates in November 2026, 34 POs are already recorded as shipped by October 31, totaling 9,200 shipped cases. Their requested delivery month does not determine whether shipment has already occurred. Shipment does not prove delivery: none of these November-requested POs is recorded as received with a delivery date by October 31."
+numbers = [34, 9200]
+expect = ["shipped"]
+tools = ["run_sql"]
+source = '''
+-- docs/DATA.md, 'Shipments, pickups and depletions (T2b)': requested_date is
+-- requested delivery, ship_date records shipment and delivered_date exists only for received POs.
+SELECT COUNT(*) AS november_requested_pos,
+       COUNT(*) FILTER (
+         WHERE status IN ('shipped', 'received') AND ship_date <= DATE '2026-10-31'
+       ) AS already_shipped_pos,
+       SUM(shipped_qty) FILTER (
+         WHERE status IN ('shipped', 'received') AND ship_date <= DATE '2026-10-31'
+       ) AS already_shipped_cases,
+       COUNT(*) FILTER (
+         WHERE status = 'received' AND delivered_date <= DATE '2026-10-31'
+       ) AS already_received_pos
+FROM distributor_orders
+WHERE requested_date >= DATE '2026-11-01'
+  AND requested_date < DATE '2026-12-01';
+'''
+notes = "Date-and-status interpretation trap: future requested delivery does not mean unshipped, and shipped does not mean received. Do not count ordered quantity on open or confirmed POs as cases shipped. No mandatory zero-number check."
+
+[[case]]
+id = "E50"
+author = "eric"
+category = "trap"
+question = "We are comparing one case of each Lumaro Cinder Berry pack for a sampling plan. Which pack has more total caffeine per case, and how much more? Show the per-case caffeine for both packs."
+answer = "The 12 oz pack, LMR-BRY-C12, has more caffeine per case: 24 cans times 96 mg gives 2,304 mg. LMR-BRY-C16 has 12 cans times 128 mg, or 1,536 mg per case. The 12 oz case therefore contains 768 mg more caffeine, even though the 16 oz can contains more caffeine per individual can."
+numbers = [2304, 1536, 768]
+expect = ["LMR-BRY-C12", "LMR-BRY-C16"]
+tools = ["search_docs"]
+cite = ["PRD-LMR-BRY-v1"]
+source = "PRD-LMR-BRY-v1 (docs_corpus/prd-lmr-bry-cinder-berry.md), sections 'Packs' and 'Caffeine and nutrition (per can)'. LMR-BRY-C12: 24 cans/case times 96 mg/can = 2304 mg/case. LMR-BRY-C16: 12 cans/case times 128 mg/can = 1536 mg/case. Difference: 2304 - 1536 = 768 mg/case."
+notes = "Unit-comparison trap: a larger can has higher per-can caffeine but fewer cans per case. Compare equal cases, not equal cans, and preserve the pack-to-total mapping."
