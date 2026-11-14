@@ -83,12 +83,12 @@ smoke-agent:
 	@$(VPY) -m agent.smoke_agent --path $(SMOKE_PATH)
 
 ## evals: evals/cases.toml through one path, results to evals/results/ (T7, D72-D74); needs the box, and the key for
-## paid paths. e.g. make evals EVAL_PATH=cloud ONLY=E01,E02
+## paid paths. e.g. make evals EVAL_PATH=cloud ONLY=E01,E02; all 50 (T13): CASES="evals/cases.toml evals/holdout.toml"
 EVAL_PATH ?= claude
 EVAL_MODEL ?=
 ONLY ?=
 evals:
-	@$(VPY) -m evals.run --path $(EVAL_PATH) $(if $(EVAL_MODEL),--name $(EVAL_MODEL)) $(if $(ONLY),--only $(ONLY))
+	@$(VPY) -m evals.run --path $(EVAL_PATH) $(if $(EVAL_MODEL),--name $(EVAL_MODEL)) $(if $(ONLY),--only $(ONLY)) $(if $(CASES),--cases $(CASES))
 
 ## judge: judge an earlier run with claude-opus-5-5 into <run>_judged.{csv,md,jsonl} (T9, D84); needs the key.
 ## e.g. make judge RUN=evals/results/2026-11-13T2207Z_cloud_qwen-qwen3.5-9b.jsonl

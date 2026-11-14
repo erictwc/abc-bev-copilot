@@ -89,13 +89,16 @@ def main(argv=None):
     p.add_argument("--path", choices=["local", "cloud", "claude"], default="claude")
     p.add_argument("--name", help="a specific model on that path (default: the adapter's)")
     p.add_argument("--only", help="comma-separated case ids")
-    p.add_argument("--cases", type=Path, default=score.CASES, help=argparse.SUPPRESS)   # for development runs
+    p.add_argument("--cases", type=Path, nargs="+", default=[score.CASES],
+                   help="case files, run in order (T13: evals/cases.toml evals/holdout.toml)")
     p.add_argument("--out", type=Path, default=RESULTS, help=argparse.SUPPRESS)
     a = p.parse_args(argv)
     try:
-        cases = score.load(a.cases)
+        cases = [c for f in a.cases for c in score.load(f)]
     except ValueError as e:
         sys.exit(str(e))
+    if dupes := sorted({c["id"] for c in cases if [d["id"] for d in cases].count(c["id"]) > 1}):
+        sys.exit(f"case id {', '.join(dupes)} is in more than one case file")
     in_file = len(cases)
     if a.only:
         wanted = a.only.split(",")
@@ -103,7 +106,7 @@ def main(argv=None):
             sys.exit(f"no case with id {', '.join(unknown)}")
         cases = [c for c in cases if c["id"] in wanted]
     if not cases:
-        sys.exit(f"no cases in {a.cases} yet")
+        sys.exit(f"no cases in {' '.join(map(str, a.cases))} yet")
 
     model = a.name or adapter.DEFAULT[a.path]
     if model == judge.MODEL:
@@ -111,12 +114,14 @@ def main(argv=None):
     started = datetime.now(timezone.utc)
     stem = a.out / f"{started:%Y-%m-%dT%H%MZ}_{a.path}_{model.replace('/', '-').replace(':', '-')}"
     a.out.mkdir(parents=True, exist_ok=True)
-    try:
-        cases_name = str(a.cases.resolve().relative_to(score.ROOT))
-    except ValueError:
-        cases_name = a.cases.name
+    def shown(f):
+        try:
+            return str(f.resolve().relative_to(score.ROOT))
+        except ValueError:
+            return f.name
+    cases_name = "` + `".join(shown(f) for f in a.cases)
     meta = {"path": a.path, "model": model, "started": f"{started:%Y-%m-%d %H:%M}", "commit": commit(),
-            "cases": cases_name, "cases_sha": hashlib.sha256(a.cases.read_bytes()).hexdigest()[:12],
+            "cases": cases_name, "cases_sha": " + ".join(hashlib.sha256(f.read_bytes()).hexdigest()[:12] for f in a.cases),
             "in_file": in_file, "selected": len(cases), "status": "incomplete: interrupted"}
     rows = []
     with open(f"{stem}.csv", "w", newline="") as fc, open(f"{stem}.jsonl", "w") as fj:

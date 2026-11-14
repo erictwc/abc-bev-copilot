@@ -156,6 +156,24 @@ class Runner(unittest.TestCase):
             lines = [json.loads(x) for x in Path(f"{stem}.jsonl").read_text().splitlines()]
             self.assertEqual(lines[1]["result"]["answer"], "It will be 10.")
 
+    def test_two_case_files_run_in_order_and_ids_must_not_repeat(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            tmp = Path(tmp)
+            one = lambda i: (f'[[case]]\nid = "{i}"\nauthor = "eric"\ncategory = "sql"\nquestion = "q{i}"\n'
+                             f'answer = "a"\nsource = "s"\nexpect = ["a"]\n\n')
+            (tmp / "a.toml").write_text(one("C1"))
+            (tmp / "b.toml").write_text(one("C2"))
+            (tmp / "dup.toml").write_text(one("C1"))
+            with mock.patch.object(run.loop, "ask", return_value=result("a")) as ask, \
+                 mock.patch.object(run.judge, "judge", return_value={**run.NOT_JUDGED, "verdict": "pass", "cost_usd": 0}):
+                with contextlib.redirect_stdout(io.StringIO()):
+                    code = run.main(["--cases", str(tmp / "a.toml"), str(tmp / "b.toml"), "--out", str(tmp / "out")])
+                self.assertEqual((code, [c.args[0] for c in ask.call_args_list]), (0, ["qC1", "qC2"]))
+                self.assertIn("2 in `a.toml` + `b.toml`", next((tmp / "out").glob("*.md")).read_text())
+                with self.assertRaises(SystemExit) as stop:
+                    run.main(["--cases", str(tmp / "a.toml"), str(tmp / "dup.toml"), "--out", str(tmp / "out")])
+                self.assertIn("C1 is in more than one case file", str(stop.exception))
+
     def test_spend_cap_stops_and_marks_incomplete(self):
         with tempfile.TemporaryDirectory() as tmp:
             tmp = Path(tmp)
