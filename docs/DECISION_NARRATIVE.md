@@ -12,8 +12,8 @@ traced back to the dated entry.
 
 ## What the project is, and why this one
 
-The project is an order-to-shelf copilot: an assistant for a Trade Development
-manager at an energy-drink company. It answers questions like "why is this SKU
+The project is an order-to-shelf assistant for a Trade Development manager
+at an energy-drink company. It answers questions like "why is this SKU
 short at this distributor, and whose action fixes it?" from two kinds of
 evidence: the order, production, inventory and promo tables, and the company's
 written policies.
@@ -431,7 +431,7 @@ overnight, in the background on my Mac with the Mac kept awake, because it
 takes a few minutes a question. In the README each path shows its accuracy,
 the two 100% rows and whether it is safe, its median latency, and two costs
 side by side: what answering a question costs, and what grading it cost. The
-grading is the price of measuring, not of using the copilot, so I keep it apart.
+grading is the price of measuring, not of using the assistant, so I keep it apart.
 
 After the measured run I looked at the four Claude answers the judge passed but
 the code checks failed. Three checks asked for more than the question did, or
@@ -695,7 +695,13 @@ visitor gets 5 live questions per 10 minutes and 20 a day, and the whole site
 100 a day. A test sends a loop of requests and shows the limit and the cap
 stopping it.
 
-*Draws on D11, D112, D113, D114, D115, D116; SPEC §5.*
+I also stopped calling it a copilot, because that is the name of an existing
+Microsoft product. It is the Order-to-Shelf Assistant everywhere a visitor
+looks. The one place the old word stays is the first line of the system
+prompt, which is frozen with the measured results; it changes with the next
+prompt edit, when the evals are run again anyway.
+
+*Draws on D11, D112, D113, D114, D115, D116, D120; SPEC §5.*
 
 ---
 

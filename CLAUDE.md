@@ -1,6 +1,6 @@
 # Rules for the coding agent
 
-Project: ABC-BEV-CO Order-to-Shelf Copilot. Read `SPEC.md` for the design and `TICKETS.md` for the work order.
+Project: ABC-BEV-CO Order-to-Shelf Assistant. Read `SPEC.md` for the design and `TICKETS.md` for the work order.
 
 ## How to work
 

@@ -1,4 +1,4 @@
-# ABC-BEV-CO Order-to-Shelf Copilot: build spec
+# ABC-BEV-CO Order-to-Shelf Assistant: build spec
 
 Put this file in an empty repo as `SPEC.md`, add `CLAUDE.md`, `TICKETS.md` and `DECISIONS.md` from this folder, then tell Claude Code: "Read SPEC.md, CLAUDE.md and TICKETS.md. Work on T0 only."
 

@@ -53,7 +53,7 @@ Local cells give LOCAL, then LOCAL-R after the slash where it differs.
 
 How the per-1,000 figures are made: the file's total agent cost for 40 questions, divided by 40, times 1,000.
 They are a linear projection of the 40 eval questions, not a measured 1,000-question run. The judge's cost is the
-price of grading, not of answering (D84, D94); leave it out of the cost to run the copilot.
+price of grading, not of answering (D84, D94); leave it out of the cost to run the assistant.
 
 The 34/40: `BAR.md` says the measured number stands as run and a number on a corrected case set is reported
 separately. 34/40 equals the bar's 34, but it is not the measured result, and the Claude path still misses the

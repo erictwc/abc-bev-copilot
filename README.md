@@ -1,4 +1,4 @@
-# ABC-BEV-CO Order-to-Shelf Copilot
+# ABC-BEV-CO Order-to-Shelf Assistant
 
 An agent that answers supply-chain questions for a Trade Development manager at a
 fictional energy-drink company, ABC-BEV-CO. It answers from structured data (SQL
@@ -101,7 +101,7 @@ below comes from the committed results file named under the table.
 - **Maximum latency:** local 950.8 s, cloud 56.4 s, Claude 14.6 s.
 - **Cost:** agent cost per question is the model calls the answer needed. Local calls are free in money; the box's
   electricity is not counted. The judge's cost is what grading cost, kept apart because it is the price of
-  measuring, not of using the copilot (D84, D94). Totals for 40 cases: Claude $0.9409 + judge $0.3204; cloud
+  measuring, not of using the assistant (D84, D94). Totals for 40 cases: Claude $0.9409 + judge $0.3204; cloud
   $0.0464 + judge $0.2743; local $0 + judge $0.2735.
 - **Local failures that are not answers:** three cases (E03, E26, E33) stopped when the adapter's context guard
   refused a 6.3k-7.2k-token prompt at `num_ctx` 8192 (D40), and one (E31) when the box dropped the connection. They

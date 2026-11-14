@@ -18,7 +18,7 @@ reachable, show the stored answers instead:
 
 > A trade development manager at a beverage company spends hours a week answering the same questions: why is a
 > product short at a distributor, what does the policy say, who fixes it. The answers sit in order tables and
-> in policy documents. I built a copilot that answers from both, cites its evidence, and says "I don't know"
+> in policy documents. I built an assistant that answers from both, cites its evidence, and says "I don't know"
 > rather than guess. The company, ABC-BEV-CO, and all its data and documents are synthetic.
 
 ## 0:25-1:05 Demo

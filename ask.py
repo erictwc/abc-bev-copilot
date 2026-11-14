@@ -1,4 +1,4 @@
-"""Ask the copilot one question (T6): python ask.py "question" --model local|cloud|claude
+"""Ask the assistant one question (T6): python ask.py "question" --model local|cloud|claude
 
 Prints the answer, its evidence (the SQL that ran and the passages cited) and a confidence note.
 --json prints the full result dict instead. Paid paths go through the spend cap (D44, D45).
