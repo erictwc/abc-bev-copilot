@@ -591,6 +591,30 @@ test-secret-scan` proves it works from a fresh clone.
 
 ---
 
+## How the project is shown: README, walkthrough and memo facts
+
+The README promises two things a stranger can check. First, with no keys and no
+model server, five commands build the data and run every offline test; from a
+fresh clone that took seconds. Second, asking a question needs an Ollama server,
+because every question is embedded for document search, even on the Claude
+path. I said that plainly rather than imply the whole thing runs from a clone
+alone. The diagram is Mermaid inside the README, so it stays text and changes
+with the code.
+
+The results table shows the measured runs. The Claude score on the corrected
+cases, 34 of 40, appears only in a note, from its own committed file, made
+offline from the stored answers and the judge's stored verdicts, with no model
+called. The measured 31 stays the result.
+
+For the three-minute walkthrough, the failure I show is the local context guard:
+it is the one entry logged as tried and did not work, and its fix is in the
+code. I write the build-vs-buy memo myself. What Claude Code prepared for it is
+a fact sheet: each figure with the file it comes from, and no recommendation.
+
+*Draws on D104, D105, D106, D107; SPEC §9, §10.*
+
+---
+
 ## Still open
 
 These are named in the spec but not decided yet. Each gets a dated entry when it

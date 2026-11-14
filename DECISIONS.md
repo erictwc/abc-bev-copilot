@@ -313,3 +313,15 @@ For each case: decode time on the box is output tokens divided by the measured 9
 
 ## 2026-11-14 D103. No rented GPU hour for v1
 Every GPU figure stays "projected, not measured". SPEC §7's optional hour of rented GPU, to check the projection, moves to v2. It would need a rental account Eric creates, a new outbound host, and a change to `bench/run_bench.py`'s private-address check. Chosen over doing it later in T11 as its own step.
+
+## 2026-11-14 D104. The README quick start has two tiers: offline proof, then asking a question
+Tier 1 is five commands with no keys and no model server: clone, `make setup`, `make data-check`, `make db`, and the four offline test targets. From a fresh clone on Eric's Mac it took 7 seconds, including DuckDB's download with pip's cache off. Tier 2 asks a question. It needs an Ollama server for `search_docs`, since every question's embedding comes from `qwen3-embedding:0.6b` (D49), even on the Claude path; any Ollama on a private or loopback address works. Tier 2 was not timed from a fresh clone, because that would have needed a paid call or the box. Chosen over promising the offline tier only and over also committing `data/docs.duckdb`, which would skip `make index` but still need Ollama for each question, and would reverse D48/D55's gitignore.
+
+## 2026-11-14 D105. The Claude rescore on the corrected cases gets its own committed result file
+`evals/rescore.py` (`make rescore RUN=<run>.jsonl`) re-runs a stored run's code checks against the current `evals/cases.toml`, keeps the judge verdicts the run stored, calls no model, and writes `<run>_rescored.{csv,md,jsonl}` beside the run. On the measured Claude run (2026-11-14T0412Z) it gives 34/40, must-decline 6/6, injection 1/2 (E10, E38 and E39 change from fail to pass on the code checks), which matches D99. The README keeps the measured 31/40 in the table and reports 34/40 in a labeled note citing that file, as `BAR.md` asks for numbers on a corrected set. Standard library and existing modules only. Chosen over leaving 34/40 out of the README and memo, and over mentioning the correction without a figure.
+
+## 2026-11-14 D106. The README diagram is Mermaid, in the README itself
+GitHub renders it, it diffs as text, and it needs no image file or new tool. Chosen over ASCII art, which is harder to read, and over an SVG file, which would drift from the code.
+
+## 2026-11-14 D107. The walkthrough's failure and fix is the local context guard (D95)
+It is the decision log's entry marked "tried, did not work": the guard refused three prompts that fit and could not see real truncation, and the fix is in the adapter. The script says the before-and-after number waits for the committed D95 rerun. `docs/WALKTHROUGH.md` holds the script; `docs/MEMO_FACTS.md` holds the memo's figures with their source files, for Eric to write the memo from. Chosen over E20, the planted code Claude repeated, and E19, the ambiguous distributor, whose fixes are not built yet.

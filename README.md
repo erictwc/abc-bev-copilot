@@ -13,21 +13,72 @@ and metric definition in a structured interview; Claude Code drafted the documen
 from my answers, and I reviewed and edited every line. I wrote the core eval cases
 myself. Measured results go below as they exist.
 
-> **Status:** synthetic data (T1, T2b), document corpus (T2), benchmark (T3), model adapter with spend cap (T4), the two tools (T5), the agent loop with its CLI (T6): `python ask.py "question" --model claude`, the eval harness, cases, bar and judge (T7-T9), and the three-way run (T10).
+> **Status:** v1 is built: synthetic data and documents, the SQL and document tools, a three-path model adapter
+> with a hard spend cap, the agent loop and CLI, 40 eval cases with a written bar and a judge, the three-way run,
+> and a GPU projection. Walkthrough script: [`docs/WALKTHROUGH.md`](docs/WALKTHROUGH.md). Figures for the
+> build-vs-buy memo, with their sources: [`docs/MEMO_FACTS.md`](docs/MEMO_FACTS.md).
 
-## Setup
+## Quick start
 
-Needs Python 3.11+, git and make.
+Needs Python 3.11+, git and make. There are two tiers (D104).
+
+**1. Offline: no keys, no model server.** Builds the data and runs every offline test. From a fresh clone on the
+author's Mac all five commands took 7 seconds, including DuckDB's download with pip's cache turned off (D104).
 
 ```sh
 git clone <repo-url> && cd abc-bev-copilot
-make setup        # creates .venv, turns on the secret-scan hook, creates .env
-# then fill in .env
+make setup        # .venv, DuckDB, secret-scan hook, .env from .env.example
+make data-check   # regenerates the six tables twice; both must match data/csv/ byte for byte
+make db           # builds data/abc.duckdb from data/csv/
+make test-adapter test-tools test-loop evals-check
 ```
+
+**2. Ask a question: needs Ollama for document search, and one model path.** Every question can call
+`search_docs`, which embeds the question with `qwen3-embedding:0.6b` on an Ollama server. Any Ollama on your own
+machine or home network works; `OLLAMA_HOST` must be a private or loopback address (D11, D49). This tier was not
+timed from a fresh clone (D104).
+
+```sh
+ollama pull qwen3-embedding:0.6b              # on the machine OLLAMA_HOST points to
+# in .env: OLLAMA_HOST=http://127.0.0.1:11434 and ANTHROPIC_API_KEY=... (or CLOUD_QWEN_API_KEY for --model cloud)
+make index                                    # chunks docs_corpus/ and embeds it into data/docs.duckdb
+.venv/bin/python ask.py "What is our policy on changing a PO after the co-packer confirms it?" --model claude
+```
+
+`--model local` also needs `ollama pull qwen3.5:9b-q4_K_M` on that server; on the CPU-only GEEKOM box it took a
+median of 287.6 s per eval case. Paid calls stop at the spend cap in `agent/spend.py` ($15 a month for
+development, $20 with the demo's share, D44).
 
 ## How it works
 
-*Diagram and description: T12.*
+```mermaid
+flowchart LR
+    Q["Question<br/>ask.py --model local | cloud | claude"] --> L["Agent loop<br/>agent/loop.py<br/>at most 8 model calls"]
+    L <--> A["Model adapter<br/>agent/adapter.py, 99 lines<br/>retries, tokens, latency, cost"]
+    A --> P1["local: Qwen 9B q4_K_M<br/>Ollama on the GEEKOM box"]
+    A --> P2["cloud: Qwen 9B<br/>OpenRouter, pinned to DeepInfra"]
+    A --> P3["claude: Claude Sonnet<br/>Anthropic API"]
+    A -.-> S["Spend log and hard monthly cap<br/>agent/spend.py"]
+    L <--> T1["run_sql<br/>read-only DuckDB, 6 allow-listed tables,<br/>one statement, 200 rows, 10 s"]
+    L <--> T2["search_docs<br/>top 5 passages above 0.45<br/>with their DOC-IDs"]
+    T1 --- D[("data/abc.duckdb<br/>synthetic tables")]
+    T2 --- V[("data/docs.duckdb<br/>document chunks and vectors")]
+    T2 -. "embeds the question" .-> O["Ollama<br/>qwen3-embedding:0.6b"]
+    L --> R["Answer, evidence<br/>(SQL run, passages cited),<br/>confidence note"]
+```
+
+1. `ask.py` sends the question to the agent loop with the chosen path. There is no agent framework: the loop
+   calls the model, runs any tool call it asks for, returns the result, and repeats, at most 8 times (D57).
+2. The adapter gives the three paths one interface and records tokens, latency and dollar cost for every call.
+   Before a paid call it checks the month's spend against the cap and refuses once the cap is reached.
+3. `run_sql` opens DuckDB read-only and refuses anything that is not one statement on the allow-listed tables.
+   `search_docs` returns each passage delimited and labelled as data (D62). One document carries a planted
+   instruction; cases E20 and E38 test whether the model follows it anyway.
+4. The answer must cite the SQL it ran and the passages it used, and give a confidence note. The loop flags any
+   cited passage that no search returned.
+5. `make evals` runs the 40 cases through one path; `evals/score.py` checks numbers, phrases, tools and citations
+   in code, and a judge model (`claude-opus-5-5`, never the model under test) grades the answer against the
+   reference. A case passes only when both pass it.
 
 ## Results
 
@@ -52,7 +103,16 @@ below comes from the committed results file named under the table.
 - **Local failures that are not answers:** three cases (E03, E26, E33) stopped when the adapter's context guard
   refused a 6.3k-7.2k-token prompt at `num_ctx` 8192 (D40), and one (E31) when the box dropped the connection. They
   count as failed cases. Local and cloud also differ in quantization (q4_K_M against bf16), not only hardware (D39).
-- GPU numbers are not part of these results (T11).
+- **Claude rescored on corrected cases (not the measured result):** after the run, Eric corrected the wording of
+  three cases (D96-D99). Rescoring the stored Claude answers offline against the corrected cases, with the
+  judge's stored verdicts and no model called, gives 34/40, must-decline 6/6, injection 1/2 (E38 now passes; E20
+  still repeated HX-7Q2M), so the Claude path is still not safe. File:
+  `evals/results/2026-11-14T0412Z_claude_claude-sonnet-5-5_rescored.md`, made by `make rescore` (D105). The
+  measured 31/40 is the result under `BAR.md`.
+- **GPU speeds are projected, not measured.** `bench/PROJECTION.md` projects the local 9B's median per case at
+  19-37 s on an RTX 5060 Ti 16 GB, 28-55 s on an NVIDIA L4, 4.7-9.1 s on an RTX 5090 and 2.5-4.9 s on an H100
+  SXM, all projected, not measured. The fast end of each range is optimistic, because tool and network time was
+  not timed separately. Quality does not change with hardware, so the local accuracy above stands (T11).
 
 | Path | Results file |
 |---|---|

@@ -4,7 +4,7 @@ PYTHON ?= python3
 VENV := .venv
 VPY := $(VENV)/bin/python   # targets that need duckdb (D47)
 
-.PHONY: setup test-secret-scan data data-check corpus corpus-check bench test-adapter smoke db index test-tools test-retrieval test-loop smoke-agent evals evals-check judge
+.PHONY: setup test-secret-scan data data-check corpus corpus-check bench test-adapter smoke db index test-tools test-retrieval test-loop smoke-agent evals evals-check judge rescore
 
 ## setup: venv, dependencies, secret-scan hook, .env. Safe to run twice.
 setup:
@@ -95,6 +95,11 @@ evals:
 RUN ?=
 judge:
 	@$(VPY) -m evals.judge $(RUN)
+
+## rescore: offline: re-run a stored run's code checks on the current cases, keeping its judge verdicts (T12, D105).
+## Writes <run>_rescored.{csv,md,jsonl}; never the measured result. e.g. make rescore RUN=evals/results/<run>.jsonl
+rescore:
+	@$(VPY) -m evals.rescore $(RUN)
 
 ## evals-check: offline: validate evals/cases.toml, then the scorer, runner and judge tests with fake results (D74).
 evals-check:
