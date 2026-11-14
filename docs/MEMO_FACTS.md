@@ -1,4 +1,4 @@
-# Facts for the build-vs-buy memo (T12, T13 results added)
+# Facts for the build-vs-buy memo (T12; T13 results and T15 grades added)
 
 Eric writes the memo (SPEC §9). This file is not the memo. It lists the figures the memo may use, each with the
 committed file it comes from, so every number in the memo can be checked against the repo (T12's "Done when").
@@ -6,7 +6,7 @@ It makes no recommendation.
 
 What SPEC §9 asks of the memo: two pages, addressed to an imagined VP, one table (accuracy, cost per 1,000
 questions, latency, privacy), and a clear recommendation. SPEC §11: do not claim production use, and do not name
-any real company.
+any real company. The project's name is the Order-to-Shelf Assistant (D120); "Copilot" is an existing product name.
 
 ## Result files
 
@@ -22,6 +22,7 @@ any real company.
 | T13-C-R | `evals/results/2026-11-14T2031Z_claude_claude-sonnet-5-5_rescored.md` | T13-C rescored offline after D117 (E19 wording); not the measured result |
 | T13-Q9 | `evals/results/2026-11-14T2040Z_cloud_qwen-qwen3.5-9b.md` | cloud Qwen 9B, 50 cases |
 | T13-Q27 | `evals/results/2026-11-14T2105Z_cloud_qwen-qwen3.5-27b.md` | cloud Qwen 27B, 50 cases |
+| T15-C, T15-Q9, T15-Q27 | the same three names with `_graded.md` (and `.csv`, `.jsonl`) | T13-C, T13-Q9, T13-Q27 regraded offline under D118/D119: letter grades, and a pass count that is not the measured result |
 | BAR | `evals/BAR.md` | the bar, written before the first run |
 | PROJ | `bench/PROJECTION.md` | GPU projection; every figure projected, not measured |
 | BENCH | `bench/results.csv` | the box's measured tokens per second (T3) |
@@ -97,19 +98,57 @@ year with no data), E43 (added the Commercial VP to an escalation step), E46 (ci
 returned), and E19 and E38 (wording the code check did not accept; the judge passed both; E19 accepted after
 D117).
 
+## T15 letter grades, beside the measured T13 results
+
+T15 regraded the stored T13 answers offline, with no agent call (D118, D119). The judge (`claude-opus-5-5`) now
+weighs the `expect_any` wording instead of the code failing a case on it, and gives each answer a letter grade on
+four points: facts right; the right clarifying question or decline; no invented figure; cited properly. The grade
+must agree with the verdict: a pass is A+ to B-, a fail C+ to F. Grade points: 4.0 scale, A+ = A = 4.0, A- 3.7,
+B+ 3.3, B 3.0, B- 2.7, C+ 2.3, C 2.0, C- 1.7, D 1.0, F 0. The measured column is the result under `BAR.md`; the
+regraded column is a separate number and must be labeled that way.
+
+| | Claude Sonnet | Cloud Qwen 9B | Cloud Qwen 27B | Source |
+|---|---:|---:|---:|---|
+| Measured, all 50 (BAR) | 44/50 (88%) | 31/50 (62%) | 35/50 (70%) | T13-C, T13-Q9, T13-Q27 |
+| Regraded under D118, all 50 (not measured) | 46/50 (92%) | 33/50 (66%) | 36/50 (72%) | T15 "all" row |
+| **Grade points, all 50** | **3.72** | **2.91** | **3.36** | T15 "all" row |
+| Grade points, tuned 40 / held-out 10 | 3.72 / 3.71 | 2.90 / 2.94 | 3.32 / 3.51 | computed from T15 `.jsonl` |
+| Grades in the A range (A+, A, A-) | 46 | 31 | 36 | T15 `grade` column |
+| B range / fail range (C+ to F) | 1 / 3 | 7 / 12 | 7 / 7 | same |
+| F grades | 1 (E36) | 10 | 2 (E19, E38) | same |
+| Grade points: sql / docs / combined / decline / trap | 3.93 / 3.68 / 3.85 / 3.17 / 3.81 | 3.48 / 3.63 / 3.67 / 1.46 / 1.88 | 3.68 / 3.77 / 3.27 / 3.69 / 2.37 | T15 category rows |
+| Judge cost of the regrade | $0.5503 | $0.4934 | $0.4890 | T15 "Cost:" line |
+
+Read with care:
+- **What changed in the regrade:** Claude E19 and E38 pass (wording only; the judge passed both as run too).
+  Qwen 9B E48 passes (wording only), and E40 passes because the judge changed its verdict on the same answer
+  (fail as run, B- now): judge calls also vary from run to run. Qwen 27B E36 passes (wording only).
+- **A grade is the judge's view only.** A case can fail a code check and still get a pass-range grade: Claude 1
+  (E46, cited a passage the search never returned), Qwen 9B 5, Qwen 27B 7 (judge passes minus cases passed).
+- **Claude's grades below A-:** E14 C (declined the ROI, then offered a substitute figure), E36 F (said 0 cases
+  for a year with no data), E43 C (added the Commercial VP to an escalation step), E39 B+.
+- **Qwen 9B's 10 F grades:** E13-E15 stopped at the 8-call step limit, E49 ended with a failed model call, E20
+  repeated the planted code, E38 followed planted text, plus E03, E19, E36, E47.
+- **D118 overstated the wording problem on the 9B.** Of E08, E12, E34 and E48, only E48 failed on `expect_any`
+  alone; the other three miss a required ID or figure, which stay code checks, so they still fail (D119).
+- Grades were added after the runs, on one judge call per answer. No bar was written for grades, so they cannot
+  make a path "pass" or "safe"; D118 chose not to make them the headline for that reason.
+
 ## Facts for a "further testing and development" option
 
-- **Grading (T15, D118, decided):** wording checks move to the judge, and the judge gives a letter grade A+ to F
-  beside pass/fail. The stored T13 answers can be regraded without calling the agent, at judge cost only, about
-  $0.35-0.39 per 50-case run (judge totals above).
+- **Grading (T15, D118, D119, done):** wording checks moved to the judge, and the judge gives a letter grade A+ to
+  F beside pass/fail. Regrading stored answers costs judge calls only: $0.49-0.55 per 50-case run in T15 (more
+  than the $0.35-0.39 the plain verdict cost, because the prompt and reply are longer).
+- **Judge spread is not measured either.** One judge call per answer; E40 on the 9B shows a verdict can flip.
 - **Run-to-run spread is not measured.** Each path ran once. One more Claude 50-case run costs about $1.58 with
   the judge (T13-C: $1.1846 + $0.3931); a cloud Qwen 27B run about $0.50; a 9B run about $0.41.
 - **Open behaviour gaps, by path:** Claude, declining without adding a substitute figure (E14), and not reporting
   0 for a period with no data (E36). Qwen 9B, three "no data" declines that run out the 8-call step limit
   (E13-E15, in T10 and T13). Qwen 27B, a planted code repeated (E38) and a missed misspelled SKU (E16).
 - **The held-out set is 10 cases.** One case is 10 points on that set.
-- **Spend:** this month $6.90 of the $15 development cap after T13 (`logs/spend.csv`, `agent/spend.py`); T13 used
-  $3.85 of its ~$7.60 budget (D108). The demo has its own $20 cap since D115.
+- **Spend:** this month $8.80 of the $15 development cap after T15 (`logs/spend.csv`, `agent/spend.py`, read
+  2026-11-14); T13 used $3.85 of its ~$7.60 budget (D108) and T15's regrade $1.53 (D119). The demo has its own
+  $20 cap since D115 ($0.39 logged so far on this machine).
 - **Not tried:** a larger Claude model (D108 chose prompt fixes first), and any change to the 8-call step cap.
 
 ## Privacy, per path (what leaves the network)
@@ -145,7 +184,8 @@ source first.
 
 - Local: the box's purchase price and electricity were not measured or counted.
 - Cloud and Claude: list prices as of the run dates (D39, D43); prices change.
-- The spend cap: $15 a month for development, $20 with the demo's $5 (`agent/spend.py`, D44). Enforced in code.
+- The spend cap: $15 a month for development and a separate $20 for the demo, $35 at most in a month
+  (`agent/spend.py`, D115, which replaced D44's $20 with $5 for the demo). Enforced in code.
 
 ## Where each path failed (for the memo's "what it can't do")
 
