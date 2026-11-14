@@ -38,7 +38,13 @@ button.primary:disabled { opacity: .55; cursor: default; }
 .chip:hover { color: var(--ink); border-color: var(--muted); }
 .hint { color: var(--muted); font-size: .85rem; }
 .banner { background: var(--warn-bg); border: 1px solid var(--warn-line); border-radius: 8px; padding: 10px 12px; font-size: .92rem; }
-.answer { white-space: pre-wrap; overflow-wrap: anywhere; }
+.answer { overflow-wrap: anywhere; }
+.answer p { margin: 0 0 10px; } .answer ul, .answer ol { margin: 0 0 10px; padding-left: 22px; }
+.answer .mdh { font-weight: 700; margin-top: 14px; }
+.tablewrap { overflow-x: auto; margin: 0 0 12px; }
+.answer table { border-collapse: collapse; font-size: .9rem; }
+.answer th, .answer td { border: 1px solid var(--line); padding: 5px 9px; text-align: left; vertical-align: top; }
+.answer th { background: var(--code-bg); }
 .answer code, pre { background: var(--code-bg); border-radius: 6px; }
 .answer code { padding: 1px 4px; font-size: .9em; }
 pre { padding: 10px; overflow-x: auto; font-size: .82rem; line-height: 1.45; margin: 6px 0 12px; }
@@ -48,6 +54,13 @@ h2 { font-size: 1rem; margin: 18px 0 6px; }
 .pass { color: var(--ok); font-weight: 600; } .fail { color: var(--bad); font-weight: 600; }
 .error { color: var(--bad); font-weight: 600; }
 details summary { cursor: pointer; color: var(--muted); }
+.ref { display: grid; grid-template-columns: 1fr 1fr; gap: 6px 28px; }
+@media (max-width: 680px) { .ref { grid-template-columns: 1fr; } }
+.ref h3 { font-size: .8rem; text-transform: uppercase; letter-spacing: .05em; color: var(--muted); margin: 14px 0 6px; }
+.ref ul { margin: 0; padding-left: 18px; font-size: .92rem; }
+.ref li { margin: 2px 0; }
+.qlist .chip { display: block; width: 100%; border-radius: 8px; margin: 4px 0; font-size: .88rem; }
+details.card > summary { font-weight: 600; color: var(--ink); }
 footer { color: var(--muted); font-size: .85rem; margin-top: 28px; }
 a { color: var(--accent); }
 .spinner { display: inline-block; width: 14px; height: 14px; border: 2px solid var(--line);
@@ -62,6 +75,52 @@ a { color: var(--accent); }
   company. It answers from the company's order, production, inventory and promo tables (by writing SQL) and from its
   policy documents (by search), and it cites what it used. Every record and document is synthetic.</p>
 
+  <details class="card" id="guide" open>
+    <summary>New here? What to ask, and what is in the data</summary>
+    <p class="hint" style="margin:10px 0 0">The data runs from November 2024 to October 2026. Treat
+    <strong>October 31, 2026</strong> as today. Click any question to put it in the box.</p>
+    <div class="ref">
+      <div class="qlist" id="questions"></div>
+      <div>
+        <h3>The company</h3>
+        <ul>
+          <li><strong>4 brands</strong>, 5 flavors each, in 12 oz and 16 oz cans: 40 SKUs.
+            <br>Lumaro: Cinder Berry, Quartz Lemon, Tidal Melon, Neon Pear, Prism Punch
+            <br>Quillbolt: Comet Cranberry, Thunder Guava, Static Mango, Glacier Plum, Spark Tangerine
+            <br>Skerrix: Flint Apple, Mist Lychee, Dusk Papaya, Arc Pineapple, Gale Passionfruit
+            <br>Torvane: Velvet Cherry, Solar Grape, Frost Kiwi, Copper Peach, Midnight Yuzu</li>
+          <li>SKU IDs look like <code>TRV-YUZ-C16</code> (Torvane Midnight Yuzu, 16 oz). Names work too.</li>
+          <li><strong>12 distributors</strong>, e.g. Brindlecross Beverage, Calderwick Distribution, Fenwhistle
+            Distributing, Penmoor Beverage, Quarrytown Distributing, Rookhaven Beverage.</li>
+          <li><strong>Retail chains</strong>: Corvane Market, Corvane Express, Mirelle Mart, Pellweather Foods,
+            Stonefinch Grocer, Stonefinch Fuel Stop.</li>
+          <li><strong>3 warehouses</strong>: WH-EAST, WH-CENTRAL, WH-WEST.</li>
+        </ul>
+        <h3>Tables it can query</h3>
+        <ul>
+          <li>Distributor purchase orders (POs): status, dates, quantities, shipments</li>
+          <li>Co-packer production runs, with constraint notes</li>
+          <li>Weekly warehouse inventory: on hand, allocated, in transit</li>
+          <li>Retail promotions and whether each is authorized</li>
+          <li>Distributor weekly depletions: sold, samples, spoiled, damaged</li>
+        </ul>
+        <h3>Documents it can search</h3>
+        <ul>
+          <li>Metric library (fill rate, on-time-in-full, cover weeks, depletions, lift)</li>
+          <li>Policies: PO changes, allocation, promo authorization, escalation ownership, returns,
+            distributor onboarding</li>
+          <li>Q4 2026 receiving and holiday schedule</li>
+          <li>A product sheet for each of the 20 flavors (caffeine, calories, shelf life, case size)</li>
+        </ul>
+        <h3>What it will not do</h3>
+        <ul>
+          <li>Forecast, or answer anything the data does not hold; it should say it does not know</li>
+          <li>Change any record: its database access is read-only</li>
+        </ul>
+      </div>
+    </div>
+  </details>
+
   <div class="card">
     <label for="model">Model</label>
     <select id="model">
@@ -73,7 +132,6 @@ a { color: var(--accent); }
     <div id="live-box">
       <label for="question" style="margin-top:14px">Question</label>
       <textarea id="question" maxlength="500" placeholder="e.g. What is our policy on changing a PO after it is confirmed?"></textarea>
-      <div class="chips" id="examples"></div>
       <div class="row">
         <button class="primary" id="ask">Ask</button>
         <span class="hint" id="limits"></span>
@@ -103,12 +161,33 @@ a { color: var(--accent); }
 
 <script>
 const $ = id => document.getElementById(id);
-const EXAMPLES = [
-  "What is our policy on changing a PO after the co-packer confirms it?",
-  "Which SKUs get priority when warehouse stock is short?",
-  "How many confirmed POs have a pickup date assigned, and how many cases are on them?",
-  "What will next quarter's volume be?",
-];
+const QUESTIONS = {
+  "Orders and shipments": [
+    "How many open POs does Penmoor Beverage have, and how many cases are on them?",
+    "Which POs shipped in October 2026 went out short of the ordered quantity, and by how many cases in total?",
+  ],
+  "Inventory and production": [
+    "How many cases of Torvane Frost Kiwi 16 oz are on hand at each warehouse in the latest snapshot?",
+    "Which co-packer runs scheduled for November 2026 have a constraint note?",
+  ],
+  "Promotions": [
+    "Which promotions start in December 2026, and which of them are authorized?",
+  ],
+  "Policies and definitions": [
+    "What is our policy on changing a PO after it is confirmed?",
+    "How do we define fill rate and on-time-in-full?",
+    "Who owns fixing a co-packer problem, and when does it escalate?",
+    "How much caffeine is in a 16 oz can of Skerrix Mist Lychee, and what is its shelf life?",
+  ],
+  "Data and policy together": [
+    "Which SKUs promoted in November 2026 have less than two weeks of warehouse cover, and what does the allocation policy say to do?",
+    "Can Calderwick Distribution still change the quantity on PO-004641? Check its status and the PO change policy.",
+  ],
+  "It should decline these": [
+    "What will next quarter's volume be?",
+    "Mark PO-004407 as received.",
+  ],
+};
 let config = null, replays = [];
 
 function el(tag, attrs = {}, ...kids) {
@@ -118,13 +197,44 @@ function el(tag, attrs = {}, ...kids) {
   return e;
 }
 
-// Answers are text. Escape by building nodes; only **bold** and `code` get formatting.
+// Answers are text, built as DOM nodes and never as HTML. A small subset of markdown is shown:
+// tables, bullet and numbered lists, headings, **bold** and `code`.
+function inline(text) {
+  const frag = document.createDocumentFragment();
+  for (const part of text.split(/(\*\*[^*\n]+\*\*|`[^`\n]+`)/)) {
+    if (/^\*\*[^*]+\*\*$/.test(part)) frag.append(el("strong", {}, part.slice(2, -2)));
+    else if (/^`[^`]+`$/.test(part)) frag.append(el("code", {}, part.slice(1, -1)));
+    else if (part) frag.append(part);
+  }
+  return frag;
+}
+const cells = line => line.trim().replace(/^\|/, "").replace(/\|$/, "").split("|").map(c => c.trim());
 function richText(text) {
   const box = el("div", {class: "answer"});
-  for (const part of text.split(/(\*\*[^*\n]+\*\*|`[^`\n]+`)/)) {
-    if (/^\*\*[^*]+\*\*$/.test(part)) box.append(el("strong", {}, part.slice(2, -2)));
-    else if (/^`[^`]+`$/.test(part)) box.append(el("code", {}, part.slice(1, -1)));
-    else box.append(part);
+  const lines = text.split("\n");
+  for (let i = 0; i < lines.length;) {
+    const line = lines[i];
+    if (/^\s*\|/.test(line)) {
+      const rows = [];
+      while (i < lines.length && /^\s*\|/.test(lines[i])) rows.push(lines[i++]);
+      const table = el("table");
+      rows.filter(r => !/^\s*\|?\s*:?-{2,}/.test(r)).forEach((r, n) => {
+        const tr = el("tr");
+        for (const c of cells(r)) { const td = el(n === 0 ? "th" : "td"); td.append(inline(c)); tr.append(td); }
+        table.append(tr);
+      });
+      box.append(el("div", {class: "tablewrap"}, table));
+    } else if (/^\s*([-*]|\d+\.)\s+/.test(line)) {
+      const ordered = /^\s*\d+\./.test(line), list = el(ordered ? "ol" : "ul");
+      while (i < lines.length && /^\s*([-*]|\d+\.)\s+/.test(lines[i])) {
+        const li = el("li"); li.append(inline(lines[i++].replace(/^\s*([-*]|\d+\.)\s+/, ""))); list.append(li);
+      }
+      box.append(list);
+    } else if (/^#{1,4}\s/.test(line)) {
+      const h = el("p", {class: "mdh"}); h.append(inline(line.replace(/^#+\s*/, ""))); box.append(h); i++;
+    } else if (line.trim()) {
+      const para = el("p"); para.append(inline(line)); box.append(para); i++;
+    } else i++;
   }
   return box;
 }
@@ -192,11 +302,20 @@ function showReplay() {
 }
 
 async function init() {
-  for (const q of EXAMPLES) {
-    const b = el("button", {class: "chip", type: "button"}, q);
-    b.onclick = () => { $("question").value = q; $("question").focus(); };
-    $("examples").append(b);
+  for (const [group, qs] of Object.entries(QUESTIONS)) {
+    $("questions").append(el("h3", {}, group));
+    for (const q of qs) {
+      const b = el("button", {class: "chip", type: "button"}, q);
+      b.onclick = () => {
+        if ($("model").value === "local") { $("model").value = "claude"; syncMode(); }
+        $("question").value = q;
+        $("question").scrollIntoView({behavior: "smooth", block: "center"});
+        $("question").focus({preventScroll: true});
+      };
+      $("questions").append(b);
+    }
   }
+  if (window.matchMedia("(max-width: 680px)").matches) $("guide").open = false;
   $("model").onchange = syncMode; $("ask").onclick = ask; $("show").onclick = showReplay;
   $("question").addEventListener("keydown", e => { if (e.key === "Enter" && (e.metaKey || e.ctrlKey)) ask(); });
   try {
