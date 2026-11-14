@@ -14,11 +14,12 @@ from datetime import datetime, timezone
 from pathlib import Path
 
 SPEND_LOG = Path(__file__).resolve().parent.parent / "logs" / "spend.csv"
-CAP_USD = {"dev": 15.00, "demo": 20.00}        # D115: dev counts all rows, demo only its own (was D5, D44)
+CAP_USD = {"dev": 25.00, "demo": 20.00}        # D121: dev $25 (was $15); D115: dev counts all rows, demo only its own
 PRICE = {                                      # $ per 1M tokens (input, output), checked 2026-11-03
     "qwen/qwen3.5-9b": (0.10, 0.15),           # OpenRouter, DeepInfra host (D39)
     "qwen/qwen3-14b": (0.12, 0.24),
     "qwen/qwen3.5-27b": (0.26, 2.60),
+    "moonshotai/kimi-k3": (2.85, 14.25),       # DeepInfra endpoint, checked 2026-11-14 (D121)
     "claude-sonnet-5-5": (2.00, 10.00),        # D43
     "claude-opus-5-5": (4.00, 20.00),
 }

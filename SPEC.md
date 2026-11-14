@@ -89,7 +89,7 @@ Each file starts with a header `DOC-ID`, title, owner, effective date.
 ## 5. Cost control
 
 - A spend log table records every model call (model, tokens, cost, timestamp).
-- A hard monthly cap, enforced in code: the adapter refuses to call a paid model once the cap is reached. Development stops at **$15**; the hosted demo has its own **$20**, counted on demo calls only (D115, which replaced the original $20 total with $5 for the demo).
+- A hard monthly cap, enforced in code: the adapter refuses to call a paid model once the cap is reached. Development stops at **$25** (D121; it was $15); the hosted demo has its own **$20**, counted on demo calls only (D115, which replaced the original $20 total with $5 for the demo).
 - Report cost per question for every model in the README.
 
 ## 6. Evaluation

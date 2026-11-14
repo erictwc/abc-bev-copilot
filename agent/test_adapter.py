@@ -48,9 +48,12 @@ class Isolated(unittest.TestCase):
         return list(csv.DictReader(io.StringIO(self.log.read_text())))
 
 
+DEV_CAP = spend.CAP_USD["dev"]
+
+
 class AdapterTest(Isolated):
     def test_dev_cap_breach_is_refused_and_never_sent(self):
-        self.seed(15.00)
+        self.seed(DEV_CAP)
         with mock.patch.object(adapter, "post", no_network):
             for path in ("cloud", "claude"):
                 with self.assertRaises(spend.CapReached):
@@ -59,12 +62,12 @@ class AdapterTest(Isolated):
         self.assertEqual([r["cost_usd"] for r in self.rows()[1:]], ["0", "0"])
 
     def test_worst_case_of_the_next_call_counts(self):
-        self.seed(14.99)        # under $15, but 4,000 output tokens on Sonnet could cost $0.04
+        self.seed(DEV_CAP - 0.01)        # under the cap, but 4,000 output tokens on Sonnet could cost $0.04
         with mock.patch.object(adapter, "post", no_network), self.assertRaises(spend.CapReached):
             adapter.call("claude", HELLO, max_tokens=4000)
 
     def test_demo_budget_counts_only_demo_rows(self):
-        self.seed(15.00)        # dev is at its cap; a demo call is still allowed (D115)
+        self.seed(DEV_CAP)        # dev is at its cap; a demo call is still allowed (D115)
         with mock.patch.object(adapter, "post", return_value=CLAUDE_OK):
             out = adapter.call("claude", HELLO, budget="demo")
         self.assertEqual(out["text"], "OK")
@@ -75,7 +78,7 @@ class AdapterTest(Isolated):
             adapter.call("claude", HELLO, budget="demo")
 
     def test_demo_rows_still_count_against_dev(self):
-        self.seed(15.00, budget="demo")
+        self.seed(DEV_CAP, budget="demo")
         with mock.patch.object(adapter, "post", no_network), self.assertRaises(spend.CapReached):
             adapter.call("claude", HELLO)
 

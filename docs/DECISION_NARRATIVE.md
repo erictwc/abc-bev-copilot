@@ -662,7 +662,14 @@ measured 44, 35 and 31 stay the result. Three of the 9B misses I had put down
 to wording turned out to miss a required ID or figure, which the code still
 checks, so they still fail.
 
-*Draws on D104, D105, D106, D107, D108, D109, D110, D111, D117, D118, D119; SPEC §9, §10.*
+To see whether a bigger open model closes the gap, I added one more run: Kimi K3,
+the open-weight model with the best published agentic scores. It goes through the
+same cloud route and host as the Qwen runs, with the same per-call limits as every
+other path, and the run counts any answer the token limit cut short. The testing
+budget is a few dollars, so I raised the development cap from $15 to $25 rather
+than risk the run stopping halfway.
+
+*Draws on D104, D105, D106, D107, D108, D109, D110, D111, D117, D118, D119, D121; SPEC §5, §9, §10.*
 
 ---
 
