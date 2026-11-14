@@ -652,7 +652,17 @@ corrected cases. That pattern is why the next ticket moves wording checks to
 the judge and adds a letter grade beside pass/fail, without touching the bar or
 the measured numbers.
 
-*Draws on D104, D105, D106, D107, D108, D109, D110, D111, D117, D118; SPEC §9, §10.*
+For the grades I kept the letter tied to the verdict: a pass is A+ to B-, a fail
+C+ to F, so a grade can never contradict pass/fail. Points follow the usual 4.0
+scale. Regrading the stored answers cost only judge calls, $1.53, a bit more
+than estimated. Claude comes out at 3.72 grade points, the 27B cloud Qwen at
+3.36 and the 9B at 2.91. Under the new wording rule Claude would pass 46 of 50,
+the 27B 36 and the 9B 33; those are shown as a separate, labeled number, and the
+measured 44, 35 and 31 stay the result. Three of the 9B misses I had put down
+to wording turned out to miss a required ID or figure, which the code still
+checks, so they still fail.
+
+*Draws on D104, D105, D106, D107, D108, D109, D110, D111, D117, D118, D119; SPEC §9, §10.*
 
 ---
 
