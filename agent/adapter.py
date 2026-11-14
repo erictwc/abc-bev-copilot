@@ -7,7 +7,7 @@ from pathlib import Path
 from agent import spend
 
 DEFAULT = {"local": "qwen3.5:9b-q4_K_M", "cloud": "qwen/qwen3.5-9b", "claude": "claude-sonnet-5-5"}
-NUM_CTX = 8192         # Ollama cuts a longer prompt without an error, so the size is fixed and checked (D40)
+NUM_CTX = 16384        # fixed; truncate/shift off so Ollama refuses or stops rather than cutting (D40, D95)
 RETRIES = 3            # D42: waits of 2, 4, 8 s, or the server's retry-after
 ENV = Path(__file__).resolve().parent.parent / ".env"
 
@@ -48,9 +48,9 @@ def send_local(model, messages, tools, max_tokens):
             raise RuntimeError(f"refusing {url.hostname}: {ip} is not a home-network address")
     r = post(f"http://{url.hostname}:{url.port or 11434}/api/chat", {
         "model": model, "messages": messages, "tools": [{"type": "function", "function": t} for t in tools],
-        "stream": False, "options": {"num_ctx": NUM_CTX, "num_predict": max_tokens}}, {}, 1800)
-    if r.get("prompt_eval_count", 0) + max_tokens > NUM_CTX:     # counts only tokens not in Ollama's prompt cache
-        raise RuntimeError(f"a {r['prompt_eval_count']}-token prompt may have been cut to num_ctx={NUM_CTX}")
+        "stream": False, "truncate": False, "shift": False, "options": {"num_ctx": NUM_CTX, "num_predict": max_tokens}}, {}, 1800)
+    if r.get("done_reason") == "length" and r.get("eval_count", 0) < max_tokens:   # an over-long prompt is a 400
+        raise RuntimeError(f"the reply ran out of context at num_ctx={NUM_CTX} after {r['prompt_eval_count']} prompt tokens")
     return {"text": r["message"].get("content", ""), "tool_calls": function_calls(r["message"].get("tool_calls")),
             "input_tokens": r.get("prompt_eval_count", 0), "output_tokens": r.get("eval_count", 0),
             "stop": r.get("done_reason"), "message": r["message"]}

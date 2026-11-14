@@ -190,7 +190,19 @@ fit in the budget; Opus 5.5 stays available by name. The local path asks Ollama
 for a fixed context window on every call, because otherwise a long prompt would
 be cut short without any error.
 
-*Draws on D4, D39, D40, D42, D43, D46; SPEC §4.*
+The first guard against that did not work, and the three-way run showed it. It
+added the most a reply may be (2,048 tokens) to the prompt's size, so it failed
+three local answers whose prompts actually fit in the 8,192-token window. And it
+could not see a real cut: when a prompt is too long, Ollama keeps only about
+half of the window and reports that smaller count, which looks normal. One local
+case was probably answered from a cut prompt. Rather than guess at token counts,
+the local path now tells Ollama not to cut at all: a prompt that is too long
+comes back as an error that names its size, and a reply that runs into the end
+of the window stops and fails instead of quietly dropping earlier text. I also
+doubled the window to 16,384 tokens, which the box handles, so long tool results
+fit. Both behaviors were tested on the box before the change.
+
+*Draws on D4, D39, D40, D42, D43, D46, D95; SPEC §4.*
 
 ---
 
@@ -557,4 +569,5 @@ is decided.
   as tickets raise them
 
 The spec also asks for at least three entries recording things that were tried
-and did not work. None exist yet; they will come from the build.
+and did not work. The first is the local context guard (D95); the others will
+come from the build.

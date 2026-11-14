@@ -90,6 +90,27 @@ class AdapterTest(Isolated):
             out = adapter.call("local", HELLO)
         self.assertEqual((out["cost_usd"], out["input_tokens"]), (0, 12))
 
+    def test_local_asks_ollama_to_refuse_rather_than_cut(self):
+        # D95: Ollama silently cut an over-long prompt to ~num_ctx/2 tokens; truncate/shift off makes it refuse or stop.
+        reply = {"message": {"content": "OK"}, "prompt_eval_count": 12, "eval_count": 2, "done_reason": "stop"}
+        with mock.patch.object(adapter, "post", return_value=reply) as post, \
+                mock.patch.dict("os.environ", {"OLLAMA_HOST": "127.0.0.1"}):
+            adapter.call("local", HELLO)
+        body = post.call_args.args[1]
+        self.assertEqual((body["truncate"], body["shift"], body["options"]["num_ctx"]), (False, False, adapter.NUM_CTX))
+
+    def test_local_reply_that_runs_out_of_context_fails(self):
+        cut = {"message": {"content": "1\n2\n3"}, "prompt_eval_count": 16300, "eval_count": 84, "done_reason": "length"}
+        with mock.patch.object(adapter, "post", return_value=cut), mock.patch.dict("os.environ", {"OLLAMA_HOST": "127.0.0.1"}):
+            with self.assertRaisesRegex(RuntimeError, "ran out of context"):
+                adapter.call("local", HELLO, max_tokens=2048)
+
+    def test_local_reply_that_reaches_max_tokens_is_not_a_context_error(self):
+        full = {"message": {"content": "x"}, "prompt_eval_count": 7000, "eval_count": 2048, "done_reason": "length"}
+        with mock.patch.object(adapter, "post", return_value=full), mock.patch.dict("os.environ", {"OLLAMA_HOST": "127.0.0.1"}):
+            out = adapter.call("local", HELLO, max_tokens=2048)
+        self.assertEqual(out["stop"], "length")
+
     def test_local_refuses_a_public_address(self):
         with mock.patch.dict("os.environ", {"OLLAMA_HOST": "http://8.8.8.8:11434"}), mock.patch.object(adapter, "post", no_network):
             with self.assertRaisesRegex(RuntimeError, "not a home-network address"):
