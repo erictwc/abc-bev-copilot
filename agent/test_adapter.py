@@ -33,9 +33,9 @@ class Isolated(unittest.TestCase):
         self.addCleanup(patch.stop)
         self.addCleanup(self.tmp.cleanup)
 
-    def seed(self, cost, timestamp=None):
-        """Pretend this much was already spent, by default this month."""
-        spend.log("ok", {"path": "claude", "model": "claude-sonnet-5-5", "budget": "dev", "cost_usd": cost})
+    def seed(self, cost, timestamp=None, budget="dev"):
+        """Pretend this much was already spent, by default this month on the dev budget."""
+        spend.log("ok", {"path": "claude", "model": "claude-sonnet-5-5", "budget": budget, "cost_usd": cost})
         if timestamp:
             rows = self.rows()
             rows[-1]["timestamp"] = timestamp
@@ -63,16 +63,21 @@ class AdapterTest(Isolated):
         with mock.patch.object(adapter, "post", no_network), self.assertRaises(spend.CapReached):
             adapter.call("claude", HELLO, max_tokens=4000)
 
-    def test_demo_budget_may_spend_the_reserved_five_dollars(self):
-        self.seed(15.00)
+    def test_demo_budget_counts_only_demo_rows(self):
+        self.seed(15.00)        # dev is at its cap; a demo call is still allowed (D115)
         with mock.patch.object(adapter, "post", return_value=CLAUDE_OK):
             out = adapter.call("claude", HELLO, budget="demo")
         self.assertEqual(out["text"], "OK")
         self.assertAlmostEqual(out["cost_usd"], (1000 * 2.00 + 100 * 10.00) / 1e6)
         self.assertEqual(self.rows()[-1]["status"], "ok")
-        self.seed(4.999)        # $19.999 spent: even a demo call is now refused
+        self.seed(19.99, budget="demo")     # demo rows now near $20: the next demo call is refused
         with mock.patch.object(adapter, "post", no_network), self.assertRaises(spend.CapReached):
             adapter.call("claude", HELLO, budget="demo")
+
+    def test_demo_rows_still_count_against_dev(self):
+        self.seed(15.00, budget="demo")
+        with mock.patch.object(adapter, "post", no_network), self.assertRaises(spend.CapReached):
+            adapter.call("claude", HELLO)
 
     def test_last_months_spend_does_not_count(self):
         self.seed(19.99, timestamp="2000-01-31T23:59:59+00:00")

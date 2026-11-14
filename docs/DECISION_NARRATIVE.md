@@ -648,6 +648,39 @@ that run showed, and the log says so.
 
 ---
 
+## The hosted demo
+
+A hiring team will try the project on a web page, not from a clone, and three
+things had to hold there: no keys in the browser, a stranger cannot run up the
+bill, and the home network stays closed.
+
+Document search was the hard part. Every question is turned into a vector on
+the mini PC at home, and that box is never reachable from the internet. So the
+demo carries its own copy of the same embedding model, at the same version, on
+the same server as the page. The build checks retrieval against the questions
+I used when I set the threshold, and fails if anything moved. The local model
+itself is far too slow on that box for a live page, so it shows recorded
+answers to the 40 eval questions, labelled as replays, with the time each one
+took and whether it passed.
+
+The server is the Python standard library and one plain page, so the demo adds
+no framework. It runs on a free Hugging Face Space with paid persistent
+storage. The storage matters because the spend log is what enforces the cap,
+and a restart that wiped it would wipe the cap with it; without that disk the
+demo starts with live answers switched off.
+
+I gave the demo its own $20 a month instead of the $5 I first set aside, and
+development keeps its $15. A demo server cannot see what I spend on my laptop,
+so one shared total could not be enforced in code anyway. The demo's API keys
+also have their own limits at Anthropic and OpenRouter, as a second line. Each
+visitor gets 5 live questions per 10 minutes and 20 a day, and the whole site
+100 a day. A test sends a loop of requests and shows the limit and the cap
+stopping it.
+
+*Draws on D11, D112, D113, D114, D115, D116; SPEC §5.*
+
+---
+
 ## Still open
 
 These are named in the spec but not decided yet. Each gets a dated entry when it

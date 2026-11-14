@@ -60,7 +60,7 @@ One ticket per Claude Code session. Eric reviews at each "Done when" before the 
 Eric's target is 39/40 on the Claude path. It is a goal, not the bar: `BAR.md` and the measured T10 result do not change, and the new numbers are reported beside them whether or not they reach it.
 *Done when:* committed result files exist for the three paths on the 50 cases, git history shows the held-out cases committed after the frozen fix, and the README reports before and after.
 
-**T14. Hosted demo, moved from V6 into v1 (D109).** Small web app with a model dropdown; Claude and cloud Qwen live behind rate limits and the $5 demo budget; local Qwen shows recorded real runs, labeled as replays; no keys in the browser; request logging. Hosting, framework and any new dependency are chosen with Eric and logged first.
+**T14. Hosted demo, moved from V6 into v1 (D109).** Small web app with a model dropdown; Claude and cloud Qwen live behind rate limits and the demo budget ($20 a month since D115); local Qwen shows recorded real runs, labeled as replays; no keys in the browser; request logging. Hosting, framework and any new dependency are chosen with Eric and logged first.
 *Done when:* a stranger can try it, and a loop of repeated requests is stopped by the rate limit and cap.
 
 **Walkthrough video, moved from V8 into v1 (D109).** Eric records the 3-minute walkthrough from `docs/WALKTHROUGH.md` once T13's numbers are in it, and the README links it. V8 keeps the portfolio card.

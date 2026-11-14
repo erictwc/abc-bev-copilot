@@ -1,0 +1,217 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Order-to-Shelf Copilot</title>
+<style>
+:root {
+  --bg: #f7f6f2; --card: #ffffff; --ink: #1d1d1b; --muted: #66645e; --line: #dedbd2;
+  --accent: #1f5f8b; --accent-ink: #ffffff; --warn-bg: #fff4dc; --warn-line: #e3c27a;
+  --code-bg: #f1efe9; --ok: #2e7d4f; --bad: #a33a2b;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #161615; --card: #201f1d; --ink: #ecebe6; --muted: #a3a097; --line: #3a3834;
+    --accent: #6fb0dd; --accent-ink: #10202b; --warn-bg: #3a3020; --warn-line: #7a6430;
+    --code-bg: #2a2926; --ok: #6cc28f; --bad: #e58b7c;
+  }
+}
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--bg); color: var(--ink);
+  font: 16px/1.55 system-ui, -apple-system, "Segoe UI", sans-serif; }
+main { max-width: 820px; margin: 0 auto; padding: 28px 16px 64px; }
+h1 { font-size: 1.6rem; margin: 0 0 4px; letter-spacing: -0.01em; }
+.sub { color: var(--muted); margin: 0 0 20px; }
+.card { background: var(--card); border: 1px solid var(--line); border-radius: 10px; padding: 18px; margin: 16px 0; }
+label { font-weight: 600; font-size: .9rem; display: block; margin: 0 0 6px; }
+select, textarea, button { font: inherit; color: inherit; }
+select, textarea { width: 100%; background: var(--bg); border: 1px solid var(--line); border-radius: 8px; padding: 9px 10px; }
+textarea { min-height: 84px; resize: vertical; }
+.row { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; margin-top: 12px; }
+button.primary { background: var(--accent); color: var(--accent-ink); border: 0; border-radius: 8px;
+  padding: 10px 18px; font-weight: 600; cursor: pointer; }
+button.primary:disabled { opacity: .55; cursor: default; }
+.chips { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; }
+.chip { background: transparent; border: 1px solid var(--line); border-radius: 999px; padding: 4px 11px;
+  font-size: .85rem; cursor: pointer; color: var(--muted); text-align: left; }
+.chip:hover { color: var(--ink); border-color: var(--muted); }
+.hint { color: var(--muted); font-size: .85rem; }
+.banner { background: var(--warn-bg); border: 1px solid var(--warn-line); border-radius: 8px; padding: 10px 12px; font-size: .92rem; }
+.answer { white-space: pre-wrap; overflow-wrap: anywhere; }
+.answer code, pre { background: var(--code-bg); border-radius: 6px; }
+.answer code { padding: 1px 4px; font-size: .9em; }
+pre { padding: 10px; overflow-x: auto; font-size: .82rem; line-height: 1.45; margin: 6px 0 12px; }
+h2 { font-size: 1rem; margin: 18px 0 6px; }
+.meta { color: var(--muted); font-size: .85rem; margin-top: 14px; border-top: 1px solid var(--line); padding-top: 10px; }
+.flag { color: var(--bad); font-size: .9rem; }
+.pass { color: var(--ok); font-weight: 600; } .fail { color: var(--bad); font-weight: 600; }
+.error { color: var(--bad); font-weight: 600; }
+details summary { cursor: pointer; color: var(--muted); }
+footer { color: var(--muted); font-size: .85rem; margin-top: 28px; }
+a { color: var(--accent); }
+.spinner { display: inline-block; width: 14px; height: 14px; border: 2px solid var(--line);
+  border-top-color: var(--accent); border-radius: 50%; animation: spin .8s linear infinite; vertical-align: -2px; }
+@keyframes spin { to { transform: rotate(360deg); } }
+</style>
+</head>
+<body>
+<main>
+  <h1>Order-to-Shelf Copilot</h1>
+  <p class="sub">An AI assistant for a trade development manager at ABC-BEV-CO, a <strong>fictional</strong> energy-drink
+  company. It answers from the company's order, production, inventory and promo tables (by writing SQL) and from its
+  policy documents (by search), and it cites what it used. Every record and document is synthetic.</p>
+
+  <div class="card">
+    <label for="model">Model</label>
+    <select id="model">
+      <option value="claude">Claude Sonnet 5.5 (live)</option>
+      <option value="cloud">Qwen 3.5 9B, hosted in the cloud (live)</option>
+      <option value="local">Qwen 3.5 9B on a mini PC at home (recorded replay)</option>
+    </select>
+
+    <div id="live-box">
+      <label for="question" style="margin-top:14px">Question</label>
+      <textarea id="question" maxlength="500" placeholder="e.g. What is our policy on changing a PO after it is confirmed?"></textarea>
+      <div class="chips" id="examples"></div>
+      <div class="row">
+        <button class="primary" id="ask">Ask</button>
+        <span class="hint" id="limits"></span>
+      </div>
+    </div>
+
+    <div id="replay-box" hidden>
+      <div class="banner" style="margin-top:14px">
+        <strong>Replay, not live.</strong> The local model runs on a small CPU-only mini PC on a home network that is
+        never exposed to the internet, so this page shows its real recorded answers to the 40 evaluation questions,
+        exactly as they came out, with the time each one took.
+      </div>
+      <label for="replay" style="margin-top:14px">Recorded question</label>
+      <select id="replay"></select>
+      <div class="row"><button class="primary" id="show">Show recorded answer</button></div>
+    </div>
+  </div>
+
+  <div id="out"></div>
+
+  <footer>
+    <p>Live answers run on a monthly demo budget with per-visitor limits. Questions are logged, with your IP address
+    hashed, to keep the demo working and see what people ask; please do not type personal information.</p>
+    <p>How it was built and measured: <a href="https://github.com/erictwc/abc-bev-copilot">the project repository</a>.</p>
+  </footer>
+</main>
+
+<script>
+const $ = id => document.getElementById(id);
+const EXAMPLES = [
+  "What is our policy on changing a PO after the co-packer confirms it?",
+  "Which SKUs get priority when warehouse stock is short?",
+  "How many confirmed POs have a pickup date assigned, and how many cases are on them?",
+  "What will next quarter's volume be?",
+];
+let config = null, replays = [];
+
+function el(tag, attrs = {}, ...kids) {
+  const e = document.createElement(tag);
+  for (const [k, v] of Object.entries(attrs)) k === "class" ? e.className = v : e.setAttribute(k, v);
+  for (const k of kids) e.append(k);
+  return e;
+}
+
+// Answers are text. Escape by building nodes; only **bold** and `code` get formatting.
+function richText(text) {
+  const box = el("div", {class: "answer"});
+  for (const part of text.split(/(\*\*[^*\n]+\*\*|`[^`\n]+`)/)) {
+    if (/^\*\*[^*]+\*\*$/.test(part)) box.append(el("strong", {}, part.slice(2, -2)));
+    else if (/^`[^`]+`$/.test(part)) box.append(el("code", {}, part.slice(1, -1)));
+    else box.append(part);
+  }
+  return box;
+}
+
+function showResult(r, replay) {
+  const out = $("out"); out.replaceChildren();
+  const card = el("div", {class: "card"});
+  if (replay) {
+    card.append(el("div", {class: "banner"},
+      el("strong", {}, "Replay, not live. "),
+      `Recorded ${replay.when} on the mini PC (${r.model}, CPU only). In the evaluation this answer `,
+      el("span", {class: replay.passed ? "pass" : "fail"}, replay.passed ? "passed" : "failed"), "."));
+  }
+  card.append(el("h2", {}, r.question));
+  card.append(richText((r.answer || "").trim()));
+
+  const ev = r.evidence || {sql: [], passages_cited: [], passages_retrieved: []};
+  const det = el("details", {open: ""}); det.append(el("summary", {}, "Evidence"));
+  for (const s of ev.sql) {
+    det.append(el("div", {class: "hint"}, s.ok ? `SQL it ran (${s.rows} rows)` : `SQL refused by the guard: ${s.error}`));
+    det.append(el("pre", {}, s.sql.trim()));
+  }
+  det.append(el("div", {class: "hint"}, "Document passages cited: " + (ev.passages_cited.length ? ev.passages_cited.join(", ") : "none")));
+  if (!ev.sql.length && !ev.passages_retrieved.length) det.append(el("div", {class: "hint"}, "No tool was used."));
+  card.append(det);
+
+  card.append(el("h2", {}, "Confidence"), el("div", {}, r.confidence || "unstated"));
+  for (const f of r.flags || []) card.append(el("div", {class: "flag"}, "Flag: " + f));
+  const tokens = (r.input_tokens || 0) + (r.output_tokens || 0);
+  card.append(el("div", {class: "meta"},
+    `${r.model} · ${r.steps} model calls · ${tokens.toLocaleString()} tokens · ` +
+    (r.path === "local" ? "no API cost" : `$${(r.cost_usd || 0).toFixed(4)}`) + ` · ${(r.latency_s || 0).toFixed(1)} s`));
+  out.append(card);
+}
+
+function showError(msg) {
+  $("out").replaceChildren(el("div", {class: "card"}, el("div", {class: "error"}, msg)));
+}
+
+function syncMode() {
+  const local = $("model").value === "local";
+  $("live-box").hidden = local; $("replay-box").hidden = !local;
+}
+
+async function ask() {
+  const question = $("question").value.trim();
+  if (!question) return showError("Type a question first.");
+  $("ask").disabled = true;
+  $("out").replaceChildren(el("div", {class: "card"}, el("span", {class: "spinner"}),
+    " Working: the model may run several SQL queries and searches. This usually takes 5 to 60 seconds."));
+  try {
+    const resp = await fetch("/api/ask", {method: "POST", headers: {"Content-Type": "application/json"},
+      body: JSON.stringify({question, model: $("model").value})});
+    const data = await resp.json().catch(() => ({error: `The server answered ${resp.status}.`}));
+    resp.ok ? showResult(data) : showError(data.error || `The server answered ${resp.status}.`);
+  } catch (e) {
+    showError("Could not reach the server. Check your connection and try again.");
+  } finally { $("ask").disabled = false; }
+}
+
+function showReplay() {
+  const c = replays[$("replay").value]; if (!c) return;
+  const m = (config && config.replay_file || "").match(/^(\d{4}-\d\d-\d\d)T(\d\d)(\d\d)Z/);
+  showResult(c.result, {passed: c.passed, when: m ? `${m[1]} ${m[2]}:${m[3]} UTC` : "earlier"});
+}
+
+async function init() {
+  for (const q of EXAMPLES) {
+    const b = el("button", {class: "chip", type: "button"}, q);
+    b.onclick = () => { $("question").value = q; $("question").focus(); };
+    $("examples").append(b);
+  }
+  $("model").onchange = syncMode; $("ask").onclick = ask; $("show").onclick = showReplay;
+  $("question").addEventListener("keydown", e => { if (e.key === "Enter" && (e.metaKey || e.ctrlKey)) ask(); });
+  try {
+    config = await (await fetch("/api/config")).json();
+    const [[, perTen], [, perDay]] = config.per_visitor;
+    $("limits").textContent = config.live
+      ? `Up to ${perTen} live questions per 10 minutes and ${perDay} per day.`
+      : "Live answers are paused right now; the recorded replays still work.";
+    const data = await (await fetch("/api/replays")).json();
+    replays = data.cases;
+    replays.forEach((c, i) => $("replay").append(el("option", {value: i}, `${c.id}: ${c.result.question}`)));
+  } catch (e) { $("limits").textContent = "Could not load the demo settings."; }
+  syncMode();
+}
+init();
+</script>
+</body>
+</html>
