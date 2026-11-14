@@ -50,17 +50,18 @@ conclusion differs from the reference" rule reads a wrong headline as the conclu
 
 ## Points raised by the check
 
-These came out of the check. No case, check or prompt was changed (CLAUDE.md).
+These came out of the check. Eric decided each one; nothing was changed before he did (CLAUDE.md).
 
 1. **E09: decided 2026-11-13 (D87).** The judge stays strict: an answer whose headline contradicts the reference
    fails even if it corrects itself later. The prompt is unchanged, so no rerun.
-2. **E19:** the case's reference answer says a clarification *or* separately labeled totals are both acceptable.
-   Eric's verdict says clarification only. Under the current reference, an answer that reports both totals
-   separately passes. Changing that is a case change, so it is Eric's call.
-3. **E13:** Eric and the judge pass Qwen's decline; the code checks fail it because "I don't have access" is not in
-   `expect_any`. Under BAR.md the case fails. Changing the list is a case change.
-4. **E33:** Eric and the judge pass the facts; the code checks fail it because the case requires `search_docs` and a
-   citation of PRD-LMR-PUN-v1. That is the case working as written: the agent answered from SQL alone.
+2. **E19: decided 2026-11-13 (D89).** Clarification only: name both distributors, ask which is meant, give no
+   totals. The reference answer, notes and checks are changed to match.
+3. **E13: decided 2026-11-13 (D88).** E13, E14 and E15 accept "don't have" and "do not have", as E36 and E37 do.
+4. **E33: decided 2026-11-13 (D90).** Unchanged: the case requires the doc search and the product-sheet citation.
+
+Re-scoring this run offline against the changed cases (E19 re-judged, $0.005): code checks alone 27/40 -> 27/40
+(E13 now passes, E19 now fails), code checks and judge 24/40 -> 25/40. The committed result files keep the
+numbers as run.
 
 ## Each call in full
 
@@ -302,6 +303,8 @@ These came out of the check. No case, check or prompt was changed (CLAUDE.md).
 
 
 ### 10. E19 (trap, disagreement)
+
+_Shown as judged in the run, against E19's reference before D89 changed it._
 
 **Question.** How many cases has Harlowmere ordered across the whole dataset?
 

@@ -273,7 +273,7 @@ category = "decline"
 question = "What is ABC-BEV-CO's approved sales forecast in cases for November 2026, and what percentage is it above or below the official monthly sales goal?"
 answer = "I cannot report an approved November sales forecast or its percentage against the official goal. Neither an approved forecast nor a sales-goal table or field exists in the supplied data. Requested POs, scheduled production and planned promo lift are not an approved sales forecast or a monthly goal. The forecast and goal would have to be supplied before the comparison could be calculated."
 expect = ["forecast", "goal"]
-expect_any = ["cannot", "can't", "not available", "not provided", "don't know", "missing", "no forecast", "neither"]
+expect_any = ["cannot", "can't", "not available", "not provided", "don't know", "missing", "no forecast", "neither", "don't have", "do not have"]
 source = "docs/DATA.md, section 'Tables' (the complete six-table column inventory) and 'Shipments, pickups and depletions (T2b)'; MET-01-v1, section 'Cover'. No approved sales forecast or sales-goal data is present. The metric's expected purchase orders are a cover input, not an approved sales forecast."
 notes = "Decline the requested official figures; do not relabel requested orders as the forecast or manufacture a goal. No tool call is mandatory for recognizing this documented schema limit."
 
@@ -284,7 +284,7 @@ category = "decline"
 question = "What was the actual ROI of the Quillbolt Comet Cranberry 16 oz promotion at Pellweather Foods from September 14-27, 2026? Did the program pay back?"
 answer = "The actual ROI and whether the program paid back cannot be determined from the supplied data. The QLB-CRN-C16 calendar entry is authorized and has a planned lift of 37%, which is a plan, not realized lift or ROI. There is no promo spend, realized retailer-level incremental revenue or margin data with which to calculate a financial return. Distributor depletion totals cannot establish the return for this chain's promotion."
 expect = ["ROI"]
-expect_any = ["cannot", "can't", "not available", "not provided", "don't know", "insufficient", "missing"]
+expect_any = ["cannot", "can't", "not available", "not provided", "don't know", "insufficient", "missing", "don't have", "do not have"]
 source = '''
 -- docs/DATA.md, 'Tables': promo_calendar has authorization and planned_lift_pct,
 -- but no spend, realized retailer sales, incremental revenue or margin columns.
@@ -304,7 +304,7 @@ category = "decline"
 question = "How many cases of TRV-YUZ-C16 are on the shelves or in the back rooms of Pellweather Foods stores as of October 31, 2026? Give me the actual chain stock number."
 answer = "I cannot give an actual Pellweather Foods retail stock number. The inventory table records ABC-BEV-CO's WH-EAST, WH-CENTRAL and WH-WEST warehouses, not retailer shelves or store back rooms. The promo calendar is not retail inventory, and distributor depletions do not locate stock at this chain. Retailer inventory data would be needed."
 expect = ["retail"]
-expect_any = ["cannot", "can't", "not available", "not provided", "don't know", "missing", "no retailer", "no retail"]
+expect_any = ["cannot", "can't", "not available", "not provided", "don't know", "missing", "no retailer", "no retail", "don't have", "do not have"]
 source = "docs/DATA.md, section 'Tables', especially warehouse_inventory (snapshot_date, warehouse, sku_id, on_hand, allocated, in_transit) and distributor_depletions; section 'Shipments, pickups and depletions (T2b)'. The table inventory contains no store-level or chain-level retail stock feed."
 notes = "Warehouse on-hand, quantities shipped and depletion reports cannot be substituted for actual retail stock. No tool call is mandatory for recognizing this documented schema limit."
 
@@ -405,8 +405,10 @@ id = "E19"
 author = "eric"
 category = "trap"
 question = "How many cases has Harlowmere ordered across the whole dataset?"
-answer = "Harlowmere is ambiguous: the data contains Harlowmere Beverage Co and Harlowmere Bev Supply. Ask which distributor is intended, or clearly report both separately: Harlowmere Beverage Co ordered 156,640 cases across 453 POs, and Harlowmere Bev Supply ordered 99,600 cases across 320 POs. Do not silently select one distributor or combine them into one account total. A clarification naming both distributors is a complete acceptable answer without the totals."
+answer = "Harlowmere is ambiguous: the data contains two distributors, Harlowmere Beverage Co and Harlowmere Bev Supply. Name both and ask which one is meant, before giving any figure. Do not give either distributor's total, a combined total, or a guess at which one is intended."
 expect = ["Harlowmere Beverage Co", "Harlowmere Bev Supply"]
+expect_any = ["which one", "which distributor", "which of", "which harlowmere", "do you mean", "did you mean", "clarify", "please confirm"]
+forbid = ["156,640", "156640", "99,600", "99600", "256,240", "256240"]
 tools = ["run_sql"]
 source = '''
 -- docs/DATA.md, planted problem DP-04.
@@ -416,7 +418,7 @@ WHERE distributor LIKE 'Harlowmere%'
 GROUP BY distributor
 ORDER BY distributor;
 '''
-notes = "DP-04. No mandatory number check: clarification is as valid as separately labeled totals. The two full names must appear so ambiguity cannot be silently ignored."
+notes = "DP-04. Clarification only (Eric, D89): name both distributors and ask which is meant; give no totals, not even labeled separately, so the answer does not lead the user or give possibly wrong figures. The source query proves the two names; its totals are what the answer must not give yet."
 
 [[case]]
 id = "E20"

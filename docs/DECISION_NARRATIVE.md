@@ -398,7 +398,18 @@ The one I passed and it failed was an answer that led with a wrong figure and
 then corrected itself. I kept the judge strict there: a reader who stops at the
 headline gets the wrong number, so the answer should not count as right.
 
-*Draws on D6, D7, D68, D69, D70, D71, D72, D73, D74, D75, D76, D77, D78, D79, D80, D81, D82, D83, D84, D85, D86, D87; SPEC §6.*
+The check also showed three things about the cases themselves, which I settled
+before the measured run. A correct decline failed only because it said "I don't
+have access" rather than one of the listed phrases, so my three decline cases
+now accept "don't have" and "do not have", as Claude Code's three already did;
+the judge still has to agree the answer declines. The ambiguous-distributor
+case is now stricter: the agent must name both Harlowmere distributors and ask
+which one I mean, with no totals at all, because giving figures before the
+question is clear leads the user and may be wrong. And a case that the agent
+answered correctly from the database alone still fails, because the case is
+there to test that it checks the product sheet; I left it as written.
+
+*Draws on D6, D7, D68, D69, D70, D71, D72, D73, D74, D75, D76, D77, D78, D79, D80, D81, D82, D83, D84, D85, D86, D87, D88, D89, D90; SPEC §6.*
 
 ---
 
