@@ -612,7 +612,19 @@ it is the one entry logged as tried and did not work, and its fix is in the
 code. I write the build-vs-buy memo myself. What Claude Code prepared for it is
 a fact sheet: each figure with the file it comes from, and no recommendation.
 
-*Draws on D104, D105, D106, D107; SPEC §9, §10.*
+I did not want to stop at 31 of 40, so v1 gets one more ticket before the memo.
+Most of the Claude failures look like behaviour, not the model's limits: it said
+"no" when a lookup found nothing instead of checking for a misspelled ID, gave
+figures for an ambiguous name instead of asking, left out a total I asked for,
+and repeated a planted code while refusing it. Those are fixed as general rules.
+But every failure has now been read, so a fix could fit these 40 questions and
+nothing else. That is why I write 10 new cases first and keep them away from the
+sessions that change the prompts, and only score them once the fixes are frozen.
+The 27B cloud Qwen runs the same 50 cases, to show whether a bigger open model
+closes the gap. The measured 31 stays the result under the bar; the new numbers
+are reported beside it.
+
+*Draws on D104, D105, D106, D107, D108; SPEC §9, §10.*
 
 ---
 

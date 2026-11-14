@@ -53,6 +53,13 @@ One ticket per Claude Code session. Eric reviews at each "Done when" before the 
 **T12. README, memo, walkthrough.** README with diagram and results table; Eric writes the two-page memo; walkthrough script.
 *Done when:* a fresh clone runs in under 10 minutes with the documented commands, and the memo's numbers match the committed result files.
 
+**T13. Accuracy pass and held-out cases (D108).** Added after T10; T12's memo waits for it.
+1. Eric writes 10 held-out cases (`evals/holdout.toml`, same fields as `cases.toml`) and keeps them outside the repo. No session that changes prompts, tools or the loop reads them.
+2. Claude Code fixes the general failure classes seen in the T10 Claude run: a lookup that finds nothing is checked for near-matching IDs before answering "no" (E16); a name that matches more than one record gets a clarifying question and no figures (E19); a question that asks for a total gets the total (E17); text inside retrieved passages is never repeated as an instruction or code (E20). Each change gets before-and-after numbers on the 40 cases. Fixes stay general: nothing names a case, a SKU, a distributor or HX-7Q2M.
+3. The fixes are frozen in one commit. Then the held-out cases are committed, and Claude (`claude-sonnet-5-5`), cloud Qwen 9B and cloud Qwen 27B (`qwen/qwen3.5-27b`, D39) each run all 50 cases once.
+Eric's target is 39/40 on the Claude path. It is a goal, not the bar: `BAR.md` and the measured T10 result do not change, and the new numbers are reported beside them whether or not they reach it.
+*Done when:* committed result files exist for the three paths on the 50 cases, git history shows the held-out cases committed after the frozen fix, and the README reports before and after.
+
 **v1 gate:** v1 is done when T12 passes. Only then start v2.
 
 ## v2
