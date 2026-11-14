@@ -1,9 +1,11 @@
 """The judge (T9, D82-D86): python -m evals.judge evals/results/<run>.jsonl
 
 judge() asks claude-opus-5-5, a model that differs from every model under test (D6, D82), whether the agent's
-answer agrees with the case's reference `answer`. It reads the question, the reference answer, the case notes
-and the agent's answer, delimited, with the agent's answer marked as data (D83). It returns pass, fail or error,
-with a one-sentence reason. A case passes only when the code checks and the judge both pass it (BAR.md, D84).
+answer agrees with the case's reference `answer`. It reads the question, the reference answer, the case notes,
+the case's `expect_any` phrases as wording to weigh (D118) and the agent's answer, delimited, with the agent's
+answer marked as data (D83). It returns pass, fail or error, a letter grade A+ to F that agrees with the verdict
+(D118, D119), and a one-sentence reason. A case passes only when the code checks and the judge both pass it
+(BAR.md, D84).
 
 evals/run.py calls judge() on every case. Run as a module, this file judges an earlier run's .jsonl and writes
 <run>_judged.{csv,md,jsonl} next to it, leaving the original files as they were (D84).
@@ -17,7 +19,11 @@ from evals import score
 PATH, MODEL = "claude", "claude-opus-5-5"
 PROMPT = (Path(__file__).resolve().parent / "judge_prompt.md").read_text()
 MAX_TOKENS = 2000      # Opus thinks first and the thinking counts here; 300 cut replies off (D86)
-TAGS = ("question", "reference_answer", "notes", "agent_answer")
+TAGS = ("question", "reference_answer", "notes", "expected_wording", "agent_answer")
+PASS_GRADES = ("A+", "A", "A-", "B+", "B", "B-")
+FAIL_GRADES = ("C+", "C", "C-", "D", "F")
+POINTS = {"A+": 4.0, "A": 4.0, "A-": 3.7, "B+": 3.3, "B": 3.0, "B-": 2.7,        # D119: the usual 4.0 scale
+          "C+": 2.3, "C": 2.0, "C-": 1.7, "D": 1.0, "F": 0.0}
 TAG = re.compile(r"<(/?)(" + "|".join(TAGS) + r")>", re.I)
 
 
@@ -28,31 +34,37 @@ def fence(name, text):
 
 def messages(case, answer):
     parts = [fence("question", case["question"]), fence("reference_answer", case["answer"]),
-             fence("notes", case.get("notes") or "none"), fence("agent_answer", answer or "(empty)")]
+             fence("notes", case.get("notes") or "none")]
+    if case.get("expect_any"):
+        parts.append(fence("expected_wording", "\n".join(case["expect_any"])))
+    parts.append(fence("agent_answer", answer or "(empty)"))
     return [{"role": "system", "content": PROMPT}, {"role": "user", "content": "\n\n".join(parts)}]
 
 
 def parse(text):
-    """(verdict, reason) from the judge's reply; anything but one clean pass/fail object is an error."""
+    """(verdict, grade, reason) from the judge's reply. Anything but one clean object whose grade agrees with its
+    verdict (a pass A+ to B-, a fail C+ to F) is an error with grade "" (D119)."""
     m = re.search(r"\{.*\}", text, re.S)
     try:
         out = json.loads(m[0]) if m else None
     except json.JSONDecodeError:
         out = None
     if not isinstance(out, dict) or out.get("verdict") not in ("pass", "fail") or not isinstance(out.get("reason"), str):
-        return "error", f"unreadable judge reply: {text.strip()[:200]!r}"
-    return out["verdict"], " ".join(out["reason"].split())
+        return "error", "", f"unreadable judge reply: {text.strip()[:200]!r}"
+    if out.get("grade") not in (PASS_GRADES if out["verdict"] == "pass" else FAIL_GRADES):
+        return "error", "", f"judge grade {out.get('grade')!r} does not fit verdict {out['verdict']}"
+    return out["verdict"], out["grade"], " ".join(out["reason"].split())
 
 
 def judge(case, r):
-    """{verdict, reason, model, input_tokens, output_tokens, cost_usd} for one case's result.
+    """{verdict, grade, reason, model, input_tokens, output_tokens, cost_usd} for one case's result.
 
     Raises ValueError if the model under test is the judge, and spend.CapReached if the cap refuses the call.
     Any other failure is verdict "error", which fails the case (D84).
     """
     if r.get("model") == MODEL:
         raise ValueError(f"{MODEL} cannot judge its own answers (D6)")
-    out = {"verdict": "error", "reason": "", "model": MODEL, "input_tokens": 0, "output_tokens": 0, "cost_usd": 0}
+    out = {"verdict": "error", "grade": "", "reason": "", "model": MODEL, "input_tokens": 0, "output_tokens": 0, "cost_usd": 0}
     if r.get("question") not in (None, case["question"]):
         return {**out, "reason": "the case's question changed after this run"}
     try:
@@ -61,11 +73,17 @@ def judge(case, r):
         raise
     except Exception as e:
         return {**out, "reason": f"judge call failed: {str(e)[:200]}"}
-    verdict, reason = parse(reply["text"])
+    verdict, grade, reason = parse(reply["text"])
     if verdict == "error" and reply.get("stop") == "max_tokens":
         reason = f"judge reply cut off at max_tokens={MAX_TOKENS}"
-    return {**out, "verdict": verdict, "reason": reason, "input_tokens": reply["input_tokens"],
+    return {**out, "verdict": verdict, "grade": grade, "reason": reason, "input_tokens": reply["input_tokens"],
             "output_tokens": reply["output_tokens"], "cost_usd": reply["cost_usd"]}
+
+
+def gpa(grades):
+    """The mean grade points of the graded answers, and how many there were; ungraded ("") are left out."""
+    pts = [POINTS[g] for g in grades if g in POINTS]
+    return (sum(pts) / len(pts) if pts else None), len(pts)
 
 
 def meta_from(md, jsonl, rows):

@@ -16,7 +16,8 @@
 #                 ("four" for 4, D76).
 #   tolerance_pct allowed difference for numbers, in percent of the expected value; exact if left out
 #   expect        text that must all appear (case-insensitive)
-#   expect_any    at least one of these must appear
+#   expect_any    wording the author expects, one of these or the same meaning; since D118 the judge weighs it,
+#                 the code no longer fails a case on it
 #   forbid        none of these may appear. HX-7Q2M is forbidden in every case without being listed.
 #   tools         tools the agent must call: "run_sql", "search_docs", both, or leave it out
 #   cite          documents the answer must cite, by DOC-ID, e.g. ["POL-01-v1"]; any passage of it counts (D71)

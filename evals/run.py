@@ -17,10 +17,10 @@ from agent import adapter, loop, spend
 from evals import judge, score
 
 RESULTS = score.ROOT / "evals" / "results"
-COLUMNS = ["id", "category", "author", "pass", "code_pass", "judge", "judge_reason", "failed", "tools_expected",
+COLUMNS = ["id", "category", "author", "pass", "code_pass", "judge", "grade", "judge_reason", "failed", "tools_expected",
            "tools_used", "tools_ok", "citation_ok", "stopped", "steps", "confidence", "latency_s", "input_tokens",
            "output_tokens", "cost_usd", "judge_cost_usd"]
-NOT_JUDGED = {"verdict": "error", "reason": "not judged: the spend cap stopped the run", "model": judge.MODEL,
+NOT_JUDGED = {"verdict": "error", "grade": "", "reason": "not judged: the spend cap stopped the run", "model": judge.MODEL,
               "input_tokens": 0, "output_tokens": 0, "cost_usd": 0}
 
 
@@ -35,7 +35,8 @@ def row(case, r, s, j):
     failed = s["failed"] + ([] if j["verdict"] == "pass" else [f"judge {j['verdict']}: {j['reason']}"])
     return {"id": case["id"], "category": case["category"], "author": case["author"],
             "pass": "pass" if s["pass"] and j["verdict"] == "pass" else "fail",
-            "code_pass": "pass" if s["pass"] else "fail", "judge": j["verdict"], "judge_reason": j["reason"],
+            "code_pass": "pass" if s["pass"] else "fail", "judge": j["verdict"], "grade": j.get("grade", ""),
+            "judge_reason": j["reason"],
             "failed": "; ".join(failed),
             "tools_expected": " ".join(case.get("tools", [])), "tools_used": " ".join(s["tools_used"]),
             "tools_ok": s["tools_ok"], "citation_ok": s["citation_ok"],
@@ -55,7 +56,9 @@ def summary(rows, meta):
     """The .md file: run details, pass rate by category, totals, then one line per case."""
     def rate(rs):
         n = lambda k, v="pass": sum(x[k] == v for x in rs)
-        return f"| {n('code_pass')} | {n('judge')} | {n('pass')} | {n('pass') / len(rs):.0%} |"
+        g, graded = judge.gpa(x["grade"] for x in rs)
+        shown = "-" if g is None else f"{g:.2f}" + ("" if graded == len(rs) else f" ({graded} graded)")
+        return f"| {n('code_pass')} | {n('judge')} | {n('pass')} | {n('pass') / len(rs):.0%} | {shown} |"
     out = [f"# Eval results: {meta['path']} {meta['model']}", "",
            f"- Run: {meta['started']} UTC, commit `{meta['commit']}`, budget `dev`",
            f"- Cases: {len(rows)} run of {meta['selected']} selected, {meta['in_file']} in `{meta['cases']}` "
@@ -64,8 +67,9 @@ def summary(rows, meta):
            *([f"- Judged afterwards from `{meta['judged_from']}`; the code checks are as scored in that run"]
              if meta.get("judged_from") else []),
            f"- Judge: `{judge.MODEL}` (T9, D82-D84). A case passes only when the code checks and the judge "
-           "both pass it (BAR.md)", "",
-           "| Category | Cases | Code checks | Judge | Passed | Pass rate |", "|---|---:|---:|---:|---:|---:|"]
+           "both pass it (BAR.md). Grade points: the judge's letter grade on the 4.0 scale, A+ = 4.0 (D118, D119)", "",
+           "| Category | Cases | Code checks | Judge | Passed | Pass rate | Grade points |",
+           "|---|---:|---:|---:|---:|---:|---:|"]
     for k in score.CATEGORIES:
         rs = [x for x in rows if x["category"] == k]
         if rs:
@@ -77,9 +81,10 @@ def summary(rows, meta):
                 f"- Cost: ${cost:.4f} total, ${cost / len(rows):.4f} per question "
                 f"(the judge: ${sum(x['judge_cost_usd'] for x in rows):.4f} more, not counted per question)",
                 f"- Latency: median {statistics.median(lat):.1f} s, max {max(lat):.1f} s"]
-    out += ["", "| Case | Category | Result | Code | Judge | Tools used | Latency (s) | Cost ($) | Failed checks |",
-            "|---|---|---|---|---|---|---:|---:|---|"]
-    out += [f"| {x['id']} | {x['category']} | {x['pass']} | {x['code_pass']} | {x['judge']} | {x['tools_used'] or '-'} | "
+    out += ["", "| Case | Category | Result | Code | Judge | Grade | Tools used | Latency (s) | Cost ($) | Failed checks |",
+            "|---|---|---|---|---|---|---|---:|---:|---|"]
+    out += [f"| {x['id']} | {x['category']} | {x['pass']} | {x['code_pass']} | {x['judge']} | {x['grade'] or '-'} | "
+            f"{x['tools_used'] or '-'} | "
             f"{x['latency_s']:.1f} | {x['cost_usd']:.4f} | {x['failed'].replace('|', '/') or '-'} |" for x in rows]
     return "\n".join(out) + "\n"
 
@@ -144,7 +149,7 @@ def main(argv=None):
                 fc.flush(), fj.flush()
                 print(f"{rows[-1]['pass'].upper()} {case['id']} [{case['category']}]: {r['steps']} calls "
                       f"[{rows[-1]['tools_used'] or 'no tools'}], ${r['cost_usd']:.4f}, {r['latency_s']:.1f} s, "
-                      f"judge {j['verdict']}" + (f" -- {rows[-1]['failed']}" if rows[-1]["failed"] else ""))
+                      f"judge {j['verdict']} {j.get('grade') or '-'}" + (f" -- {rows[-1]['failed']}" if rows[-1]["failed"] else ""))
                 if capped:
                     meta["status"] = "incomplete: the spend cap stopped the run"
                     break
