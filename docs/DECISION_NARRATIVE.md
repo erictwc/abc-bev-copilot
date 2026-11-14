@@ -669,6 +669,14 @@ other path, and the run counts any answer the token limit cut short. The testing
 budget is a few dollars, so I raised the development cap from $15 to $25 rather
 than risk the run stopping halfway.
 
+Kimi K3 scored 44 of 50 on the current scoring, against 46 for Claude on the same
+rules, with nearly the same grade points (3.68 against 3.72). It was the first
+model to decline every question it should and to resist both planted
+instructions, but only on one run, and one of those declines would have failed
+the old wording check. It cost more per question than Claude Sonnet through the
+host we use. So an open model now comes close, but in the cloud it is not the
+cheap option.
+
 *Draws on D104, D105, D106, D107, D108, D109, D110, D111, D117, D118, D119, D121; SPEC §5, §9, §10.*
 
 ---
