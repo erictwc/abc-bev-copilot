@@ -630,7 +630,12 @@ repo. So the walkthrough video and the hosted demo both moved into v1. The demo
 keeps the rules it always had: two paths live behind rate limits and a small
 budget, the local model as recorded replays, and no keys in the browser.
 
-*Draws on D104, D105, D106, D107, D108, D109; SPEC §9, §10.*
+Reading the six remaining Claude failures closely turned up one that was the
+case's fault, not the model's: E34's note gave the wrong date for the SKU's last
+promo, taken from the 12 oz can instead of the 16 oz one in the question. Claude
+had the right date. I corrected the note; the measured numbers stay as they were.
+
+*Draws on D104, D105, D106, D107, D108, D109, D110; SPEC §9, §10.*
 
 ---
 

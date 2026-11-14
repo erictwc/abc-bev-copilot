@@ -688,7 +688,7 @@ FROM copacker_plan r
 JOIN sku_master s ON s.sku_id = r.sku_id
 WHERE r.run_id = 'RUN-01416';
 '''
-notes = "Hypothetical cut; do not report the run as cut. The SKU's latest promo ended 2026-09-27. Four weeks counted from the run week."
+notes = "Hypothetical cut; do not report the run as cut. The SKU's latest promo ended 2026-07-05 (the promo ending 2026-09-27 is for the 12 oz can, SKX-LYC-C12). Four weeks counted from the run week."
 
 [[case]]
 id = "E35"
