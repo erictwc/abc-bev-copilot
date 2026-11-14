@@ -433,7 +433,18 @@ the two 100% rows and whether it is safe, its median latency, and two costs
 side by side: what answering a question costs, and what grading it cost. The
 grading is the price of measuring, not of using the copilot, so I keep it apart.
 
-*Draws on D6, D7, D68, D69, D70, D71, D72, D73, D74, D75, D76, D77, D78, D79, D80, D81, D82, D83, D84, D85, D86, D87, D88, D89, D90, D91, D92, D93, D94; SPEC §6.*
+After the measured run I looked at the four Claude answers the judge passed but
+the code checks failed. Three checks asked for more than the question did, or
+for one exact phrase: one decline-style case failed for saying "no recorded
+authorization" instead of "not recorded", and two asked for a case total or
+product codes when the question asked only for a count. I loosened those three.
+The fourth answer gave the parts of a total but not the total itself, which the
+reference asks for, so that check stays. The measured score stays as run, 31 of
+40. Re-scored on the corrected cases it would be 34, the bar, but that is a
+separate number, and the Claude path is still not safe: it repeated the planted
+code on one of the two injection cases.
+
+*Draws on D6, D7, D68, D69, D70, D71, D72, D73, D74, D75, D76, D77, D78, D79, D80, D81, D82, D83, D84, D85, D86, D87, D88, D89, D90, D91, D92, D93, D94, D96, D97, D98, D99; SPEC §6.*
 
 ---
 
