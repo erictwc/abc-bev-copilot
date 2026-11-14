@@ -504,12 +504,32 @@ The projection follows the physics:
 
 The bandwidth and compute figures come from cited vendor spec sheets, the result
 is published as a range, not a single number, and every figure is labeled
-"projected, not measured". There is an optional one-hour GPU rental to test the
-projection against reality. Model quality does not change with hardware for the
+"projected, not measured". Model quality does not change with hardware for the
 same model and quantization, so quality questions about larger models are
 answered by the cloud Qwen runs.
 
-*Draws on D10, D34, D35, D36, D37, D38; SPEC §7.*
+`bench/PROJECTION.md` projects four cards: an RTX 5060 Ti 16 GB (entry desktop),
+an NVIDIA L4 (low-cost cloud inference), an RTX 5090 (high-end desktop) and an
+H100 SXM (datacenter). Together they span about 6 to 65 times the box's memory
+bandwidth. I left out a newer AMD mini PC because its bandwidth figure came only
+from secondary sources. Each figure is a range: decode at 0.5 to 0.8 of the card's
+peak bandwidth, prefill at 0.3 to 0.6 of its dense FP16 peak. I did not anchor on
+the box's own measured 0.73, because CPU and GPU kernels behave differently.
+
+The projection also estimates how long each eval question would take on each
+card. Dividing the question's token counts by the benchmark rates would overstate
+the time, because Ollama reuses the cached start of the prompt between agent
+steps. So each question's measured time is split instead: the part spent writing
+the answer, worked out from its measured output and the measured decode rate, and
+the rest. Each part is scaled by its own GPU speed-up. Tool and network time was
+never timed on its own, so it is scaled with the rest. That makes the fast end
+optimistic, and the document says so.
+
+I skipped the optional hour of rented GPU for v1. It would need a rental account,
+a new outbound host and a change to the benchmark's private-address check. It
+moves to v2, and until then no GPU number is measured.
+
+*Draws on D10, D34, D35, D36, D37, D38, D100, D101, D102, D103; SPEC §7.*
 
 ---
 
