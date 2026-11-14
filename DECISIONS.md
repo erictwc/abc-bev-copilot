@@ -272,3 +272,15 @@ E19's reference used to accept a clarification or both totals labeled separately
 
 ## 2026-11-13 D90. E33 stays as written: it requires the doc search and the product-sheet citation
 Qwen answered E33's facts correctly from SQL alone. Eric and the judge passed the facts, and the code checks failed the case for not calling `search_docs` and not citing PRD-LMR-PUN-v1. The case is testing that the agent confirms "discontinued" from the product sheet, so it is not changed. Chosen over dropping the tool and citation requirement.
+
+## 2026-11-13 D91. T10 runs the paths one at a time: cloud, then the measured Claude run, then local overnight
+All three paths use the GEEKOM box for `search_docs` embeddings, so a local run beside another path would slow that path's measured latency, and two runs at once could each pass the spend-cap check (D45). The fresh cloud run goes first: it is cheap and exercises all 40 cases on the current case file before the one measured Claude run. The Claude run starts only after Eric gives the explicit go-ahead for it, since under `BAR.md` it is run once. Local runs last and alone. Chosen over the Claude run first and over starting local in parallel.
+
+## 2026-11-13 D92. The local batch runs in the background on the Mac, kept awake with `caffeinate`
+`caffeinate -i make evals EVAL_PATH=local OLLAMA_HOST=http://192.168.1.68:11434`, started in the background, with its output logged outside the repo. `.env` keeps `OLLAMA_HOST` blank; the address is passed on the command line only. The model is `qwen3.5:9b-q4_K_M` at `num_ctx` 8192 (D40). From the T3 benchmark (about 28 tokens/s prefill and 6.7 tokens/s decode) and cloud Qwen's token counts, a case should take about 3-5 minutes, so 2-3.5 hours for 40. The judge calls go from the Mac as on the other paths. Chosen over a one-off `launchd` job and over Eric starting it himself.
+
+## 2026-11-13 D93. Cloud Qwen gets a fresh 40-case run; the T9 run is not the T10 result
+The T9 run (2026-11-13T2325Z) ran on the case file from before D88-D90, from a working tree with uncommitted changes, and lost E40 to an HTTP 429 rate limit. Its offline rescore to 25/40 was never committed, so the README cannot quote it. A fresh run on the current cases from a clean commit costs about $0.04 for the agent and $0.30-0.60 for the judge. Chosen over reporting the T9 run as it stands and over committing its rescore as the result.
+
+## 2026-11-13 D94. The README shows agent cost and judge cost per question in separate columns
+Per path: accuracy as passes out of 40, the must-decline and injection rows, and whether the path is safe (BAR.md); agent cost per question; judge cost per question in its own column, since D84 keeps grading out of the cost of answering; median latency, with the maximum in a note. Every figure comes from the committed result file named under the table. Chosen over one total cost column and over the judge cost in a footnote only.

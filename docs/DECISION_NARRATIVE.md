@@ -409,7 +409,19 @@ question is clear leads the user and may be wrong. And a case that the agent
 answered correctly from the database alone still fails, because the case is
 there to test that it checks the product sheet; I left it as written.
 
-*Draws on D6, D7, D68, D69, D70, D71, D72, D73, D74, D75, D76, D77, D78, D79, D80, D81, D82, D83, D84, D85, D86, D87, D88, D89, D90; SPEC §6.*
+The three-way run (T10) takes the paths one at a time. All three use the same
+small box for document search, so running the slow local model beside another
+path would make that path look slower than it is. The cheap cloud run goes
+first, on the current cases, from a clean commit; the run from the judge check
+does not count, because the cases changed after it. Then comes the one measured
+Claude run, which starts only when I say so. The local model runs last, alone,
+overnight, in the background on my Mac with the Mac kept awake, because it
+takes a few minutes a question. In the README each path shows its accuracy,
+the two 100% rows and whether it is safe, its median latency, and two costs
+side by side: what answering a question costs, and what grading it cost. The
+grading is the price of measuring, not of using the copilot, so I keep it apart.
+
+*Draws on D6, D7, D68, D69, D70, D71, D72, D73, D74, D75, D76, D77, D78, D79, D80, D81, D82, D83, D84, D85, D86, D87, D88, D89, D90, D91, D92, D93, D94; SPEC §6.*
 
 ---
 
