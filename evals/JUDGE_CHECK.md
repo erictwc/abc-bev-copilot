@@ -48,12 +48,12 @@ conclusion differs from the reference" rule reads a wrong headline as the conclu
 - **E19:** fail. Eric's reason is stricter than the judge's: the agent should only ask for clarification, and give
   a total once it is clear which distributor is meant.
 
-## Points for Eric to decide (nothing changed)
+## Points raised by the check
 
 These came out of the check. No case, check or prompt was changed (CLAUDE.md).
 
-1. **E09:** keep the judge as it is (strict on self-corrected answers), or change the prompt so a corrected final
-   figure counts. A prompt change means rerunning the judge on this run and reporting before and after.
+1. **E09: decided 2026-11-13 (D87).** The judge stays strict: an answer whose headline contradicts the reference
+   fails even if it corrects itself later. The prompt is unchanged, so no rerun.
 2. **E19:** the case's reference answer says a clarification *or* separately labeled totals are both acceptable.
    Eric's verdict says clarification only. Under the current reference, an answer that reports both totals
    separately passes. Changing that is a case change, so it is Eric's call.

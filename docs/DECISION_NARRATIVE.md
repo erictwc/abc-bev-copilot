@@ -393,9 +393,12 @@ taken first from the cases where it and the code checks disagree. They come
 from a full 40-case run on the cheap cloud Qwen model, which has no bar, so the
 judge is tested on answers to all 40 questions without touching the one
 measured Claude run. `evals/JUDGE_CHECK.md` lists the 10 calls and every place
-I disagree with the judge.
+I disagree with the judge. I graded them blind and agreed with the judge on 9.
+The one I passed and it failed was an answer that led with a wrong figure and
+then corrected itself. I kept the judge strict there: a reader who stops at the
+headline gets the wrong number, so the answer should not count as right.
 
-*Draws on D6, D7, D68, D69, D70, D71, D72, D73, D74, D75, D76, D77, D78, D79, D80, D81, D82, D83, D84, D85, D86; SPEC §6.*
+*Draws on D6, D7, D68, D69, D70, D71, D72, D73, D74, D75, D76, D77, D78, D79, D80, D81, D82, D83, D84, D85, D86, D87; SPEC §6.*
 
 ---
 
