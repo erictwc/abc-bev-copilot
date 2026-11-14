@@ -149,7 +149,94 @@ Read with care:
 - **Spend:** this month $8.80 of the $15 development cap after T15 (`logs/spend.csv`, `agent/spend.py`, read
   2026-11-14); T13 used $3.85 of its ~$7.60 budget (D108) and T15's regrade $1.53 (D119). The demo has its own
   $20 cap since D115 ($0.39 logged so far on this machine).
-- **Not tried:** a larger Claude model (D108 chose prompt fixes first), and any change to the 8-call step cap.
+- **A more capable Claude model (not tried; D108 chose prompt fixes first).** The candidate is Claude Fable 5.2
+  (`claude-fable-5-2`, $8 / $40 per 1M tokens, Anthropic's most capable widely released model; list price
+  checked 2026-11-14). Claude Opus 5.5 ($4 / $20) cannot be tested under the current judge, because the judge is
+  Opus 5.5 and must differ from the model under test (D6, D82); testing it would mean a new judge and regrading
+  every path. Estimated from T13-C's tokens (400,086 in, 38,442 out), so a floor, since a thinking model may
+  write more: one 50-case Fable run about $4.75 plus about $0.55 judge; about $95 per 1,000 questions against
+  Sonnet's measured $23.69. Headroom is small: on the regrade (T15-C) Sonnet fails 4 of 50 (E14, E36, E43,
+  E46), all judgment calls, and one run already moves by about two cases. Needs a price entry in
+  `agent/spend.py` and probably a longer adapter timeout first.
+- **Not tried:** any change to the 8-call step cap.
+
+## Stronger open-weight models to test next (further testing)
+
+Read 2026-11-14 from OpenRouter's model API (`openrouter.ai/api/v1/models`, `.../<id>/endpoints`) and each Hugging
+Face model card. Benchmarks are the vendors' own, on different harnesses, so they do not compare strictly. VRAM is
+estimated from the parameter count (weights only; add 10-30% for the cache), not measured. None of these was
+tested here. All support tool calling on OpenRouter.
+
+| Model (OpenRouter ID) | Size | License | DeepInfra price / 1M in-out | Est. 50-case run | Self-host at 4-bit (est.) | Vendor agentic score |
+|---|---|---|---:|---:|---|---|
+| Qwen3.8-27B (`qwen/qwen3.8-27b`) | 27.8B dense | Apache 2.0 | $0.15 / $1.875 | $0.14-0.16 | ~17 GB: one 32 GB card | SWE-bench Pro 61.7 (Qwen3.6-27B 53.5) |
+| Qwen3.6-35B-A3B (`qwen/qwen3.6-35b-a3b`) | 36B MoE, 3B active | Apache 2.0 | $0.10 / $0.95 | $0.08-0.09 | ~21 GB: one 32 GB card | TAU3-Bench 67.2 |
+| Nemotron 3 Super (`nvidia/nemotron-3-super-120b-a12b`) | 120B MoE, 12B active | NVIDIA Open Model License | $0.075 / $0.40 | ~$0.05 | ~65-70 GB: one 96 GB card | TauBench V2 61.2 |
+| DeepSeek V4.1 Flash (`deepseek/deepseek-v4.1-flash`) | ~763B MoE, 8-16B active | MIT | $0.112 / $0.336 | ~$0.06 | ~400 GB: 8x 80 GB server | DeepSWE 74.2 |
+| DeepSeek V4 Pro 0813 (`deepseek/deepseek-v4-pro-0813`) | 1.6T MoE, 49B active | MIT | $1.30 / $2.60 | $0.62-0.66 | ~0.9 TB: 8x H200-class | Toolathlon-Verified 74.1 |
+| GLM-5.3 (`z-ai/glm-5.3`) | ~744B MoE, ~40B active | custom (review above $10B revenue) | $0.562 / $2.50 (fp4) | $0.32-0.36 | ~410 GB: 8x 80 GB | Toolathlon-Verified 73.0 |
+| Kimi K3 (`moonshotai/kimi-k3`) | 2.8T MoE, 104B active | custom (agreement above $20M revenue) | $2.85 / $14.25 | $1.71-1.92 | ~1.5 TB: not practical | Toolathlon-Verified 76.5 (top open) |
+
+For comparison, the tested Qwen 3.5 27B is $0.26 / $2.60, $0.15-0.25 a run. Run cost assumes T13's ~400k input and
+40-55k output tokens; these are thinking models, so set the reasoning effort and pin the provider
+(`allow_fallbacks: false`) or the output and the host can change. Every model above is on DeepInfra, the one host
+D39 allows; DeepSeek's and Z.ai's own APIs would be new hosts. Natural first tests: Qwen3.8-27B (same family and
+size as the tested 27B, one 32 GB card), DeepSeek V4 Pro (strongest under MIT), Kimi K3 or GLM-5.3 as the ceiling.
+
+## Owning the GPU: what keeping data in the building costs
+
+All figures US$, researched 2026-11-14; prices are well above list after the 2026 memory shortage (RTX 5090 street
+about 3x its $1,999 MSRP). Sources: gpupoet.com November price pages and market report (averages of the cheapest
+eBay/Amazon listings, may include used), NVIDIA product pages for board power, EIA Electric Power Monthly Table
+5.3 (August 2026, preliminary: commercial 14.47 cents/kWh, residential 18.16), runpod.io and lambda.com pricing, and
+reseller listings. Machine totals are estimates built from part prices; machine power is estimated, not measured.
+
+| Option | Holds (4-bit) | Price | Power, 24/7 a year (low-high use) | Per month, 3-yr life | Per month, 5-yr life |
+|---|---|---:|---:|---:|---:|
+| RTX 5090 workstation, 32 GB | a 27B-35B model (Qwen3.8-27B, Qwen3.6-35B-A3B) | ~$10-13k (card ~$6.2-6.9k) | $317-1,014 | $304-446 | $193-301 |
+| RTX PRO 6000 workstation, 96 GB | up to ~120B MoE (Nemotron 3 Super), or 27B at 8-bit | ~$16-22k (card ~$15.8k; Dell/HP prebuilt $16.2k / $19.6k) | $380-1,077 | $476-701 | $298-456 |
+| NVIDIA DGX Spark, 128 GB unified | up to ~120B MoE, but slow (memory bandwidth far below a 5090) | $6,950 | $51-203 | $197-210 | $120-133 |
+| 8x H200 server | the frontier open models (DeepSeek V4 Pro, GLM-5.3) | $320-470k (Supermicro / Lenovo / DGX list) | $5-11k, plus a data-centre space | $13.3-19.9k (with 15%/yr support) | $9.8-14.7k |
+
+Monthly cost = price / life + electricity at the commercial rate (+15% a year support on the server only). Not
+counted: staff time to run, patch and secure it, a spare or downtime, space and cooling, and a resale value.
+
+Break-even volume, 3-year life: the questions a month at which the API bill equals the monthly cost above, using the
+measured T13 cost per 1,000 questions (Claude $23.69, cloud Qwen 27B $3.10, cloud Qwen 9B $1.01):
+
+| Option | vs Claude Sonnet | vs cloud Qwen 27B | vs cloud Qwen 9B |
+|---|---:|---:|---:|
+| RTX 5090 workstation | 12,800-18,800 / month | 98,000-144,000 | 301,000-441,000 |
+| RTX PRO 6000 workstation | 20,100-29,600 | 154,000-226,000 | 471,000-694,000 |
+| DGX Spark | 8,300-8,900 | 64,000-68,000 | 195,000-208,000 |
+| 8x H200 server | 562,000-839,000 | 4.3-6.4 million | 13-20 million |
+
+Months to pay back the purchase against the Claude bill (price / (Claude bill - electricity)):
+
+| Questions a month | Claude bill | RTX 5090 workstation | RTX PRO 6000 workstation | DGX Spark |
+|---:|---:|---:|---:|---:|
+| 1,000 | $24 | never | never | ~44 years |
+| 10,000 | $237 | 55-71 months | 90-124 | 31 |
+| 25,000 | $592 | 19-24 | 30-41 | 12 |
+| 50,000 | $1,184 | 9-12 | 14-20 | 6 |
+| 100,000 | $2,369 | 4-6 | 7-10 | 3 |
+
+Read with care:
+- **Owning the GPU does not buy Claude's accuracy.** It runs an open model. The measured open-model results are
+  cloud Qwen 27B 35/50 and Qwen 9B 31/50, against Claude's 44/50, and no open model is called safe either. A
+  stronger open model (table above) has not been tested here. So the price of keeping data in the building is
+  best read against the same open model in the cloud: at 10,000 questions a month, a 5090 workstation ($304-446)
+  against cloud Qwen 27B ($31) is about $270-415 a month, or $3,300-5,000 a year, for nothing leaving the building.
+- **Capacity is projected, not measured.** At about 6,000 input and 600 output tokens per question (T13-Q27), a 5090
+  serving a 27B model one question at a time (about 20-40 s each, from bandwidth, my estimate) handles about
+  65,000-130,000 a month running flat out; batching raises that. The box
+  measured here (CPU only) took 228-288 s per question on the 9B and would not serve any of these volumes.
+- **Question volume is the deciding number, and it is not known.** Choose it for the memo; the tables give 1,000
+  to 100,000 a month.
+- Hardware prices moved by more than 2x during 2026, and the break-even moves with them. Cloud GPU rental, for
+  reference: RTX 5090 $0.69-1.39 an hour, RTX PRO 6000 $1.69-2.69, H100 $1.99-4.89 (RunPod, Lambda).
+- Useful life: hyperscalers book 5-6 years; skeptics argue about 3 (Fortune, April 2026). US tax treats computers as
+  5-year property (IRS Pub 946). Hence the 3- and 5-year columns.
 
 ## Privacy, per path (what leaves the network)
 
