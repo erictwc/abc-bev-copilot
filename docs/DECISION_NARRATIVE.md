@@ -624,7 +624,13 @@ The 27B cloud Qwen runs the same 50 cases, to show whether a bigger open model
 closes the gap. The measured 31 stays the result under the bar; the new numbers
 are reported beside it.
 
-*Draws on D104, D105, D106, D107, D108; SPEC §9, §10.*
+The first people likely to look at this are a hiring team, not engineers. They
+will watch a video and might type a question into a page; they will not clone a
+repo. So the walkthrough video and the hosted demo both moved into v1. The demo
+keeps the rules it always had: two paths live behind rate limits and a small
+budget, the local model as recorded replays, and no keys in the browser.
+
+*Draws on D104, D105, D106, D107, D108, D109; SPEC §9, §10.*
 
 ---
 

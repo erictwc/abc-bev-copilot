@@ -60,7 +60,12 @@ One ticket per Claude Code session. Eric reviews at each "Done when" before the 
 Eric's target is 39/40 on the Claude path. It is a goal, not the bar: `BAR.md` and the measured T10 result do not change, and the new numbers are reported beside them whether or not they reach it.
 *Done when:* committed result files exist for the three paths on the 50 cases, git history shows the held-out cases committed after the frozen fix, and the README reports before and after.
 
-**v1 gate:** v1 is done when T12 passes. Only then start v2.
+**T14. Hosted demo, moved from V6 into v1 (D109).** Small web app with a model dropdown; Claude and cloud Qwen live behind rate limits and the $5 demo budget; local Qwen shows recorded real runs, labeled as replays; no keys in the browser; request logging. Hosting, framework and any new dependency are chosen with Eric and logged first.
+*Done when:* a stranger can try it, and a loop of repeated requests is stopped by the rate limit and cap.
+
+**Walkthrough video, moved from V8 into v1 (D109).** Eric records the 3-minute walkthrough from `docs/WALKTHROUGH.md` once T13's numbers are in it, and the README links it. V8 keeps the portfolio card.
+
+**v1 gate:** v1 is done when T12, T13 and T14 pass and the walkthrough video is linked from the README. Only then start v2.
 
 ## v2
 
@@ -79,11 +84,8 @@ Eric's target is 39/40 on the Claude path. It is a goal, not the bar: `BAR.md` a
 **V5. MCP server.** Expose `run_sql` and `search_docs`; connect Claude Desktop or Claude Code.
 *Done when:* `docs/MCP.md` states what changed and what did not.
 
-**V6. Hosted demo.** Small web app with a model dropdown; Claude and cloud Qwen live behind rate limits and the $5 demo budget; local Qwen shows recorded real runs, labeled as replays; no keys in the browser; request logging.
-*Done when:* a stranger can try it, and a loop of repeated requests is stopped by the rate limit and cap.
-
 **V7. Adoption kit and pilot.** Two-page rep guide, one-page admin guide, one-page "what this will not do", 15-minute training recording; pilot with 2 or 3 real people, with a log of their questions and confusion points.
 *Done when:* the pilot log exists and at least one change was made because of it.
 
-**V8. Walkthrough and portfolio card.** 3-minute walkthrough recorded; card added to the portfolio page.
-*Done when:* both are linked from the README.
+**V8. Portfolio card.** Card added to the portfolio page; the walkthrough video moved to v1 (D109).
+*Done when:* the card is linked from the README.

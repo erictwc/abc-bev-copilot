@@ -148,7 +148,7 @@ The real number is reported whether or not the bar is hit. Results are committed
 
 ### v1 (reach this before any interview)
 
-SQL tool, retrieval, three-model adapter, 40 evals with the written bar, cost log and cap, benchmark and projection, build-vs-buy memo, README with results table.
+SQL tool, retrieval, three-model adapter, 40 evals with the written bar, cost log and cap, benchmark and projection, build-vs-buy memo, README with results table. Added on 2026-11-14 (D108, D109): an accuracy pass checked on 10 held-out cases, the hosted demo below, and the recorded walkthrough video.
 
 ### v2
 
@@ -157,7 +157,7 @@ SQL tool, retrieval, three-model adapter, 40 evals with the written bar, cost lo
 - router: cheap model first, escalate to Claude on low confidence or tool failure; report cost and accuracy against all-Claude
 - promo ROI table and cases
 - MCP server exposing the two tools
-- hosted demo with a model dropdown: Claude and cloud Qwen live behind rate limits and the demo budget; local Qwen shows **recorded real runs**, labeled as replays; no API keys in the browser
+- (moved to v1 as T14, D109) hosted demo with a model dropdown: Claude and cloud Qwen live behind rate limits and the demo budget; local Qwen shows **recorded real runs**, labeled as replays; no API keys in the browser
 - adoption kit: two-page rep guide, one-page admin guide, one-page "what this will not do", a recorded 15-minute training, and a pilot with 2 or 3 real people, logging what they asked and where they got confused
 
 v2 work on promo ROI starts only after v1 meets its bar or the miss is explained.
