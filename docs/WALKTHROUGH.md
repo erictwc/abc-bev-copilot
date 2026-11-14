@@ -57,10 +57,8 @@ reachable, show the stored answers instead:
 > have been cut". My context guard added the 2,048-token reply allowance to the prompt and refused prompts that
 > fit. Worse, testing on the box showed it could not see real truncation: Ollama cut long prompts to 4,098 tokens
 > and reported that size, which passed the check. The fix is to tell Ollama never to truncate, so an over-long
-> prompt is an error naming its size, and to double the window to 16,384 tokens.
-
-If the D95 rerun is committed by then, add its before-and-after number here. Until then, say that the rerun is
-pending; do not quote it.
+> prompt is an error naming its size, and to double the window to 16,384 tokens. On the rerun, no question hit a
+> context error, and the local score went from 20 to 22 of 40.
 
 ## 2:20-2:45 Cost per question
 
@@ -89,6 +87,7 @@ pending; do not quote it.
 | Claude 34/40 on corrected cases | CLAUDE-R (`..._0412Z_claude_claude-sonnet-5-5_rescored.md`) |
 | cloud 23/40, local 20/40 | CLOUD, LOCAL |
 | E03 message, 6,342 tokens | LOCAL `.jsonl`, case E03 |
+| rerun: 20 -> 22 of 40, no context errors | LOCAL-R (`..._1454Z_local_qwen3.5-9b-q4_K_M.md`) |
 | 2,048 allowance, 4,098 cut size, 16,384 window | `DECISIONS.md` D95 |
 | $0.0235, $0.0012, $0 per question; $23.52 and $1.16 per 1,000 | the "Cost:" lines; `docs/MEMO_FACTS.md` |
 | local median 287.6 s | LOCAL "Latency:" line |
