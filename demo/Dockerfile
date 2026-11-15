@@ -12,6 +12,9 @@ COPY --from=ollama /usr/lib/ollama /usr/lib/ollama
 
 RUN useradd -m -u 1000 user
 WORKDIR /app
+# WORKDIR makes /app root-owned and COPY --chown only covers what it copies, so the app could not
+# create logs/ (first Space build, 2026-11-14) and start.sh could not link it to /data.
+RUN chown user:user /app
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 COPY --chown=user . .
