@@ -1,6 +1,7 @@
 #!/bin/sh
 # Container entry point (T14). The spend log and request log must survive a restart, or the demo
-# cap would reset (D113, D115): they go on the Space's persistent disk at /data. Without it, live
+# cap would reset (D113, D115): they go on the Storage Bucket
+# mounted read-write at /data. Without it, live
 # answers are switched off and only the replays work.
 set -e
 if [ -d /data ] && [ -w /data ]; then

@@ -697,10 +697,14 @@ answers to the 40 eval questions, labelled as replays, with the time each one
 took and whether it passed.
 
 The server is the Python standard library and one plain page, so the demo adds
-no framework. It runs on a free Hugging Face Space with paid persistent
-storage. The storage matters because the spend log is what enforces the cap,
-and a restart that wiped it would wipe the cap with it; without that disk the
-demo starts with live answers switched off.
+no framework. It runs on a free Hugging Face Space with storage that outlives
+a restart. The storage matters because the spend log is what enforces the cap,
+and a restart that wiped it would wipe the cap with it; without that storage
+the demo starts with live answers switched off. I first planned the Space's
+paid persistent disk, but Hugging Face had retired it, so the Space mounts a
+Storage Bucket in the same place. Nobody documents how a bucket handles a file
+that grows one line at a time, so the deploy includes a restart test: the
+spend log must keep its rows before the cap is trusted.
 
 I gave the demo its own $20 a month instead of the $5 I first set aside, and
 development keeps its $15. A demo server cannot see what I spend on my laptop,
