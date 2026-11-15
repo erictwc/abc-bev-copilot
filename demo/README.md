@@ -49,7 +49,8 @@ Eric's steps. Each one is in his own accounts.
 1. **Demo-only API keys with provider-side limits**, a backstop that holds even if the app's log is lost.
    Anthropic: a separate workspace with a monthly spend limit and its own key. OpenRouter: a new key
    with a credit limit. The two limits add up to $20 or less.
-2. **Create the Space**: Docker SDK, Blank template, CPU Basic (free), public. Under Storage Buckets,
+2. **Create the Space**: Docker SDK, Blank template, CPU Basic, public. Docker Spaces on CPU Basic now
+   need a Hugging Face **Pro** subscription (about $9 a month). Under Storage Buckets,
    create a bucket and attach it **read-write at `/data`** (confirm the price on the settings page).
    Hugging Face retired the old persistent-storage disk in 2026; a bucket is its replacement. Without
    a writable `/data` the Space still runs, with replays only.

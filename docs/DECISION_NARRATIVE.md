@@ -697,8 +697,10 @@ answers to the 40 eval questions, labelled as replays, with the time each one
 took and whether it passed.
 
 The server is the Python standard library and one plain page, so the demo adds
-no framework. It runs on a free Hugging Face Space with storage that outlives
-a restart. The storage matters because the spend log is what enforces the cap,
+no framework. It runs on a Hugging Face Space with storage that outlives a
+restart. I planned on the free tier, but by deploy day Docker Spaces needed a
+Pro subscription, about $9 a month; I paid it rather than ship a page with
+replays only, and it can be cancelled once the demo has done its job. The storage matters because the spend log is what enforces the cap,
 and a restart that wiped it would wipe the cap with it; without that storage
 the demo starts with live answers switched off. I first planned the Space's
 paid persistent disk, but Hugging Face had retired it, so the Space mounts a
