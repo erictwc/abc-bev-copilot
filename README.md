@@ -17,7 +17,7 @@ myself. Measured results go below as they exist.
 > with a hard spend cap, the agent loop and CLI, 40 eval cases with a written bar and a judge, the three-way run,
 > and a GPU projection. Walkthrough script: [`docs/WALKTHROUGH.md`](docs/WALKTHROUGH.md). Figures for the
 > build-vs-buy memo, with their sources: [`docs/MEMO_FACTS.md`](docs/MEMO_FACTS.md). The memo (draft, written by Eric):
-> [`docs/Order_to_Shelf_Memo.docx`](docs/Order_to_Shelf_Memo.docx).
+> [`docs/Order_to_Shelf_Memo.pdf`](docs/Order_to_Shelf_Memo.pdf) (Word: [`docs/Order_to_Shelf_Memo.docx`](docs/Order_to_Shelf_Memo.docx)).
 
 ## Quick start
 
