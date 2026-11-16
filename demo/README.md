@@ -65,7 +65,7 @@ Eric's steps. Each one is in his own accounts.
    ```
    Git asks for your Hugging Face username and a **write** access token as the password.
    `build_space.sh` packs the committed tree at HEAD (never `.env`, `logs/`, the local `.duckdb` files,
-   or the memo `.docx`, since the Hub refuses plain-git binary files) and puts the Dockerfile and the
+   or any binary file such as the memo's `.docx` and `.pdf`, since the Hub refuses plain-git binary files) and puts the Dockerfile and the
    Space's README at the root.
 5. The build builds both DuckDB stores, pulls `qwen3-embedding:0.6b`, and runs `agent.test_retrieval`
    and `demo.test_server`. **If retrieval differs from the box, the build fails.**
