@@ -2,8 +2,9 @@
 
 One web page for people who will not clone the repo: a question box and a model dropdown.
 
-- **Claude Sonnet 5.5** and **cloud Qwen 3.5 9B** answer live, through the same `agent.loop.ask()` as the
-  CLI, on the `demo` budget: $20 a month counted on demo calls only (D115).
+- **Claude Sonnet 5.5**, **cloud Qwen 3.5 9B** and **Kimi K3** (open weights, on the cloud path, D122) answer
+  live, through the same `agent.loop.ask()` as the CLI, on the `demo` budget: $20 a month counted on demo calls
+  only (D115).
 - **Local Qwen 3.5 9B** is never called. The page shows its recorded answers to the 40 eval questions
   from the newest committed local run in `evals/results/`, labelled as replays with their eval result.
 - Keys stay on the server. The browser gets answers, evidence and costs, nothing else.

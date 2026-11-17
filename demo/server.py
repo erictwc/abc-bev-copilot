@@ -1,6 +1,6 @@
 """The hosted demo (T14): one page, a question box and a model dropdown. Standard library only (D114).
 
-Claude and cloud Qwen answer live through agent.loop.ask(budget="demo"), so every call goes through the
+Claude, cloud Qwen and Kimi K3 (D122) answer live through agent.loop.ask(budget="demo"), so every call goes through the
 adapter's spend cap (D115). Local Qwen is never called: it shows the recorded answers from the latest
 committed local eval run, labelled as replays (D11). Keys stay on the server, read by the adapter from
 the environment; the browser only ever sees answers.
@@ -27,7 +27,11 @@ PAGE = Path(__file__).resolve().parent / "index.html"
 RESULTS = ROOT / "evals" / "results"
 REQUEST_LOG = ROOT / "logs" / "demo_requests.jsonl"
 
-LIVE = {"claude": "Claude Sonnet 5.5", "cloud": "Qwen 3.5 9B, cloud"}
+# page key: (label, adapter path, model on that path; None = the adapter's default). Kimi K3 rides the cloud
+# path, so it goes through OpenRouter pinned to DeepInfra like Qwen (D39, D122).
+LIVE = {"claude": ("Claude Sonnet 5.5", "claude", None),
+        "cloud": ("Qwen 3.5 9B, cloud", "cloud", None),
+        "kimi": ("Kimi K3, cloud", "cloud", "moonshotai/kimi-k3")}
 MAX_CHARS = 500
 PER_VISITOR = [(600, 5), (86400, 20)]   # (window in seconds, questions)
 SITE_PER_DAY = 100
@@ -158,7 +162,7 @@ def make_handler(limiter, replays, ask=loop.ask):
                 return self.send(200, PAGE.read_bytes(), "text/html; charset=utf-8")
             if self.path == "/api/config":
                 return self.send(200, {
-                    "live": os.environ.get("DEMO_LIVE", "on") != "off", "models": LIVE,
+                    "live": os.environ.get("DEMO_LIVE", "on") != "off", "models": {k: v[0] for k, v in LIVE.items()},
                     "max_chars": MAX_CHARS, "per_visitor": PER_VISITOR, "site_per_day": SITE_PER_DAY,
                     "demo_spent_usd": round(spend.month_spend("demo"), 2), "demo_cap_usd": spend.CAP_USD["demo"],
                     "replay_file": run_file})
@@ -185,7 +189,7 @@ def make_handler(limiter, replays, ask=loop.ask):
             entry.update(model=model, question=question[:MAX_CHARS + 50])
             refusal = None
             if model not in LIVE:
-                refusal = 400, "Pick Claude or cloud Qwen for a live answer."
+                refusal = 400, "Pick Claude, cloud Qwen or Kimi K3 for a live answer."
             elif not question:
                 refusal = 400, "Type a question first."
             elif len(question) > MAX_CHARS:
@@ -198,7 +202,8 @@ def make_handler(limiter, replays, ask=loop.ask):
                 log_request({**entry, "admitted": False, "refused": refusal[1]})
                 return self.send(refusal[0], {"error": refusal[1]})
             try:
-                r = ask(question, path=model, budget="demo")
+                _, path, name = LIVE[model]
+                r = ask(question, path=path, model=name, budget="demo")
             except Exception as e:      # ask() handles model and tool errors itself; this is a last resort
                 log_request({**entry, "admitted": True, "error": f"{type(e).__name__}: {e}"})
                 return self.send(500, {"error": "Something went wrong on the server. Try again later."})

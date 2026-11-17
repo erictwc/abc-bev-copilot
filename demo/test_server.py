@@ -14,9 +14,9 @@ from agent import adapter, loop, spend
 from demo import server
 
 
-def fake_ask(question, path, budget):
+def fake_ask(question, path, budget, model=None):
     assert budget == "demo"
-    return {"question": question, "path": path, "model": "fake", "answer": "ok", "confidence": "high",
+    return {"question": question, "path": path, "model": model or "fake", "answer": "ok", "confidence": "high",
             "flags": [], "evidence": {"sql": [], "passages_cited": [], "passages_retrieved": []},
             "stopped": "answer", "steps": 1, "input_tokens": 10, "output_tokens": 5, "cost_usd": 0.0, "latency_s": 0.1}
 
@@ -70,6 +70,14 @@ class Demo(unittest.TestCase):
         entries = self.log()
         self.assertEqual(sum(e["admitted"] for e in entries), 6)
         self.assertNotIn("203.0.113.7", server.REQUEST_LOG.read_text())   # IPs are hashed
+
+    def test_kimi_goes_through_the_cloud_path_with_its_model_name(self):
+        self.start()
+        status, body = self.post(model="kimi")
+        self.assertEqual(status, 200)
+        self.assertEqual((body["path"], body["model"]), ("cloud", "moonshotai/kimi-k3"))
+        self.assertIn("kimi", json.loads(self.get("/api/config"))["models"])
+        self.assertIn('value="kimi"', self.get("/").decode())
 
     def test_a_spoofed_forwarded_header_does_not_dodge_the_limit(self):
         self.start()

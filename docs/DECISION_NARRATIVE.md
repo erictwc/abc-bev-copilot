@@ -722,7 +722,12 @@ looks. The one place the old word stays is the first line of the system
 prompt, which is frozen with the measured results; it changes with the next
 prompt edit, when the evals are run again anyway.
 
-*Draws on D11, D112, D113, D114, D115, D116, D120; SPEC §5.*
+Later I added Kimi K3 to the demo's menu, beside Claude and the 9B cloud Qwen, because it is the open model that
+came closest to Claude and a visitor should be able to try it. It goes through the same cloud route and host as
+Qwen, under the same limits and the same $20 demo cap. It is the most expensive live choice per question, so
+the cap simply runs out sooner if visitors pick it.
+
+*Draws on D11, D112, D113, D114, D115, D116, D120, D122; SPEC §5.*
 
 ---
 
